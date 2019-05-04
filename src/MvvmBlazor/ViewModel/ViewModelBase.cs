@@ -6,27 +6,16 @@ using System.Threading.Tasks;
 
 namespace MvvmBlazor.ViewModel
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
+    public abstract class ViewModelBase : INotifyPropertyChanged, ICleanup, IDisposable
     {
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Dispose(true);
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
+        
         protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
                 field = value;
-                RaisePropertyChanged(propertyName);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
                 return true;
             }
 
@@ -37,8 +26,20 @@ namespace MvvmBlazor.ViewModel
         {
             Dispose(false);
         }
+        
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            Dispose(true);
+        }
 
-        protected virtual void Dispose(bool disposing) { }
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+                Cleanup();
+        }
+
+        public virtual void Cleanup() { }
 
         /// <summary>
         ///     Method invoked when the component is ready to start, having received its
