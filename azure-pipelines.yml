@@ -20,7 +20,7 @@ stages:
             displayName: Restore
             inputs:
               command: restore
-              projects: 'src/*/.csproj'
+              projects: 'src/*/*.csproj'
       - job: samples
         displayName: Samples
         container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
@@ -35,4 +35,4 @@ stages:
             displayName: Restore
             inputs:
               command: restore
-              projects: 'samples/*/.csproj'
+              projects: 'samples/*/*.csproj'
