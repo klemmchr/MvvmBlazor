@@ -1,0 +1,19 @@
+@page "/counter"
+@using BlazorServersideSample.ViewModel
+@using MvvmBlazor.ViewModel
+@inject CounterViewModel CounterViewModel
+
+<h1>Counter</h1>
+
+<p>Current count: @Bind(() => CounterViewModel.CurrentCount)</p>
+
+<button class="btn btn-primary" onclick="@CounterViewModel.IncrementCount">Click me</button>
+
+@functions {
+
+    protected override ViewModelBase SetBindingContext()
+    {
+        return CounterViewModel;
+    }
+
+}

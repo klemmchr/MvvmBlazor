@@ -1,0 +1,32 @@
+name: string  # build numbering format
+pr: master
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+    - job: build_library
+      displayName: Build Library
+      workspace:
+        clean: all
+      container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4-alpine
+      timeoutInMinutes: 60
+      cancelTimeoutInMinutes: 60
+      steps:
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: restore
+            projects: 'src/*/.csproj'
+    - job: build_samples
+      displayName: Build Library
+      workspace:
+        clean: all
+      container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4-alpine
+      timeoutInMinutes: 60
+      cancelTimeoutInMinutes: 60
+      steps:
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: restore
+            projects: 'samples/*/.csproj'
