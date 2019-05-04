@@ -6,12 +6,21 @@ MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmBlazor", "MvvmBlazor\MvvmBlazor.csproj", "{B4E1DEC6-44FF-434C-8AA9-79B3F2FE50DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3454D681-0991-4626-A291-D4D9D26E91FF}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitattributes = ..\.gitattributes
+		..\.gitignore = ..\.gitignore
+		..\azure-pipelines.yml = ..\azure-pipelines.yml
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4A4D5D8E-6CD2-4EAB-96E7-B2473C3B2925}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServersideSample", "..\samples\BlazorServersideSample\BlazorServersideSample.csproj", "{130B2682-F2F0-4C14-932E-49A86E104E8C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorSample", "..\samples\BlazorSample\BlazorSample.csproj", "{335D444C-CEFB-4115-BEC9-4B8C7086ED1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmBlazor.Tests", "MvvmBlazor.Tests\MvvmBlazor.Tests.csproj", "{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +68,18 @@ Global
 		{335D444C-CEFB-4115-BEC9-4B8C7086ED1C}.Release|x64.Build.0 = Release|Any CPU
 		{335D444C-CEFB-4115-BEC9-4B8C7086ED1C}.Release|x86.ActiveCfg = Release|Any CPU
 		{335D444C-CEFB-4115-BEC9-4B8C7086ED1C}.Release|x86.Build.0 = Release|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Debug|x64.Build.0 = Debug|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Debug|x86.Build.0 = Debug|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Release|x64.ActiveCfg = Release|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Release|x64.Build.0 = Release|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Release|x86.ActiveCfg = Release|Any CPU
+		{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,3 @@
-name: $(Build.BuildNumber)
 pr:
   - master
 
@@ -15,12 +14,21 @@ stages:
           clean: all
         timeoutInMinutes: 60
         cancelTimeoutInMinutes: 60
+        variables:
+          - name: Projects
+            value: src/*/*.csproj
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
             inputs:
               command: restore
-              projects: 'src/*/*.csproj'
+              projects: '$(Projects)'
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: publish
+              arguments: '-c Release -o out'
+              projects: '$(Projects)'
       - job: samples
         displayName: Samples
         container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
@@ -30,9 +38,45 @@ stages:
           clean: all
         timeoutInMinutes: 60
         cancelTimeoutInMinutes: 60
+        variables:
+          - name: Projects
+            value: samples/*/*.csproj
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
             inputs:
               command: restore
-              projects: 'samples/*/*.csproj'
+              projects: '$(Projects)'
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: build
+              arguments: '-c Release'
+              projects: '$(Projects)'
+  - stage: test
+    displayName: Test
+    jobs:
+      - job: unit_test
+        displayName: Unit-Tests
+        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
+        pool:
+          vmImage: 'ubuntu-16.04'
+        workspace:
+          clean: all
+        timeoutInMinutes: 60
+        cancelTimeoutInMinutes: 60
+        variables:
+          - name: Projects
+            value: src/MvvmBlazor.Tests/*.csproj
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: Restore
+            inputs:
+              command: restore
+              projects: '$(Projects)'
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: test
+              arguments: '-c Release --collect "Code coverage"'
+              projects: '$(Projects)'
