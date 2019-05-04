@@ -1,15 +1,17 @@
-name: string  # build numbering format
+pool:
+  vmImage: 'ubuntu-16.04'
+container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4-alpine
+name: $(Build.BuildNumber)
 pr:
 - master
 stages:
 - stage: build
   displayName: Build
   jobs:
-    - job: build_library
-      displayName: Build Library
+    - job: library
+      displayName: Library
       workspace:
         clean: all
-      container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4-alpine
       timeoutInMinutes: 60
       cancelTimeoutInMinutes: 60
       steps:
@@ -18,11 +20,10 @@ stages:
           inputs:
             command: restore
             projects: 'src/*/.csproj'
-    - job: build_samples
-      displayName: Build Library
+    - job: samples
+      displayName: Samples
       workspace:
         clean: all
-      container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4-alpine
       timeoutInMinutes: 60
       cancelTimeoutInMinutes: 60
       steps:
