@@ -1,9 +1,11 @@
 pool:
   vmImage: 'ubuntu-16.04'
 container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4-alpine
+
 name: $(Build.BuildNumber)
 pr:
 - master
+
 stages:
 - stage: build
   displayName: Build
