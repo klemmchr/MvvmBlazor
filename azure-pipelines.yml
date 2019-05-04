@@ -1,5 +1,6 @@
 name: string  # build numbering format
-pr: master
+pr:
+- master
 stages:
 - stage: build
   displayName: Build
