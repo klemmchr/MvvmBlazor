@@ -8,7 +8,9 @@ stages:
     jobs:
       - job: library
         displayName: Library
-        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4-alpine
+        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
+        pool:
+          vmImage: 'ubuntu-16.04'
         workspace:
           clean: all
         timeoutInMinutes: 60
@@ -21,6 +23,9 @@ stages:
               projects: 'src/*/.csproj'
       - job: samples
         displayName: Samples
+        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
+        pool:
+          vmImage: 'ubuntu-16.04'
         workspace:
           clean: all
         timeoutInMinutes: 60
