@@ -38,9 +38,9 @@ namespace MvvmBlazor.Bindings
 
         private void AddCollectionBindings()
         {
-            var value = GetValue();
-            if (value is INotifyCollectionChanged collection)
+            if (typeof(INotifyCollectionChanged).IsAssignableFrom(PropertyInfo.ReflectedType))
             {
+                var collection = (INotifyCollectionChanged) GetValue();
                 collection.CollectionChanged += CollectionOnCollectionChanged;
                 _boundCollection = collection;
             }
@@ -78,7 +78,7 @@ namespace MvvmBlazor.Bindings
 
         public override bool Equals(object obj)
         {
-            return obj is Binding b && b.Source == Source && b.PropertyInfo.Name == PropertyInfo.Name;
+            return obj is Binding b && ReferenceEquals(b.Source, Source) && b.PropertyInfo.Name == PropertyInfo.Name;
         }
 
         public override int GetHashCode()

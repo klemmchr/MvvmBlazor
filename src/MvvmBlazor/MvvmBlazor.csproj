@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>preview</LangVersion>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>Christian Klemm</Authors>
+    <Description>A lightweight Blazor Mvvm Library</Description>
+    <PackageProjectUrl>https://github.com/chris579/MvvmBlazor</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/chris579/MvvmBlazor</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Blazor,Mvvm</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
