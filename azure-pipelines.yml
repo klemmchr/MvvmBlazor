@@ -1,6 +1,9 @@
 pr:
   - master
 
+variables: 
+  PackageVersion: '1.0.0'
+
 stages:
   - stage: build
     displayName: Build
@@ -30,7 +33,7 @@ stages:
             displayName: Pack
             inputs:
               command: pack
-              arguments: '-c Release -o out'
+              arguments: '-c Release -o out /p:Version=$(PackageVersion)'
               projects: 'src/MvvmBlazor/MvvmBlazor.csproj'
           - task: CopyFiles@2
             inputs:
@@ -61,7 +64,7 @@ stages:
               command: restore
               projects: $(Projects)
           - task: DotNetCoreCLI@2
-            displayName: Build
+            displayName: Test
             inputs:
               command: test
               arguments: '-c Release --collect "Code coverage"'
