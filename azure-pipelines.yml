@@ -19,19 +19,19 @@ stages:
         timeoutInMinutes: 60
         cancelTimeoutInMinutes: 60
         variables:
-          Projects: src/MvvmBlazor/*.csproj
+          ProjectsTest: src/MvvmBlazor/*.csproj
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
             inputs:
               command: restore
-              projects: '$(Projects)'
+              projects: '$(ProjectsTest)'
           - task: DotNetCoreCLI@2
             displayName: Build
             inputs:
               command: publish
               arguments: '-c Release -o out'
-              projects: '$(Projects)'
+              projects: '$(ProjectsTest)'
           - task: CopyFiles@2
             inputs:
               contents: 'out\*.nupkg'
