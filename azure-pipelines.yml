@@ -16,7 +16,7 @@ stages:
         cancelTimeoutInMinutes: 60
         variables:
           - name: Projects
-            value: src/*/*.csproj
+            value: src/MvvmBlazor/*.csproj
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
