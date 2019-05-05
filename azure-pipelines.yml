@@ -1,21 +1,15 @@
 pr:
   - master
 
-variables:
-  - name: BuildContainer
-    value: 'mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4'
-  - name: VmImage
-    value: 'ubuntu-16.04'
-
 stages:
   - stage: build
     displayName: Build
     jobs:
       - job: library
         displayName: Library
-        container: $(BuildContainer)
+        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
         pool:
-          vmImage: $(VmImage)
+          vmImage: ubuntu-16.04
         workspace:
           clean: all
         timeoutInMinutes: 60
@@ -44,9 +38,9 @@ stages:
               artifactName: NuGet Package
       - job: samples
         displayName: Samples
-        container: $(BuildContainer)
+        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
         pool:
-          vmImage: $(VmImage)
+          vmImage: ubuntu-16.04
         workspace:
           clean: all
         timeoutInMinutes: 60
@@ -70,9 +64,9 @@ stages:
     jobs:
       - job: unit_test
         displayName: Unit-Tests
-        container: $(BuildContainer)
+        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
         pool:
-          vmImage: $(VmImage)
+          vmImage: ubuntu-16.04
         workspace:
           clean: all
         timeoutInMinutes: 60
