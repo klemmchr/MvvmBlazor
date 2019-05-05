@@ -19,13 +19,17 @@ stages:
             displayName: Restore
             inputs:
               command: restore
-              projects: 'src/MvvmBlazor/*.csproj'
           - task: DotNetCoreCLI@2
             displayName: Build
             inputs:
-              command: publish
+              command: build
+              arguments: '-c Release'
+          - task: DotNetCoreCLI@2
+            displayName: Pack
+            inputs:
+              command: pack
               arguments: '-c Release -o out'
-              projects: 'src/MvvmBlazor/*.csproj'
+              projects: 'src/MvvmBlazor/MvvmBlazor.csproj'
           - task: CopyFiles@2
             inputs:
               contents: 'out\*.nupkg'
