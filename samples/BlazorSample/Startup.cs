@@ -17,8 +17,8 @@ namespace BlazorSample
             services.AddServerSideBlazor();
 
             // ViewModel
-            services.AddScoped<FetchDataViewModel>();
-            services.AddScoped<CounterViewModel>();
+            services.AddTransient<FetchDataViewModel>();
+            services.AddTransient<CounterViewModel>();
 
             // Services
             services.AddSingleton<WeatherForecastService>();

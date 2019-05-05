@@ -29,6 +29,14 @@ stages:
               command: publish
               arguments: '-c Release -o out'
               projects: '$(Projects)'
+          - task: CopyFiles@2
+            inputs:
+              contents: 'out\*.nupkg'
+              targetFolder: $(Build.ArtifactStagingDirectory)
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathtoPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: NuGet Package
       - job: samples
         displayName: Samples
         container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
