@@ -2,8 +2,8 @@ pr:
   - master
 
 variables:
-  BuildContainer: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
-  VmImage: ubuntu-16.04
+  BuildContainer: 'mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4'
+  VmImage: 'ubuntu-16.04'
 
 stages:
   - stage: build
@@ -13,25 +13,25 @@ stages:
         displayName: Library
         container: $(BuildContainer)
         pool:
-          vmImage: '$(VmImage)'
+          vmImage: $(VmImage)
         workspace:
           clean: all
         timeoutInMinutes: 60
         cancelTimeoutInMinutes: 60
         variables:
-          ProjectsTest: src/MvvmBlazor/*.csproj
+          ProjectsTest: 'src/MvvmBlazor/*.csproj'
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
             inputs:
               command: restore
-              projects: '$(ProjectsTest)'
+              projects: $(ProjectsTest)
           - task: DotNetCoreCLI@2
             displayName: Build
             inputs:
               command: publish
               arguments: '-c Release -o out'
-              projects: '$(ProjectsTest)'
+              projects: $(ProjectsTest)
           - task: CopyFiles@2
             inputs:
               contents: 'out\*.nupkg'
@@ -44,7 +44,7 @@ stages:
         displayName: Samples
         container: $(BuildContainer)
         pool:
-          vmImage: '$(VmImage)'
+          vmImage: $(VmImage)
         workspace:
           clean: all
         timeoutInMinutes: 60
@@ -70,22 +70,22 @@ stages:
         displayName: Unit-Tests
         container: $(BuildContainer)
         pool:
-          vmImage: '$(VmImage)'
+          vmImage: $(VmImage)
         workspace:
           clean: all
         timeoutInMinutes: 60
         cancelTimeoutInMinutes: 60
         variables:
-          Projects: src/MvvmBlazor.Tests/*.csproj
+          Projects: 'src/MvvmBlazor.Tests/*.csproj'
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
             inputs:
               command: restore
-              projects: '$(Projects)'
+              projects: $(Projects)
           - task: DotNetCoreCLI@2
             displayName: Build
             inputs:
               command: test
               arguments: '-c Release --collect "Code coverage"'
-              projects: '$(Projects)'
+              projects: $(Projects)
