@@ -19,11 +19,13 @@ stages:
             displayName: Restore
             inputs:
               command: restore
+              projects: 'src'
           - task: DotNetCoreCLI@2
             displayName: Build
             inputs:
               command: build
               arguments: '-c Release'
+              projects: 'src'
           - task: DotNetCoreCLI@2
             displayName: Pack
             inputs:
