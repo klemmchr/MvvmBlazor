@@ -1,22 +1,25 @@
 pr:
   - master
 
+variables:
+  BuildContainer: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
+  VmImage: ubuntu-16.04
+
 stages:
   - stage: build
     displayName: Build
     jobs:
       - job: library
         displayName: Library
-        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
+        container: $(BuildContainer)
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: '$(VmImage)'
         workspace:
           clean: all
         timeoutInMinutes: 60
         cancelTimeoutInMinutes: 60
         variables:
-          - name: Projects
-            value: src/MvvmBlazor/*.csproj
+          Projects: src/MvvmBlazor/*.csproj
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
@@ -39,16 +42,15 @@ stages:
               artifactName: NuGet Package
       - job: samples
         displayName: Samples
-        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
+        container: $(BuildContainer)
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: '$(VmImage)'
         workspace:
           clean: all
         timeoutInMinutes: 60
         cancelTimeoutInMinutes: 60
         variables:
-          - name: Projects
-            value: samples/*/*.csproj
+          Projects: samples/*/*.csproj
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
@@ -66,16 +68,15 @@ stages:
     jobs:
       - job: unit_test
         displayName: Unit-Tests
-        container: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview4
+        container: $(BuildContainer)
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: '$(VmImage)'
         workspace:
           clean: all
         timeoutInMinutes: 60
         cancelTimeoutInMinutes: 60
         variables:
-          - name: Projects
-            value: src/MvvmBlazor.Tests/*.csproj
+          Projects: src/MvvmBlazor.Tests/*.csproj
         steps:
           - task: DotNetCoreCLI@2
             displayName: Restore
