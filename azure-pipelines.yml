@@ -37,7 +37,7 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               pathtoPublish: $(Build.ArtifactStagingDirectory)
-              artifactName: NuGet Package
+              artifactName: Package
   - stage: test
     displayName: Test
     jobs:
