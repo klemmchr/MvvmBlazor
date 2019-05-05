@@ -1,8 +1,6 @@
+name: 1.0.$(rev:.r)
 pr:
   - master
-
-variables: 
-  PackageVersion: '1.0.0'
 
 stages:
   - stage: build
@@ -32,13 +30,10 @@ stages:
           - task: DotNetCoreCLI@2
             displayName: Pack
             inputs:
-              command: pack
-              arguments: '-c Release -o out /p:Version=$(PackageVersion)'
-              projects: 'src/MvvmBlazor/MvvmBlazor.csproj'
-          - task: CopyFiles@2
-            inputs:
-              contents: 'out\*.nupkg'
-              targetFolder: $(Build.ArtifactStagingDirectory)
+              command: 'pack'
+              configuration: 'release'
+              versioningScheme: 'byBuildNumber'
+              packagesToPack: 'src/MvvmBlazor/MvvmBlazor.csproj'
           - task: PublishBuildArtifacts@1
             inputs:
               pathtoPublish: $(Build.ArtifactStagingDirectory)
