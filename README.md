@@ -1,6 +1,7 @@
 MvvmBlazor
 ================
 [![Build Status](https://dev.azure.com/chris579/MvvmBlazor/_apis/build/status/MvvmBlazor-CI?branchName=master)](https://dev.azure.com/chris579/MvvmBlazor/_build/latest?definitionId=3&branchName=master)
+[![NuGet](https://img.shields.io/nuget/v/MvvmBlazor.svg?style=flat)](https://www.nuget.org/packages/MvvmBlazor)
 
 A lightweight Blazor MVVM Library. The main goal is to achieve a MVVM Pattern in Blazor and Serverside Blazor. Plus, it aims to mitigate the need to manually force the component to rerender if binding values have changed changed without user interaction.
 
