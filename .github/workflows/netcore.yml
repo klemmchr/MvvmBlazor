@@ -1,6 +1,6 @@
 name: ASP.NET Core CI
 
-on: [push]
+on: [created]
 
 jobs:
   build:
