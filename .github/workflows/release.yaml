@@ -1,0 +1,26 @@
+on:
+  push:
+    branches:    
+      - release
+
+name: Release
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@master
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@master
+      with:
+        dotnet-version: '3.0.100-preview9-014004'
+
+    - name: Build
+      run: dotnet build --configuration Release src
+
+    - name: Test
+      run: dotnet test --configuration Release src
