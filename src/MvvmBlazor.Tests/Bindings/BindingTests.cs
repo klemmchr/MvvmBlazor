@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Reflection;
 using Moq;
 using MvvmBlazor.Bindings;
-using MvvmBlazor.Collections;
 using Xunit;
 using Shouldly;
 

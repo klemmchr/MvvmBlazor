@@ -5,7 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MvvmBlazor.Components
 {
-    public interface IDependencyResolver {
+    public interface IDependencyResolver
+    {
         T GetService<T>();
     }
 
@@ -16,7 +17,7 @@ namespace MvvmBlazor.Components
 
         public DependencyResolver(IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public T GetService<T>()

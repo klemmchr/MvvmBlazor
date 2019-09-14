@@ -1,10 +1,23 @@
 ﻿@page "/counter"
-@using BlazorServersideSample.ViewModel
-@using MvvmBlazor.ViewModel
-@inherits ComponentBaseMvvm<CounterViewModel>
+@inherits MvvmComponentBase<CounterViewModel>
+@inject ClockViewModel ClockViewModel
 
 <h1>Counter</h1>
+
+<div class="alert alert-primary" role="alert">
+    The view model gets auto injected and can be accessed with the property <pre style="display: inline">BindingContext</pre>.
+    You can use this property to bind event handlers on your controls.
+</div>
 
 <p>Current count: @Bind(x => x.CurrentCount)</p>
 
 <button class="btn btn-primary" @onclick="@BindingContext.IncrementCount">Click me</button>
+
+<br/><br/><br/>
+
+<div class="alert alert-primary" role="alert">
+    You can also bind additional view models that you simply inject by yourself.
+    The lifecycle methods on such view models will not be invoked by this component.
+</div>
+
+<p>Current time: @Bind(ClockViewModel, x => x.DateTime)</p>

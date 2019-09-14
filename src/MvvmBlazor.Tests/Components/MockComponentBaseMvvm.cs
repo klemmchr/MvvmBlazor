@@ -7,13 +7,13 @@ using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Tests.Components
 {
-    public class MockComponentBaseMvvm: ComponentBaseMvvm
+    public class MockMvvmComponentBase: MvvmComponentBase
     {
         public ViewModelBase Context => BindingContext;
 
         private readonly ViewModelBase _viewModel;
 
-        public MockComponentBaseMvvm(ViewModelBase viewModel)
+        public MockMvvmComponentBase(ViewModelBase viewModel)
         {
             _viewModel = viewModel;
         }

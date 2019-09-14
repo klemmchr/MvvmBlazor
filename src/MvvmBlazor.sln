@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.gitignore = ..\.gitignore
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
 		..\LICENSE = ..\LICENSE
+		..\.github\workflows\netcore.yaml = ..\.github\workflows\netcore.yaml
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
@@ -18,13 +19,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4A4D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmBlazor.Tests", "MvvmBlazor.Tests\MvvmBlazor.Tests.csproj", "{1D60EC2D-CA52-4AA7-AB93-CA21CB85479F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorServersideSample", "..\samples\BlazorServersideSample\BlazorServersideSample.csproj", "{AFAA8C8F-ACB6-41E1-B14C-6B91E074F44E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServersideSample", "..\samples\BlazorServersideSample\BlazorServersideSample.csproj", "{AFAA8C8F-ACB6-41E1-B14C-6B91E074F44E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSample.Server", "..\samples\BlazorSample\Server\BlazorSample.Server.csproj", "{F7B0DCBE-24E0-4559-9EE9-C9B69A0AAE2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorSample.Server", "..\samples\BlazorSample\Server\BlazorSample.Server.csproj", "{F7B0DCBE-24E0-4559-9EE9-C9B69A0AAE2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSample.Client", "..\samples\BlazorSample\Client\BlazorSample.Client.csproj", "{3EA96E59-0411-4051-9264-508580EAFB3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorSample.Client", "..\samples\BlazorSample\Client\BlazorSample.Client.csproj", "{3EA96E59-0411-4051-9264-508580EAFB3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSample.Shared", "..\samples\BlazorSample\Shared\BlazorSample.Shared.csproj", "{57E14396-DD6D-4ECE-89A4-33D4E46FD95B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorSample.Shared", "..\samples\BlazorSample\Shared\BlazorSample.Shared.csproj", "{57E14396-DD6D-4ECE-89A4-33D4E46FD95B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

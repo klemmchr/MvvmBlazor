@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using BlazorServersideSample.Data;
+using BlazorSample.Client.Services;
+using BlazorSample.Shared;
 using MvvmBlazor.ViewModel;
 
-namespace BlazorServersideSample.ViewModel
+namespace BlazorSample.Client.ViewModel
 {
     public class FetchDataViewModel : ViewModelBase
     {
@@ -27,8 +28,8 @@ namespace BlazorServersideSample.ViewModel
         {
             await Task.Delay(1500);
 
-            var forecastData = await _weatherForecastService.GetForecastAsync(DateTime.Now);
-            _forecasts =  new ObservableCollection<WeatherForecast>(forecastData);
+            var forecastData = await _weatherForecastService.GetForecasts();
+            _forecasts = new ObservableCollection<WeatherForecast>(forecastData);
         }
     }
 }

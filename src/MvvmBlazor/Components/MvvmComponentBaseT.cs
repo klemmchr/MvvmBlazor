@@ -10,88 +10,14 @@ using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Components
 {
-    public abstract class ComponentBaseMvvm : ComponentBase, IDisposable
-    {
-        private readonly HashSet<Binding> _bindings = new HashSet<Binding>();
-
-        protected TValue Bind<TViewModel, TValue>(TViewModel viewModel, Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
-        {
-            return AddBinding(viewModel, property);
-        }
-
-        public TValue AddBinding<TViewModel, TValue>(TViewModel? viewModel, Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
-        {
-            var propertyInfo = ValidateAndResolveBindingContext(viewModel, property);
-
-#pragma warning disable CS8604 // Possible null reference argument.
-            var binding = new Binding(viewModel, propertyInfo);
-#pragma warning restore CS8604 // Possible null reference argument.
-            if (_bindings.Contains(binding)) return (TValue)binding.GetValue();
-
-            binding.BindingValueChanged += BindingOnBindingValueChanged;
-            binding.Initialize();
-
-            _bindings.Add(binding);
-
-            return (TValue)binding.GetValue();
-        }
-
-        private void BindingOnBindingValueChanged(object sender, EventArgs e)
-        {
-            InvokeAsync(StateHasChanged);
-        }
-
-        protected PropertyInfo ValidateAndResolveBindingContext<TViewModel, TValue>(ViewModelBase? viewModel, Expression<Func<TViewModel, TValue>> property)
-        {
-            if (viewModel is null)
-                throw new BindingException("ViewModelType is null");
-
-            if (!(property.Body is MemberExpression m))
-                throw new BindingException("Binding member needs to be a property");
-
-            if (!(m.Member is PropertyInfo p))
-                throw new BindingException("Binding member needs to be a property");
-
-            if (p.DeclaringType != viewModel.GetType())
-                throw new BindingException($"Cannot find property {p.Name} in type {viewModel.GetType().FullName}");
-
-            return p;
-        }
-
-        #region IDisposable Support
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                foreach (var binding in _bindings)
-                {
-                    binding.BindingValueChanged -= BindingOnBindingValueChanged;
-                    binding.Dispose();
-                }
-            }
-        }
-
-        ~ComponentBaseMvvm()
-        {
-            Dispose(false);
-        }
-        #endregion
-    }
-
-    public abstract class ComponentBaseMvvm<T> : ComponentBaseMvvm where T: ViewModelBase
+    public abstract class MvvmComponentBase<T> : MvvmComponentBase where T: ViewModelBase
     {
         private readonly IDependencyResolver _dependencyResolver;
 
         protected internal T BindingContext { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        protected internal ComponentBaseMvvm(IDependencyResolver dependencyResolver)
+        protected internal MvvmComponentBase(IDependencyResolver dependencyResolver)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
             _dependencyResolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
@@ -99,7 +25,7 @@ namespace MvvmBlazor.Components
         }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        protected ComponentBaseMvvm()
+        protected MvvmComponentBase()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
             _dependencyResolver = DependencyResolver.Default ??
@@ -162,6 +88,15 @@ namespace MvvmBlazor.Components
             return BindingContext?.OnAfterRenderAsync(firstRender) ?? Task.CompletedTask;
         }
 
+        /// <inheritdoc />
+        public sealed override async Task SetParametersAsync(ParameterView parameters)
+        {
+            await base.SetParametersAsync(parameters);
+
+            if(BindingContext != null)
+                await BindingContext.SetParametersAsync(parameters);
+        }
+
         #endregion
 
         #region IDisposable Support
@@ -176,7 +111,7 @@ namespace MvvmBlazor.Components
             }
         }
 
-        ~ComponentBaseMvvm()
+        ~MvvmComponentBase()
         {
             Dispose(false);
         }

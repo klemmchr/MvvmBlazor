@@ -13,7 +13,7 @@ namespace MvvmBlazor.Tests.Components
         {
             var bindingContext = new Mock<ViewModelBase>();
             
-            var component = new MockComponentBaseMvvm(bindingContext.Object);
+            var component = new MockMvvmComponentBase(bindingContext.Object);
             component.Initialized();
 
             component.Context.ShouldBe(bindingContext.Object);
@@ -29,7 +29,7 @@ namespace MvvmBlazor.Tests.Components
             var bindingContext = new Mock<ViewModelBase>();
             bindingContext.Setup(x => x.OnInitializedAsync()).Returns(task);
 
-            var component = new MockComponentBaseMvvm(bindingContext.Object);
+            var component = new MockMvvmComponentBase(bindingContext.Object);
             component.Initialized();
             var res = component.InitializedAsync();
             res.ShouldBe(task);
@@ -44,7 +44,7 @@ namespace MvvmBlazor.Tests.Components
         {
             var bindingContext = new Mock<ViewModelBase>();
 
-            var component = new MockComponentBaseMvvm(bindingContext.Object);
+            var component = new MockMvvmComponentBase(bindingContext.Object);
             component.Initialized();
             component.ParametersSet();
 
@@ -60,7 +60,7 @@ namespace MvvmBlazor.Tests.Components
             var bindingContext = new Mock<ViewModelBase>();
             bindingContext.Setup(x => x.OnParametersSetAsync()).Returns(task);
 
-            var component = new MockComponentBaseMvvm(bindingContext.Object);
+            var component = new MockMvvmComponentBase(bindingContext.Object);
             component.Initialized();
             var res = component.ParametersSetAsync();
             res.ShouldBe(task);
