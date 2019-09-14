@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using BlazorServersideSample.Data;
 using MvvmBlazor.Collections;
@@ -23,9 +24,14 @@ namespace BlazorServersideSample.ViewModel
             set => Set(ref _forecasts, value, nameof(Forecasts));
         }
 
-        public override async Task OnInitAsync()
+        public override async Task OnInitializedAsync()
         {
-            Forecasts.AddRange(await _weatherForecastService.GetForecastAsync(DateTime.Now));
+            await Task.Delay(500);
+            var forecastData = await _weatherForecastService.GetForecastAsync(DateTime.Now);
+            foreach (var weatherForecast in forecastData)
+            {
+                Forecasts.Add(weatherForecast);
+            }
         }
     }
 }

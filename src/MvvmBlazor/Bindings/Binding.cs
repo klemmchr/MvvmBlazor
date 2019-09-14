@@ -7,7 +7,7 @@ namespace MvvmBlazor.Bindings
 {
     internal class Binding : IDisposable
     {
-        private INotifyCollectionChanged _boundCollection;
+        private INotifyCollectionChanged? _boundCollection;
 
         public Binding(INotifyPropertyChanged source, PropertyInfo propertyInfo)
         {
@@ -23,7 +23,7 @@ namespace MvvmBlazor.Bindings
             Dispose(true);
         }
 
-        public event EventHandler BindingValueChanged;
+        public event EventHandler? BindingValueChanged;
 
         public void Initialize()
         {

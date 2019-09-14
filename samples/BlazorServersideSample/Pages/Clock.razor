@@ -1,0 +1,11 @@
+﻿@page "/clock"
+
+@using System.Globalization
+@using BlazorServersideSample.ViewModel
+@inherits ComponentBaseMvvm<ClockViewModel>
+
+<h1>Clock</h1>
+
+<p>This component demonstrates updating from a background task without user interaction.</p>
+
+<p>Current time:</p> @Bind(x => x.DateTime).ToString(CultureInfo.CurrentCulture)

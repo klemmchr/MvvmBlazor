@@ -1,47 +1,37 @@
-@page "/fetchdata"
+﻿@page "/fetchdata"
+
 @using BlazorServersideSample.ViewModel
-@using MvvmBlazor.ViewModel
-@inject FetchDataViewModel FetchDataViewModel
+@inherits ComponentBaseMvvm<FetchDataViewModel>
+
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (Bind(() => FetchDataViewModel.Forecasts) == null)
+@if (Bind(x => x.Forecasts) == null)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
+    <p><em>Loading...</em></p>
 }
 else
 {
     <table class="table">
         <thead>
-        <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
-        </tr>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var forecast in Bind(() => FetchDataViewModel.Forecasts))
-        {
-            <tr>
-                <td>@forecast.Date.ToShortDateString()</td>
-                <td>@forecast.TemperatureC</td>
-                <td>@forecast.TemperatureF</td>
-                <td>@forecast.Summary</td>
-            </tr>
-        }
+            @foreach (var forecast in Bind(x => x.Forecasts))
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
         </tbody>
     </table>
-}
-
-@functions {
-
-    protected override ViewModelBase SetBindingContext()
-    {
-        return FetchDataViewModel;
-    }
-
 }

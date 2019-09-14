@@ -8,9 +8,9 @@ namespace MvvmBlazor.ViewModel
 {
     public abstract class ViewModelBase : INotifyPropertyChanged, ICleanup, IDisposable
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         
-        protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -41,11 +41,13 @@ namespace MvvmBlazor.ViewModel
 
         public virtual void Cleanup() { }
 
+        #region Lifecycle Methods
+
         /// <summary>
         ///     Method invoked when the component is ready to start, having received its
         ///     initial parameters from its parent in the render tree.
         /// </summary>
-        public virtual void OnInit() { }
+        public virtual void OnInitialized() { }
 
         /// <summary>
         ///     Method invoked when the component is ready to start, having received its
@@ -54,7 +56,7 @@ namespace MvvmBlazor.ViewModel
         ///     want the component to refresh when that operation is completed.
         /// </summary>
         /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.</returns>
-        public virtual Task OnInitAsync()
+        public virtual Task OnInitializedAsync()
         {
             return Task.CompletedTask;
         }
@@ -93,7 +95,7 @@ namespace MvvmBlazor.ViewModel
         /// <summary>
         ///     Method invoked after each time the component has been rendered.
         /// </summary>
-        public virtual void OnAfterRender() { }
+        public virtual void OnAfterRender(bool firstRender) { }
 
         /// <summary>
         ///     Method invoked after each time the component has been rendered. Note that the component does
@@ -101,10 +103,13 @@ namespace MvvmBlazor.ViewModel
         ///     because
         ///     that would cause an infinite render loop.
         /// </summary>
+        /// <param name="firstRender"></param>
         /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.</returns>
-        public virtual Task OnAfterRenderAsync()
+        public virtual Task OnAfterRenderAsync(bool firstRender)
         {
             return Task.CompletedTask;
         }
+
+        #endregion
     }
 }

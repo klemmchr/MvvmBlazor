@@ -10,10 +10,12 @@
     <RepositoryUrl>https://github.com/chris579/MvvmBlazor</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Blazor,Mvvm</PackageTags>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.0.0-preview5-19227-01" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.0.0-preview9.19424.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
 using Moq;
 using MvvmBlazor.Bindings;
 using MvvmBlazor.Collections;
-using NUnit.Framework;
+using Xunit;
 using Shouldly;
+
 
 namespace MvvmBlazor.Tests.Bindings
 {
     public class BindingTests
     {
-        [Test]
+        [Fact]
         public void ShouldValidateParameters()
         {
             Should.Throw<ArgumentNullException>(() => new Binding(null, new Mock<PropertyInfo>().Object));
             Should.Throw<ArgumentNullException>(() => new Binding(new Mock<INotifyPropertyChanged>().Object, null));
         }
 
-        [Test]
+        [Fact]
         public void ShouldNotRaiseBindingValueChangedWhenUninitialized()
         {
             const string propertyName = "propertyName";
@@ -30,20 +32,21 @@ namespace MvvmBlazor.Tests.Bindings
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
 
+            var hasChanged = false;
             var binding = new Binding(source.Object, propertyInfo.Object);
             binding.BindingValueChanged += (sender, args) =>
             {
                 sender.ShouldBe(binding);
                 args.ShouldBe(EventArgs.Empty);
-                Assert.Fail();
+
+                hasChanged = true;
             };
 
             source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
-
-            Assert.Pass();
+            hasChanged.ShouldBeFalse();
         }
 
-        [Test]
+        [Fact]
         public void ShouldRaiseBindingValueChangedWhenPropertyChanged()
         {
             const string propertyName = "propertyName";
@@ -53,21 +56,22 @@ namespace MvvmBlazor.Tests.Bindings
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
 
+            var hasChanged = false;
             var binding = new Binding(source.Object, propertyInfo.Object);
             binding.Initialize();
             binding.BindingValueChanged += (sender, args) =>
             {
                 sender.ShouldBe(binding);
                 args.ShouldBe(EventArgs.Empty);
-                Assert.Pass();
+                hasChanged = true;
             };
 
             source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
 
-            Assert.Fail();
+            hasChanged.ShouldBeTrue();
         }
 
-        [Test]
+        [Fact]
         public void ShouldNotRaiseBindingValueChangedOnCollectionWhenUninitialized()
         {
             const string propertyName = "propertyName";
@@ -80,18 +84,16 @@ namespace MvvmBlazor.Tests.Bindings
             propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
             propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
 
+            var hasChanged = false;
             var binding = new Binding(source.Object, propertyInfo.Object);
-            binding.BindingValueChanged += (sender, args) =>
-            {
-                Assert.Fail();
-            };
+            binding.BindingValueChanged += (sender, args) => { hasChanged = true; };
 
             collection.Raise(x => x.CollectionChanged += null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<object>() { new object() }));
 
-            Assert.Pass();
+            hasChanged.ShouldBeFalse();
         }
 
-        [Test]
+        [Fact]
         public void ShouldRaiseBindingValueChangedOnCollectionWhenChanged()
         {
             const string propertyName = "propertyName";
@@ -104,21 +106,22 @@ namespace MvvmBlazor.Tests.Bindings
             propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
             propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
 
+            var hasChanged = false;
             var binding = new Binding(source.Object, propertyInfo.Object);
             binding.Initialize();
             binding.BindingValueChanged += (sender, args) =>
             {
                 sender.ShouldBe(binding);
                 args.ShouldBe(EventArgs.Empty);
-                Assert.Pass();
+                hasChanged = true;
             };
 
             collection.Raise(x => x.CollectionChanged += null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<object>() { new object() }));
 
-            Assert.Fail();
+            hasChanged.ShouldBeTrue();
         }
 
-        [Test]
+        [Fact]
         public void ShouldEqualSameSourceAndProperty()
         {
             const string propertyName = "propertyName";
@@ -135,7 +138,7 @@ namespace MvvmBlazor.Tests.Bindings
             binding1.Equals(binding2).ShouldBeTrue();
         }
 
-        [Test]
+        [Fact]
         public void ShouldNotEqualDifferentSourceAndProperty()
         {
             const string propertyName = "propertyName";

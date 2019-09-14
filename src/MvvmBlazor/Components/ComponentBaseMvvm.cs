@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MvvmBlazor.Bindings;
+using MvvmBlazor.Extensions;
 using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Components
@@ -13,48 +14,37 @@ namespace MvvmBlazor.Components
     {
         private readonly HashSet<Binding> _bindings = new HashSet<Binding>();
 
-        protected ViewModelBase BindingContext { get; set; }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Dispose(true);
-        }
-
-        protected T Bind<T>(Expression<Func<T>> property)
-        {
-            return AddBinding(BindingContext, property);
-        }
-
-        protected T Bind<T>(ViewModelBase viewModel, Expression<Func<T>> property)
+        protected TValue Bind<TViewModel, TValue>(TViewModel viewModel, Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
         {
             return AddBinding(viewModel, property);
         }
 
-        public T AddBinding<T>(ViewModelBase viewModel, Expression<Func<T>> property)
+        public TValue AddBinding<TViewModel, TValue>(TViewModel? viewModel, Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
         {
             var propertyInfo = ValidateAndResolveBindingContext(viewModel, property);
 
+#pragma warning disable CS8604 // Possible null reference argument.
             var binding = new Binding(viewModel, propertyInfo);
-            if (_bindings.Contains(binding)) return (T) binding.GetValue();
+#pragma warning restore CS8604 // Possible null reference argument.
+            if (_bindings.Contains(binding)) return (TValue)binding.GetValue();
 
             binding.BindingValueChanged += BindingOnBindingValueChanged;
             binding.Initialize();
 
             _bindings.Add(binding);
 
-            return (T) binding.GetValue();
+            return (TValue)binding.GetValue();
         }
 
         private void BindingOnBindingValueChanged(object sender, EventArgs e)
         {
-            StateHasChanged();
+            InvokeAsync(StateHasChanged);
         }
 
-        private PropertyInfo ValidateAndResolveBindingContext<T>(ViewModelBase viewModel, Expression<Func<T>> property)
+        protected PropertyInfo ValidateAndResolveBindingContext<TViewModel, TValue>(ViewModelBase? viewModel, Expression<Func<TViewModel, TValue>> property)
         {
             if (viewModel is null)
-                throw new BindingException("ViewModel is null");
+                throw new BindingException("ViewModelType is null");
 
             if (!(property.Body is MemberExpression m))
                 throw new BindingException("Binding member needs to be a property");
@@ -68,9 +58,11 @@ namespace MvvmBlazor.Components
             return p;
         }
 
-        ~ComponentBaseMvvm()
+        #region IDisposable Support
+        public void Dispose()
         {
-            Dispose(false);
+            GC.SuppressFinalize(this);
+            Dispose(true);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -82,77 +74,112 @@ namespace MvvmBlazor.Components
                     binding.BindingValueChanged -= BindingOnBindingValueChanged;
                     binding.Dispose();
                 }
-
-                BindingContext?.Dispose();
             }
         }
 
-        protected virtual ViewModelBase SetBindingContext()
+        ~ComponentBaseMvvm()
         {
-            return null;
+            Dispose(false);
+        }
+        #endregion
+    }
+
+    public abstract class ComponentBaseMvvm<T> : ComponentBaseMvvm where T: ViewModelBase
+    {
+        private readonly IDependencyResolver _dependencyResolver;
+
+        protected internal T BindingContext { get; set; }
+
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        protected internal ComponentBaseMvvm(IDependencyResolver dependencyResolver)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        {
+            _dependencyResolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
+            SetBindingContext();
         }
 
-        /// <summary>
-        ///     Method invoked when the component is ready to start, having received its
-        ///     initial parameters from its parent in the render tree.
-        /// </summary>
-        protected sealed override void OnInit()
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        protected ComponentBaseMvvm()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            BindingContext = SetBindingContext();
-            BindingContext?.OnInit();
+            _dependencyResolver = DependencyResolver.Default ??
+                throw new InvalidOperationException(
+                    $"Mvvm blazor is uninitialized. Make sure to call '{nameof(ServiceCollectionExtensions.AddMvvm)}()' and '{nameof(ApplicationBuilderExtensions.UseMvvm)}()' in your Startup class.");
+            SetBindingContext();
         }
 
-        /// <summary>
-        ///     Method invoked when the component is ready to start, having received its
-        ///     initial parameters from its parent in the render tree.
-        ///     Override this method if you will perform an asynchronous operation and
-        ///     want the component to refresh when that operation is completed.
-        /// </summary>
-        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.</returns>
-        protected sealed override Task OnInitAsync()
+        private void SetBindingContext()
         {
-            return BindingContext?.OnInitAsync() ?? Task.CompletedTask;
+            BindingContext = _dependencyResolver.GetService<T>();
         }
 
-        /// <summary>
-        ///     Method invoked when the component has received parameters from its parent in
-        ///     the render tree, and the incoming values have been assigned to properties.
-        /// </summary>
+        protected TValue Bind<TValue>(Expression<Func<T, TValue>> property)
+        {
+            return AddBinding(BindingContext, property);
+        }
+        
+        #region Lifecycle Methods
+
+        /// <inheritdoc />
+        protected sealed override void OnInitialized()
+        {
+            BindingContext?.OnInitialized();
+        }
+
+        /// <inheritdoc />
+        protected sealed override Task OnInitializedAsync()
+        {
+            return BindingContext?.OnInitializedAsync() ?? Task.CompletedTask;
+        }
+
+        /// <inheritdoc />
         protected sealed override void OnParametersSet()
         {
             BindingContext?.OnParametersSet();
         }
 
-        /// <summary>
-        ///     Method invoked when the component has received parameters from its parent in
-        ///     the render tree, and the incoming values have been assigned to properties.
-        /// </summary>
-        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.</returns>
+        /// <inheritdoc />
         protected sealed override Task OnParametersSetAsync()
         {
             return BindingContext?.OnParametersSetAsync() ?? Task.CompletedTask;
         }
 
-        /// <summary>
-        ///     Returns a flag to indicate whether the component should render.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         protected sealed override bool ShouldRender()
         {
             return BindingContext?.ShouldRender() ?? true;
         }
 
-        /// <summary>
-        ///     Method invoked after each time the component has been rendered.
-        /// </summary>
-        protected sealed override void OnAfterRender()
+        /// <inheritdoc />
+        protected sealed override void OnAfterRender(bool firstRender)
         {
-            BindingContext?.OnAfterRenderAsync();
+            BindingContext?.OnAfterRender(firstRender);
+        }
+        
+        /// <inheritdoc />
+        protected sealed override Task OnAfterRenderAsync(bool firstRender)
+        {
+            return BindingContext?.OnAfterRenderAsync(firstRender) ?? Task.CompletedTask;
         }
 
-        protected sealed override Task OnAfterRenderAsync()
+        #endregion
+
+        #region IDisposable Support
+        
+        protected override void Dispose(bool disposing)
         {
-            return BindingContext?.OnAfterRenderAsync() ?? Task.CompletedTask;
+            base.Dispose(disposing);
+
+            if (disposing)
+            {
+                BindingContext?.Dispose();
+            }
         }
+
+        ~ComponentBaseMvvm()
+        {
+            Dispose(false);
+        }
+        #endregion
     }
 }
