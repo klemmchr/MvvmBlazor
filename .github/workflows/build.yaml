@@ -16,17 +16,8 @@ jobs:
       with:
         dotnet-version: '3.0.100-preview9-014004'
 
-    - name: Define Version
-      run: >
-        export VERSION=$(git describe --long --tags --match 'v*' | sed 's/v//' | sed -E 's/[-].+//g');
-        echo $VERSION;
-        echo $VERSION >> src/version.txt;
-
     - name: Build
-      run: >
-        VERSION=$(tail src/version.txt);
-        echo $VERSION;
-        dotnet build --configuration Release src /p:Version=$VERSION;
+      run: dotnet build --configuration Release src
 
     - name: Test
       run: dotnet test --configuration Release src
