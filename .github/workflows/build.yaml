@@ -18,14 +18,15 @@ jobs:
 
     - name: Define Version
       run: >
-        export VERSION=$(git describe --long --tags --match 'v*' | sed 's/v//' | sed -E 's/[-].+//g')
-        echo $VERSION
-        echo $VERSION >> src/version.txt
+        export VERSION=$(git describe --long --tags --match 'v*' | sed 's/v//' | sed -E 's/[-].+//g');
+        echo $VERSION;
+        echo $VERSION >> src/version.txt;
 
     - name: Build
       run: >
-        echo $VERSION
-        dotnet build --configuration Release src /p:Version=$VERSION
+        VERSION=$(tail src/version.txt);
+        echo $VERSION;
+        dotnet build --configuration Release src /p:Version=$VERSION;
 
     - name: Test
       run: dotnet test --configuration Release src
