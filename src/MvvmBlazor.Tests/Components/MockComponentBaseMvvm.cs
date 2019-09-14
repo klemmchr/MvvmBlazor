@@ -7,20 +7,12 @@ using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Tests.Components
 {
-    public class MockMvvmComponentBase: MvvmComponentBase
+    public class MockMvvmComponentBase: MvvmComponentBase<ViewModelBase>
     {
         public ViewModelBase Context => BindingContext;
 
-        private readonly ViewModelBase _viewModel;
-
-        public MockMvvmComponentBase(ViewModelBase viewModel)
+        public MockMvvmComponentBase(IDependencyResolver dependencyResolver): base(dependencyResolver)
         {
-            _viewModel = viewModel;
-        }
-
-        protected override ViewModelBase SetBindingContext()
-        {
-            return _viewModel;
         }
 
         public void Initialized()
