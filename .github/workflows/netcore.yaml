@@ -17,4 +17,4 @@ jobs:
         dotnet-version: '3.0.100-preview9-014004'
 
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Release src
