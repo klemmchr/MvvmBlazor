@@ -6,7 +6,7 @@ MvvmBlazor
 A lightweight Blazor MVVM Library. The main goal is to achieve a MVVM Pattern in Blazor and Serverside Blazor. Plus, it aims to mitigate the need to manually force the component to rerender if binding properties have changed changed without user interaction.
 
 ## Get started
-MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). You will need .NET Core 3.0 preview-9 or later to use this library.
+MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). You will need .NET Core 3.0 Preview 9 or later to use this library.
 
 ## Usage
 ### Components
