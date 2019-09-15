@@ -6,120 +6,13 @@ using System.ComponentModel;
 using System.Reflection;
 using Moq;
 using MvvmBlazor.Bindings;
-using Xunit;
 using Shouldly;
-
+using Xunit;
 
 namespace MvvmBlazor.Tests.Bindings
 {
     public class BindingTests
     {
-        [Fact]
-        public void ShouldValidateParameters()
-        {
-            Should.Throw<ArgumentNullException>(() => new Binding(null, new Mock<PropertyInfo>().Object));
-            Should.Throw<ArgumentNullException>(() => new Binding(new Mock<INotifyPropertyChanged>().Object, null));
-        }
-
-        [Fact]
-        public void ShouldNotRaiseBindingValueChangedWhenUninitialized()
-        {
-            const string propertyName = "propertyName";
-
-            var source = new Mock<INotifyPropertyChanged>();
-
-            var propertyInfo = new Mock<PropertyInfo>();
-            propertyInfo.Setup(x => x.Name).Returns(propertyName);
-
-            var hasChanged = false;
-            var binding = new Binding(source.Object, propertyInfo.Object);
-            binding.BindingValueChanged += (sender, args) =>
-            {
-                sender.ShouldBe(binding);
-                args.ShouldBe(EventArgs.Empty);
-
-                hasChanged = true;
-            };
-
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
-            hasChanged.ShouldBeFalse();
-        }
-
-        [Fact]
-        public void ShouldRaiseBindingValueChangedWhenPropertyChanged()
-        {
-            const string propertyName = "propertyName";
-
-            var source = new Mock<INotifyPropertyChanged>();
-
-            var propertyInfo = new Mock<PropertyInfo>();
-            propertyInfo.Setup(x => x.Name).Returns(propertyName);
-
-            var hasChanged = false;
-            var binding = new Binding(source.Object, propertyInfo.Object);
-            binding.Initialize();
-            binding.BindingValueChanged += (sender, args) =>
-            {
-                sender.ShouldBe(binding);
-                args.ShouldBe(EventArgs.Empty);
-                hasChanged = true;
-            };
-
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
-
-            hasChanged.ShouldBeTrue();
-        }
-
-        [Fact]
-        public void ShouldNotRaiseBindingValueChangedOnCollectionWhenUninitialized()
-        {
-            const string propertyName = "propertyName";
-
-            var source = new Mock<INotifyPropertyChanged>();
-            var collection = new Mock<ObservableCollection<object>>();
-
-            var propertyInfo = new Mock<PropertyInfo>();
-            propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
-            propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
-
-            var hasChanged = false;
-            var binding = new Binding(source.Object, propertyInfo.Object);
-            binding.BindingValueChanged += (sender, args) => { hasChanged = true; };
-
-            collection.Raise(x => x.CollectionChanged += null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<object>() { new object() }));
-
-            hasChanged.ShouldBeFalse();
-        }
-
-        [Fact]
-        public void ShouldRaiseBindingValueChangedOnCollectionWhenChanged()
-        {
-            const string propertyName = "propertyName";
-
-            var source = new Mock<INotifyPropertyChanged>();
-            var collection = new Mock<ObservableCollection<object>>();
-
-            var propertyInfo = new Mock<PropertyInfo>();
-            propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
-            propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
-
-            var hasChanged = false;
-            var binding = new Binding(source.Object, propertyInfo.Object);
-            binding.Initialize();
-            binding.BindingValueChanged += (sender, args) =>
-            {
-                sender.ShouldBe(binding);
-                args.ShouldBe(EventArgs.Empty);
-                hasChanged = true;
-            };
-
-            collection.Raise(x => x.CollectionChanged += null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<object>() { new object() }));
-
-            hasChanged.ShouldBeTrue();
-        }
-
         [Fact]
         public void ShouldEqualSameSourceAndProperty()
         {
@@ -156,6 +49,116 @@ namespace MvvmBlazor.Tests.Bindings
 
             binding1.GetHashCode().ShouldNotBe(binding2.GetHashCode());
             binding1.Equals(binding2).ShouldBeFalse();
+        }
+
+        [Fact]
+        public void ShouldNotRaiseBindingValueChangedOnCollectionWhenUninitialized()
+        {
+            const string propertyName = "propertyName";
+
+            var source = new Mock<INotifyPropertyChanged>();
+            var collection = new Mock<ObservableCollection<object>>();
+
+            var propertyInfo = new Mock<PropertyInfo>();
+            propertyInfo.Setup(x => x.Name).Returns(propertyName);
+            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
+
+            var hasChanged = false;
+            var binding = new Binding(source.Object, propertyInfo.Object);
+            binding.BindingValueChanged += (sender, args) => { hasChanged = true; };
+
+            collection.Raise(x => x.CollectionChanged += null,
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
+                    new List<object> {new object()}));
+
+            hasChanged.ShouldBeFalse();
+        }
+
+        [Fact]
+        public void ShouldNotRaiseBindingValueChangedWhenUninitialized()
+        {
+            const string propertyName = "propertyName";
+
+            var source = new Mock<INotifyPropertyChanged>();
+
+            var propertyInfo = new Mock<PropertyInfo>();
+            propertyInfo.Setup(x => x.Name).Returns(propertyName);
+
+            var hasChanged = false;
+            var binding = new Binding(source.Object, propertyInfo.Object);
+            binding.BindingValueChanged += (sender, args) =>
+            {
+                sender.ShouldBe(binding);
+                args.ShouldBe(EventArgs.Empty);
+
+                hasChanged = true;
+            };
+
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
+            hasChanged.ShouldBeFalse();
+        }
+
+        [Fact]
+        public void ShouldRaiseBindingValueChangedOnCollectionWhenChanged()
+        {
+            const string propertyName = "propertyName";
+
+            var source = new Mock<INotifyPropertyChanged>();
+            var collection = new Mock<ObservableCollection<object>>();
+
+            var propertyInfo = new Mock<PropertyInfo>();
+            propertyInfo.Setup(x => x.Name).Returns(propertyName);
+            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
+
+            var hasChanged = false;
+            var binding = new Binding(source.Object, propertyInfo.Object);
+            binding.Initialize();
+            binding.BindingValueChanged += (sender, args) =>
+            {
+                sender.ShouldBe(binding);
+                args.ShouldBe(EventArgs.Empty);
+                hasChanged = true;
+            };
+
+            collection.Raise(x => x.CollectionChanged += null,
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
+                    new List<object> {new object()}));
+
+            hasChanged.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void ShouldRaiseBindingValueChangedWhenPropertyChanged()
+        {
+            const string propertyName = "propertyName";
+
+            var source = new Mock<INotifyPropertyChanged>();
+
+            var propertyInfo = new Mock<PropertyInfo>();
+            propertyInfo.Setup(x => x.Name).Returns(propertyName);
+
+            var hasChanged = false;
+            var binding = new Binding(source.Object, propertyInfo.Object);
+            binding.Initialize();
+            binding.BindingValueChanged += (sender, args) =>
+            {
+                sender.ShouldBe(binding);
+                args.ShouldBe(EventArgs.Empty);
+                hasChanged = true;
+            };
+
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
+
+            hasChanged.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void ShouldValidateParameters()
+        {
+            Should.Throw<ArgumentNullException>(() => new Binding(null, new Mock<PropertyInfo>().Object));
+            Should.Throw<ArgumentNullException>(() => new Binding(new Mock<INotifyPropertyChanged>().Object, null));
         }
     }
 }

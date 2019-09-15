@@ -6,21 +6,20 @@ namespace BlazorSample.Client.ViewModel
 {
     public class ClockViewModel : ViewModelBase
     {
-        private DateTime _dateTime = DateTime.Now;
-
-        public DateTime DateTime
-        {
-            get => _dateTime;
-            set => Set(ref _dateTime, value);
-        }
-
         private readonly Timer _timer;
+        private DateTime _dateTime = DateTime.Now;
 
         public ClockViewModel()
         {
             _timer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
             _timer.Elapsed += TimerOnElapsed;
             _timer.Start();
+        }
+
+        public DateTime DateTime
+        {
+            get => _dateTime;
+            set => Set(ref _dateTime, value);
         }
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs e)

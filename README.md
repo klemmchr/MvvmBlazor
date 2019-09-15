@@ -3,14 +3,14 @@ MvvmBlazor
 [![Actions Status](https://github.com/chris579/MvvmBlazor/workflows/Build/badge.svg)](https://github.com/chris579/MvvmBlazor/actions)
 [![NuGet](https://img.shields.io/nuget/v/MvvmBlazor.svg?style=flat)](https://www.nuget.org/packages/MvvmBlazor)
 
-A lightweight Blazor MVVM Library. The main goal is to achieve a MVVM Pattern in Blazor and Serverside Blazor. Plus, it aims to mitigate the need to manually force the component to rerender if binding values have changed changed without user interaction.
+A lightweight Blazor MVVM Library. The main goal is to achieve a MVVM Pattern in Blazor and Serverside Blazor. Plus, it aims to mitigate the need to manually force the component to rerender if binding properties have changed changed without user interaction.
 
 ## Get started
-MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). You will need .NET Core 3.0 preview-5 or later to use this library.
+MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). You will need .NET Core 3.0 preview-9 or later to use this library.
 
 ## Usage
 ### Components
-Components need to inherit the base class `MvvmBlazor.Components.ComponentBaseMvvm`.  
+Components need to inherit the base class `MvvmBlazor.Components.MvvmComponentBase`.
 Layout components need to inherit the base class `MvvmBlazor.Components.LayoutComponentBaseMvvm`.
 
 #### BindingSource

@@ -13,11 +13,11 @@
 
 <button class="btn btn-primary" @onclick="@BindingContext.IncrementCount">Click me</button>
 
-<br/><br/><br/>
+        <br/><br/><br/>
 
-<div class="alert alert-primary" role="alert">
-    You can also bind additional view models that you simply inject by yourself.
-    The lifecycle methods on such view models will not be invoked by this component.
-</div>
+        <div class="alert alert-primary" role="alert">
+            You can also bind additional view models that you simply inject by yourself.
+            The lifecycle methods on such view models will not be invoked by this component.
+        </div>
 
-<p>Current time: @Bind(ClockViewModel, x => x.DateTime)</p>
+        <p>Current time: @Bind(ClockViewModel, x => x.DateTime)</p>

@@ -9,6 +9,7 @@ namespace BlazorSample.Client.Services
     public class WeatherForecastService
     {
         private readonly HttpClient _httpClient;
+
         public WeatherForecastService(HttpClient httpClient)
         {
             _httpClient = httpClient;

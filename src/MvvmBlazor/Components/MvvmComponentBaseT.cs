@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MvvmBlazor.Bindings;
 using MvvmBlazor.Extensions;
 using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Components
 {
-    public abstract class MvvmComponentBase<T> : MvvmComponentBase where T: ViewModelBase
+    public abstract class MvvmComponentBase<T> : MvvmComponentBase where T : ViewModelBase
     {
         private readonly IDependencyResolver _dependencyResolver;
-
-        protected internal T BindingContext { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         protected internal MvvmComponentBase(IDependencyResolver dependencyResolver)
@@ -29,10 +24,12 @@ namespace MvvmBlazor.Components
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
             _dependencyResolver = DependencyResolver.Default ??
-                throw new InvalidOperationException(
-                    $"Mvvm blazor is uninitialized. Make sure to call '{nameof(ServiceCollectionExtensions.AddMvvm)}()' and '{nameof(ApplicationBuilderExtensions.UseMvvm)}()' in your Startup class.");
+                                  throw new InvalidOperationException(
+                                      $"Mvvm blazor is uninitialized. Make sure to call '{nameof(ServiceCollectionExtensions.AddMvvm)}()' and '{nameof(ApplicationBuilderExtensions.UseMvvm)}()' in your Startup class.");
             SetBindingContext();
         }
+
+        protected internal T BindingContext { get; set; }
 
         private void SetBindingContext()
         {
@@ -43,7 +40,7 @@ namespace MvvmBlazor.Components
         {
             return AddBinding(BindingContext, property);
         }
-        
+
         #region Lifecycle Methods
 
         /// <inheritdoc />
@@ -81,7 +78,7 @@ namespace MvvmBlazor.Components
         {
             BindingContext?.OnAfterRender(firstRender);
         }
-        
+
         /// <inheritdoc />
         protected sealed override Task OnAfterRenderAsync(bool firstRender)
         {
@@ -93,28 +90,26 @@ namespace MvvmBlazor.Components
         {
             await base.SetParametersAsync(parameters);
 
-            if(BindingContext != null)
+            if (BindingContext != null)
                 await BindingContext.SetParametersAsync(parameters);
         }
 
         #endregion
 
         #region IDisposable Support
-        
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
 
-            if (disposing)
-            {
-                BindingContext?.Dispose();
-            }
+            if (disposing) BindingContext?.Dispose();
         }
 
         ~MvvmComponentBase()
         {
             Dispose(false);
         }
+
         #endregion
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MvvmBlazor.Components
@@ -13,12 +11,13 @@ namespace MvvmBlazor.Components
     internal class DependencyResolver : IDependencyResolver
     {
         private readonly IServiceProvider _serviceProvider;
-        public static IDependencyResolver? Default { get; internal set; }
 
         public DependencyResolver(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
+
+        public static IDependencyResolver? Default { get; internal set; }
 
         public T GetService<T>()
         {

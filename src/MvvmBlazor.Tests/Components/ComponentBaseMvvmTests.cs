@@ -2,13 +2,22 @@
 using Moq;
 using MvvmBlazor.Components;
 using MvvmBlazor.ViewModel;
-using Xunit;
 using Shouldly;
+using Xunit;
 
 namespace MvvmBlazor.Tests.Components
 {
     public class ComponentBaseMvvmTests
     {
+        private (Mock<ViewModelBase> viewModel, Mock<IDependencyResolver> resolver) GetResolver()
+        {
+            var viewModel = new Mock<ViewModelBase>();
+            var resolver = new Mock<IDependencyResolver>();
+            resolver.Setup(x => x.GetService<ViewModelBase>()).Returns(viewModel.Object);
+
+            return (viewModel, resolver);
+        }
+
         [Fact]
         public void OnInitializedAsync_CalledOnBindingContext()
         {
@@ -56,15 +65,6 @@ namespace MvvmBlazor.Tests.Components
             viewModel.Verify(x => x.OnInitialized());
             viewModel.Verify(x => x.OnParametersSetAsync());
             viewModel.VerifyNoOtherCalls();
-        }
-
-        private (Mock<ViewModelBase> viewModel, Mock<IDependencyResolver> resolver) GetResolver()
-        {
-            var viewModel = new Mock<ViewModelBase>();
-            var resolver = new Mock<IDependencyResolver>();
-            resolver.Setup(x => x.GetService<ViewModelBase>()).Returns(viewModel.Object);
-
-            return (viewModel, resolver);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace BlazorServersideSample.ViewModel
             await Task.Delay(1500);
 
             var forecastData = await _weatherForecastService.GetForecastAsync(DateTime.Now);
-            _forecasts =  new ObservableCollection<WeatherForecast>(forecastData);
+            _forecasts = new ObservableCollection<WeatherForecast>(forecastData);
         }
     }
 }

@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MvvmBlazor.Bindings;
-using MvvmBlazor.Extensions;
 using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Components
@@ -14,26 +12,28 @@ namespace MvvmBlazor.Components
     {
         private readonly HashSet<Binding> _bindings = new HashSet<Binding>();
 
-        protected TValue Bind<TViewModel, TValue>(TViewModel viewModel, Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
+        protected TValue Bind<TViewModel, TValue>(TViewModel viewModel, Expression<Func<TViewModel, TValue>> property)
+            where TViewModel : ViewModelBase
         {
             return AddBinding(viewModel, property);
         }
 
-        public TValue AddBinding<TViewModel, TValue>(TViewModel? viewModel, Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
+        public TValue AddBinding<TViewModel, TValue>(TViewModel? viewModel,
+            Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
         {
             var propertyInfo = ValidateAndResolveBindingContext(viewModel, property);
 
 #pragma warning disable CS8604 // Possible null reference argument.
             var binding = new Binding(viewModel, propertyInfo);
 #pragma warning restore CS8604 // Possible null reference argument.
-            if (_bindings.Contains(binding)) return (TValue)binding.GetValue();
+            if (_bindings.Contains(binding)) return (TValue) binding.GetValue();
 
             binding.BindingValueChanged += BindingOnBindingValueChanged;
             binding.Initialize();
 
             _bindings.Add(binding);
 
-            return (TValue)binding.GetValue();
+            return (TValue) binding.GetValue();
         }
 
         private void BindingOnBindingValueChanged(object sender, EventArgs e)
@@ -41,7 +41,8 @@ namespace MvvmBlazor.Components
             InvokeAsync(StateHasChanged);
         }
 
-        protected PropertyInfo ValidateAndResolveBindingContext<TViewModel, TValue>(ViewModelBase? viewModel, Expression<Func<TViewModel, TValue>> property)
+        protected PropertyInfo ValidateAndResolveBindingContext<TViewModel, TValue>(ViewModelBase? viewModel,
+            Expression<Func<TViewModel, TValue>> property)
         {
             if (viewModel is null)
                 throw new BindingException("ViewModelType is null");
@@ -59,6 +60,7 @@ namespace MvvmBlazor.Components
         }
 
         #region IDisposable Support
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);
@@ -68,19 +70,18 @@ namespace MvvmBlazor.Components
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 foreach (var binding in _bindings)
                 {
                     binding.BindingValueChanged -= BindingOnBindingValueChanged;
                     binding.Dispose();
                 }
-            }
         }
 
         ~MvvmComponentBase()
         {
             Dispose(false);
         }
+
         #endregion
     }
 }
