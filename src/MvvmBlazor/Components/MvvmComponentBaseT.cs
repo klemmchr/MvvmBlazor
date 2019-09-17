@@ -9,34 +9,28 @@ namespace MvvmBlazor.Components
 {
     public abstract class MvvmComponentBase<T> : MvvmComponentBase where T : ViewModelBase
     {
-        private readonly IDependencyResolver _dependencyResolver;
-
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        protected internal MvvmComponentBase(IDependencyResolver dependencyResolver)
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        {
-            _dependencyResolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
-            SetBindingContext();
-        }
-
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        protected MvvmComponentBase()
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        {
-            _dependencyResolver = DependencyResolver.Default ??
-                                  throw new InvalidOperationException(
-                                      $"Mvvm blazor is uninitialized. Make sure to call '{nameof(ServiceCollectionExtensions.AddMvvm)}()' and '{nameof(ApplicationBuilderExtensions.UseMvvm)}()' in your Startup class.");
-            SetBindingContext();
-        }
-
         protected internal T BindingContext { get; set; }
+
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public MvvmComponentBase()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        {
+            SetBindingContext();
+        }
+
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        internal MvvmComponentBase(IDependencyResolver dependencyResolver) : base(dependencyResolver)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        {
+            SetBindingContext();
+        }
 
         private void SetBindingContext()
         {
-            BindingContext = _dependencyResolver.GetService<T>();
+            BindingContext = DependencyResolver.GetService<T>();
         }
 
-        protected TValue Bind<TValue>(Expression<Func<T, TValue>> property)
+        protected internal TValue Bind<TValue>(Expression<Func<T, TValue>> property)
         {
             return AddBinding(BindingContext, property);
         }

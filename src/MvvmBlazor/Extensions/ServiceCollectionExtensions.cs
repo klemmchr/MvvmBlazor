@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MvvmBlazor.Bindings;
 using MvvmBlazor.Components;
+using MvvmBlazor.Internal.WeakEventListener;
 
 namespace MvvmBlazor.Extensions
 {
@@ -7,7 +9,11 @@ namespace MvvmBlazor.Extensions
     {
         public static IServiceCollection AddMvvm(this IServiceCollection serviceCollection)
         {
-            return serviceCollection.AddSingleton<IDependencyResolver, DependencyResolver>();
+            serviceCollection.AddSingleton<IDependencyResolver, DependencyResolver>();
+            serviceCollection.AddSingleton<IWeakEventManagerFactory, WeakEventManagerFactory>();
+            serviceCollection.AddSingleton<IBindingFactory, BindingFactory>();
+
+            return serviceCollection;
         }
     }
 }

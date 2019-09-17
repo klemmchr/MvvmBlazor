@@ -4,13 +4,45 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using MvvmBlazor.Bindings;
+using MvvmBlazor.Extensions;
+using MvvmBlazor.Internal.WeakEventListener;
 using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Components
 {
     public abstract class MvvmComponentBase : ComponentBase, IDisposable
     {
-        private readonly HashSet<Binding> _bindings = new HashSet<Binding>();
+        private readonly HashSet<IBinding> _bindings = new HashSet<IBinding>();
+        private IWeakEventManagerFactory _weakEventManagerFactory;
+        private IBindingFactory _bindingFactory;
+        private IWeakEventManager _weakEventManager;
+
+        protected readonly IDependencyResolver DependencyResolver;
+
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        protected internal MvvmComponentBase(IDependencyResolver dependencyResolver)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        {
+            DependencyResolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
+            InitializeDependencies();
+        }
+
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        protected MvvmComponentBase()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        {
+            DependencyResolver = Components.DependencyResolver.Default ??
+                                  throw new InvalidOperationException(
+                                      $"Mvvm blazor is uninitialized. Make sure to call '{nameof(ServiceCollectionExtensions.AddMvvm)}()' and '{nameof(ApplicationBuilderExtensions.UseMvvm)}()' in your Startup class.");
+            InitializeDependencies();
+        }
+
+        private void InitializeDependencies()
+        {
+            _weakEventManagerFactory = DependencyResolver.GetService<IWeakEventManagerFactory>();
+            _bindingFactory = DependencyResolver.GetService<IBindingFactory>();
+            _weakEventManager = _weakEventManagerFactory.Create();
+        }
 
         protected TValue Bind<TViewModel, TValue>(TViewModel viewModel, Expression<Func<TViewModel, TValue>> property)
             where TViewModel : ViewModelBase
@@ -18,17 +50,15 @@ namespace MvvmBlazor.Components
             return AddBinding(viewModel, property);
         }
 
-        public TValue AddBinding<TViewModel, TValue>(TViewModel? viewModel,
+        public virtual TValue AddBinding<TViewModel, TValue>(TViewModel viewModel,
             Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
         {
             var propertyInfo = ValidateAndResolveBindingContext(viewModel, property);
 
-#pragma warning disable CS8604 // Possible null reference argument.
-            var binding = new Binding(viewModel, propertyInfo);
-#pragma warning restore CS8604 // Possible null reference argument.
+            var binding = _bindingFactory.Create(viewModel, propertyInfo, _weakEventManagerFactory.Create());
             if (_bindings.Contains(binding)) return (TValue) binding.GetValue();
 
-            binding.BindingValueChanged += BindingOnBindingValueChanged;
+            _weakEventManager.AddWeakEventListener<IBinding, EventArgs>(binding, nameof(Binding.BindingValueChanged), BindingOnBindingValueChanged);
             binding.Initialize();
 
             _bindings.Add(binding);
@@ -72,7 +102,7 @@ namespace MvvmBlazor.Components
             if (disposing)
                 foreach (var binding in _bindings)
                 {
-                    binding.BindingValueChanged -= BindingOnBindingValueChanged;
+                    _weakEventManager.RemoveWeakEventListener(binding);
                     binding.Dispose();
                 }
         }

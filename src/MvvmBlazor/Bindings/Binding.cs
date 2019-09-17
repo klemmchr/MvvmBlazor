@@ -2,15 +2,27 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
+using MvvmBlazor.Internal.WeakEventListener;
 
 namespace MvvmBlazor.Bindings
 {
-    internal class Binding : IDisposable
+    public interface IBinding : IDisposable
     {
+        INotifyPropertyChanged Source { get; }
+        PropertyInfo PropertyInfo { get; }
+        event EventHandler? BindingValueChanged;
+        void Initialize();
+        object GetValue();
+    }
+
+    internal class Binding : IBinding
+    {
+        private readonly IWeakEventManager _weakEventManager;
         private INotifyCollectionChanged? _boundCollection;
 
-        public Binding(INotifyPropertyChanged source, PropertyInfo propertyInfo)
+        public Binding(INotifyPropertyChanged source, PropertyInfo propertyInfo, IWeakEventManager weakEventManager)
         {
+            _weakEventManager = weakEventManager ?? throw new ArgumentNullException(nameof(weakEventManager));
             Source = source ?? throw new ArgumentNullException(nameof(source));
             PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
         }
@@ -18,16 +30,13 @@ namespace MvvmBlazor.Bindings
         public INotifyPropertyChanged Source { get; }
         public PropertyInfo PropertyInfo { get; }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+        
 
         public event EventHandler? BindingValueChanged;
 
         public void Initialize()
         {
-            Source.PropertyChanged += SourceOnPropertyChanged;
+            _weakEventManager.AddWeakEventListener(Source, SourceOnPropertyChanged);
             AddCollectionBindings();
         }
 
@@ -41,18 +50,21 @@ namespace MvvmBlazor.Bindings
             if (typeof(INotifyCollectionChanged).IsAssignableFrom(PropertyInfo.ReflectedType))
             {
                 var collection = (INotifyCollectionChanged) GetValue();
-                collection.CollectionChanged += CollectionOnCollectionChanged;
+                _weakEventManager.AddWeakEventListener(collection, CollectionOnCollectionChanged);
                 _boundCollection = collection;
             }
         }
 
         private void SourceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            // Check if property name of event matches the property name of the binding
             if (e.PropertyName == PropertyInfo.Name)
             {
+                // If our binding is a collection binding we need to remove the event
+                // and reinitialize the collection bindings
                 if (_boundCollection != null)
                 {
-                    _boundCollection.CollectionChanged -= CollectionOnCollectionChanged;
+                    _weakEventManager.RemoveWeakEventListener(_boundCollection);
                     AddCollectionBindings();
                 }
 
@@ -65,15 +77,29 @@ namespace MvvmBlazor.Bindings
             BindingValueChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        #region IDisposable Support
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
                 if (_boundCollection != null)
-                    _boundCollection.CollectionChanged -= CollectionOnCollectionChanged;
+                    _weakEventManager.RemoveWeakEventListener(_boundCollection);
 
-                Source.PropertyChanged -= SourceOnPropertyChanged;
+                _weakEventManager.RemoveWeakEventListener(Source);
             }
+        }
+        #endregion
+
+        #region Base overrides
+
+        public override string ToString()
+        {
+            return $"{PropertyInfo?.DeclaringType?.Name}.{PropertyInfo?.Name}";
         }
 
         public override bool Equals(object obj)
@@ -89,5 +115,6 @@ namespace MvvmBlazor.Bindings
 
             return hash;
         }
+        #endregion
     }
 }
