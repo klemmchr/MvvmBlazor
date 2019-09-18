@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
-using MvvmBlazor.Bindings;
+using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Extensions;
 using MvvmBlazor.Internal.WeakEventListener;
 using MvvmBlazor.ViewModel;
@@ -44,7 +44,7 @@ namespace MvvmBlazor.Components
             _weakEventManager = _weakEventManagerFactory.Create();
         }
 
-        protected TValue Bind<TViewModel, TValue>(TViewModel viewModel, Expression<Func<TViewModel, TValue>> property)
+        protected internal TValue Bind<TViewModel, TValue>(TViewModel viewModel, Expression<Func<TViewModel, TValue>> property)
             where TViewModel : ViewModelBase
         {
             return AddBinding(viewModel, property);
@@ -66,7 +66,7 @@ namespace MvvmBlazor.Components
             return (TValue) binding.GetValue();
         }
 
-        private void BindingOnBindingValueChanged(object sender, EventArgs e)
+        internal virtual void BindingOnBindingValueChanged(object sender, EventArgs e)
         {
             InvokeAsync(StateHasChanged);
         }

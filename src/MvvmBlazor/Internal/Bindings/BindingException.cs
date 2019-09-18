@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace MvvmBlazor.Bindings
+namespace MvvmBlazor.Internal.Bindings
 {
     public class BindingException : Exception
     {

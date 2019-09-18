@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Moq;
-using MvvmBlazor.Bindings;
 using MvvmBlazor.Components;
+using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Internal.WeakEventListener;
 using MvvmBlazor.ViewModel;
 using Shouldly;
@@ -16,12 +16,6 @@ using Xunit;
 
 namespace MvvmBlazor.Tests.Components
 {
-
-    public class TestViewModel : ViewModelBase
-    {
-        public string TestProperty { get; set; }
-    }
-
     public class MvvmComponentBaseTTests
     {
         private (Mock<ViewModelBase> viewModel, Mock<IDependencyResolver> resolver) GetResolver()
@@ -156,8 +150,7 @@ namespace MvvmBlazor.Tests.Components
             resolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object);
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object);
-
-
+            
             var component = new Mock<MvvmComponentBase<TestViewModel>>(resolver.Object);
             component.Object.Bind(x => x.TestProperty);
 

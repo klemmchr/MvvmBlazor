@@ -55,19 +55,7 @@ namespace MvvmBlazor.Tests.Internal.WeakEventListener
 
             subscriber.Invocations.ShouldBe(1);
         }
-
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_TypedCustom_FiresEvent_Test()
-        {
-            var publisher = new TestPublisher();
-            var subscriber = new TestSubscriber();
-            subscriber.StartTypedCustom(publisher);
-
-            publisher.FireProperty();
-
-            subscriber.Invocations.ShouldBe(1);
-        }
-
+        
         [Fact]
         public void WeakEventManager_AddWeakEventListener_Property_FiresEvent_Test()
         {
@@ -261,12 +249,7 @@ namespace MvvmBlazor.Tests.Internal.WeakEventListener
         {
             _manager.AddWeakEventListener<TestPublisher, PropertyChangedEventArgs>(publisher, nameof(publisher.PropertyChanged), OnPropertyChanged);
         }
-
-        public void StartTypedCustom(TestPublisher publisher)
-        {
-            _manager.AddWeakEventListener<TestPublisher, PropertyChangedEventArgs, PropertyChangedEventHandler>(publisher, (t, e) => t.PropertyChanged += e, (t, e) => t.PropertyChanged -= e, OnPropertyChanged);
-        }
-
+        
         public void Stop()
         {
             _manager.RemoveWeakEventListener(Publisher);

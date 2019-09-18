@@ -2,7 +2,7 @@
 using System.Reflection;
 using MvvmBlazor.Internal.WeakEventListener;
 
-namespace MvvmBlazor.Bindings
+namespace MvvmBlazor.Internal.Bindings
 {
     public interface IBindingFactory
     {

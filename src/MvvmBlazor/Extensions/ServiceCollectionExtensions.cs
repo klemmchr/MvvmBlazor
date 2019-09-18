@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MvvmBlazor.Bindings;
 using MvvmBlazor.Components;
+using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Internal.WeakEventListener;
 
 namespace MvvmBlazor.Extensions

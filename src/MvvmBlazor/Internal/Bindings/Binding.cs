@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Reflection;
 using MvvmBlazor.Internal.WeakEventListener;
 
-namespace MvvmBlazor.Bindings
+namespace MvvmBlazor.Internal.Bindings
 {
     public interface IBinding : IDisposable
     {

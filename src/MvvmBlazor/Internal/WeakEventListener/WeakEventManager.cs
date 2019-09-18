@@ -26,24 +26,7 @@ namespace MvvmBlazor.Internal.WeakEventListener
         /// </summary>
         void AddWeakEventListener<T>(T source, Action<T, NotifyCollectionChangedEventArgs> handler)
             where T : class, INotifyCollectionChanged;
-
-        /// <summary>
-        /// Registers the given delegate as a handler for the event specified by lamba expressions for registering and unregistering the event
-        /// </summary>
-        void AddWeakEventListener<T, TArgs>(T source, Action<T, EventHandler<TArgs>> register,
-            Action<T, EventHandler<TArgs>> unregister, Action<T, TArgs> handler)
-            where T : class
-            where TArgs : EventArgs;
-
-        /// <summary>
-        /// Registers the given delegate as a handler for the event specified by lamba expressions for registering and unregistering the event
-        /// </summary>
-        void AddWeakEventListener<T, TArgs, THandler>(T source, Action<T, THandler> register,
-            Action<T, THandler> unregister, Action<T, TArgs> handler)
-            where T : class
-            where TArgs : EventArgs
-            where THandler : Delegate;
-
+        
         /// <summary>
         /// Unregisters any previously registered weak event handlers on the given source object
         /// </summary>
@@ -98,20 +81,7 @@ namespace MvvmBlazor.Internal.WeakEventListener
         {
             _listeners.Add(new TypedWeakEventListener<T, TArgs>(source, register, unregister, handler), handler);
         }
-
-        /// <summary>
-        /// Registers the given delegate as a handler for the event specified by lamba expressions for registering and unregistering the event
-        /// </summary>
-        public void AddWeakEventListener<T, TArgs, THandler>(T source, Action<T, THandler> register,
-            Action<T, THandler> unregister, Action<T, TArgs> handler)
-            where T : class
-            where TArgs : EventArgs
-            where THandler : Delegate
-        {
-            _listeners.Add(new TypedWeakEventListener<T, TArgs, THandler>(source, register, unregister, handler),
-                handler);
-        }
-
+        
         /// <summary>
         /// Unregisters any previously registered weak event handlers on the given source object
         /// </summary>
