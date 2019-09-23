@@ -7,8 +7,8 @@ name: Release
 
 jobs:
 
-  build:
-    name: Build
+  release:
+    name: Release
     runs-on: ubuntu-latest
     steps:
 
@@ -25,12 +25,10 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release src
 
-    - name: Pack
+    - name: Publish
       run: >
         export VERSION=$(git describe --long --tags --match 'v*' | sed 's/v//' | sed -E 's/[-].+//g');
         echo $VERSION;
         echo $VERSION >> src/version.txt;
         dotnet pack --configuration Release --include-source -o MvvmBlazor.nupkg src/MvvmBlazor /p:Version=$VERSION;
-
-    - name: Publish
-      run: dotnet nuget push MvvmBlazor.nupkg --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
+        dotnet nuget push MvvmBlazor.nupkg --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json;
