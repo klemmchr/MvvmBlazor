@@ -1,0 +1,36 @@
+on: 
+  push:
+    branches:    
+      - master
+
+name: Release
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@master
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@master
+      with:
+        dotnet-version: '3.0.100'
+
+    - name: Build
+      run: dotnet build --configuration Release src /p:Version=$VERSION
+
+    - name: Test
+      run: dotnet test --configuration Release src
+
+    - name: Pack
+      run: >
+        export VERSION=$(git describe --long --tags --match 'v*' | sed 's/v//' | sed -E 's/[-].+//g');
+        echo $VERSION;
+        echo $VERSION >> src/version.txt;
+        dotnet pack --configuration Release --include-source -o MvvmBlazor.nupkg src/MvvmBlazor /p:Version=$VERSION;
+
+    - name: Publish
+      run: dotnet nuget push MvvmBlazor.nupkg --force-english-output -k ${{ secrets.NUGET_KEY }}

@@ -1,12 +1,19 @@
-@page "/fetchdata"
-@using BlazorServersideSample.ViewModel
-@using MvvmBlazor.ViewModel
-@inject FetchDataViewModel FetchDataViewModel
+﻿@page "/fetchdata"
+
+@inherits MvvmComponentBase<FetchDataViewModel>
+
 <h1>Weather forecast</h1>
+
+<div class="alert alert-primary" role="alert">
+    To use a view model with your component simply inherit from the base class
+    <pre style="display: inline">MvvmComponentBase</pre> and specify your view model type for this component as a generic argument.
+    Your view model will have access to all lifecycle methods you also have on your component.
+    As soon as any value changes via the <pre style="display: inline">Set</pre> method on your view model the component will refresh if needed.
+</div>
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (Bind(() => FetchDataViewModel.Forecasts) == null)
+@if (Bind(x => x.Forecasts) == null)
 {
     <p>
         <em>Loading...</em>
@@ -24,7 +31,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var forecast in Bind(() => FetchDataViewModel.Forecasts))
+        @foreach (var forecast in Bind(x => x.Forecasts))
         {
             <tr>
                 <td>@forecast.Date.ToShortDateString()</td>
@@ -35,13 +42,4 @@ else
         }
         </tbody>
     </table>
-}
-
-@functions {
-
-    protected override ViewModelBase SetBindingContext()
-    {
-        return FetchDataViewModel;
-    }
-
 }

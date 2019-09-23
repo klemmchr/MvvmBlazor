@@ -1,0 +1,15 @@
+﻿@page "/clock"
+@using System.Globalization
+@inherits MvvmComponentBase<ClockViewModel>
+
+<h1>Clock</h1>
+
+<div class="alert alert-primary" role="alert">
+    Having values updating in the background is no hassle. No need to manually invoke
+    <pre style="display: inline">StateHasChanged()</pre> on the component inside it's synchronization context.
+    That's done for you! Just make sure to update your values using the <pre style="display: inline">Set</pre> method in your view model.
+</div>
+
+<p>This component demonstrates updating from a background task without user interaction.</p>
+
+<p>Current time:</p> @Bind(x => x.DateTime).ToString(CultureInfo.CurrentCulture)

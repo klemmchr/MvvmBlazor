@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using BlazorServersideSample.Data;
-using MvvmBlazor.Collections;
 using MvvmBlazor.ViewModel;
 
 namespace BlazorServersideSample.ViewModel
@@ -10,7 +10,7 @@ namespace BlazorServersideSample.ViewModel
     {
         private readonly WeatherForecastService _weatherForecastService;
 
-        private ObservableCollection<WeatherForecast> _forecasts = new ObservableCollection<WeatherForecast>();
+        private ObservableCollection<WeatherForecast> _forecasts;
 
         public FetchDataViewModel(WeatherForecastService weatherForecastService)
         {
@@ -23,9 +23,12 @@ namespace BlazorServersideSample.ViewModel
             set => Set(ref _forecasts, value, nameof(Forecasts));
         }
 
-        public override async Task OnInitAsync()
+        public override async Task OnInitializedAsync()
         {
-            Forecasts.AddRange(await _weatherForecastService.GetForecastAsync(DateTime.Now));
+            await Task.Delay(1500);
+
+            var forecastData = await _weatherForecastService.GetForecastAsync(DateTime.Now);
+            _forecasts = new ObservableCollection<WeatherForecast>(forecastData);
         }
     }
 }

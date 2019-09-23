@@ -1,0 +1,23 @@
+on: [push, pull_request]
+
+name: Build
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@master
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@master
+      with:
+        dotnet-version: '3.0.100'
+
+    - name: Build
+      run: dotnet build --configuration Release src
+
+    - name: Test
+      run: dotnet test --configuration Release src
