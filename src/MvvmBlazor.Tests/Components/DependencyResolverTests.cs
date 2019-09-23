@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Moq;
 using MvvmBlazor.Components;
 using Shouldly;
@@ -10,12 +8,6 @@ namespace MvvmBlazor.Tests.Components
 {
     public class DependencyResolverTests
     {
-        [Fact]
-        public void ValidatesParameters()
-        {
-            Should.Throw<ArgumentNullException>(() => new DependencyResolver(null));
-        }
-
         [Fact]
         public void GetService_GetsServiceFromProvider()
         {
@@ -36,10 +28,16 @@ namespace MvvmBlazor.Tests.Components
             var serviceProvider = new Mock<IServiceProvider>();
 
             var resolver = new DependencyResolver(serviceProvider.Object);
-            Should.Throw<InvalidOperationException>(() =>resolver.GetService<object>());
-            
+            Should.Throw<InvalidOperationException>(() => resolver.GetService<object>());
+
             serviceProvider.Verify(x => x.GetService(typeof(object)));
             serviceProvider.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ValidatesParameters()
+        {
+            Should.Throw<ArgumentNullException>(() => new DependencyResolver(null));
         }
     }
 }

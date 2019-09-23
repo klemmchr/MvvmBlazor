@@ -64,14 +64,11 @@ namespace MvvmBlazor.Internal.Bindings
             {
                 // If our binding is a collection binding we need to remove the event
                 // and reinitialize the collection bindings
-                if (_boundCollection != null)
-                {
-                    _weakEventManager.RemoveWeakEventListener(_boundCollection);
-                }
-                    
+                if (_boundCollection != null) _weakEventManager.RemoveWeakEventListener(_boundCollection);
+
                 AddCollectionBindings();
             }
-                
+
 
             BindingValueChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -82,6 +79,7 @@ namespace MvvmBlazor.Internal.Bindings
         }
 
         #region IDisposable Support
+
         public void Dispose()
         {
             Dispose(true);
@@ -98,6 +96,7 @@ namespace MvvmBlazor.Internal.Bindings
                 _weakEventManager.RemoveWeakEventListener(Source);
             }
         }
+
         #endregion
 
         #region Base overrides
@@ -120,6 +119,7 @@ namespace MvvmBlazor.Internal.Bindings
 
             return hash;
         }
+
         #endregion
     }
 }

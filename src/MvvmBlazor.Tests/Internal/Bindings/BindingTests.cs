@@ -15,21 +15,112 @@ namespace MvvmBlazor.Tests.Internal.Bindings
     public class BindingTests
     {
         [Fact]
-        public void Equals_SameSourceAndProperty()
+        public void AddsCollectionEventListener_WhenInitializing()
         {
             const string propertyName = "propertyName";
 
             var source = new Mock<INotifyPropertyChanged>();
+            var collection = new Mock<INotifyCollectionChanged>();
             var wem = new Mock<IWeakEventManager>();
-
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
+            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.SetupSequence(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
+                .Returns(collection.Object);
 
-            var binding1 = new Binding(source.Object, propertyInfo.Object, wem.Object);
-            var binding2 = new Binding(source.Object, propertyInfo.Object, wem.Object);
+            var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+            binding.Initialize();
 
-            binding1.GetHashCode().ShouldBe(binding2.GetHashCode());
-            binding1.Equals(binding2).ShouldBeTrue();
+            wem.Verify(x =>
+                x.AddWeakEventListener(
+                    It.IsAny<INotifyCollectionChanged>(),
+                    It.IsAny<Action<INotifyCollectionChanged, NotifyCollectionChangedEventArgs>>()));
+        }
+
+        [Fact]
+        public void AddsCollectionEventListener_WhenPropertyChangesToNotNull()
+        {
+            const string propertyName = "propertyName";
+
+            var source = new Mock<INotifyPropertyChanged>();
+            var collection = new Mock<INotifyCollectionChanged>();
+            var wem = new Mock<IWeakEventManager>();
+            var propertyInfo = new Mock<PropertyInfo>();
+            propertyInfo.Setup(x => x.Name).Returns(propertyName);
+            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            wem.Setup(x =>
+                    x.AddWeakEventListener(
+                        It.IsAny<INotifyPropertyChanged>(),
+                        It.IsAny<Action<INotifyPropertyChanged, PropertyChangedEventArgs>>()))
+                .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
+                    (sender, action) =>
+                        sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged) s, a));
+            propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
+                .Returns(collection.Object);
+
+            var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+            binding.Initialize();
+
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
+            wem.Verify(x => x.AddWeakEventListener(It.IsAny<INotifyCollectionChanged>(),
+                It.IsAny<Action<INotifyCollectionChanged, NotifyCollectionChangedEventArgs>>()));
+        }
+
+        [Fact]
+        public void Dispose_RemovesCollectionListener()
+        {
+            const string propertyName = "propertyName";
+
+            var source = new Mock<INotifyPropertyChanged>();
+            var collection = new Mock<INotifyCollectionChanged>();
+            var wem = new Mock<IWeakEventManager>();
+            var propertyInfo = new Mock<PropertyInfo>();
+            propertyInfo.Setup(x => x.Name).Returns(propertyName);
+            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            wem.Setup(x =>
+                    x.AddWeakEventListener(
+                        It.IsAny<INotifyPropertyChanged>(),
+                        It.IsAny<Action<INotifyPropertyChanged, PropertyChangedEventArgs>>()))
+                .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
+                    (sender, action) =>
+                        sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged) s, a));
+            propertyInfo.SetupSequence(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
+                .Returns(collection.Object)
+                .Returns((object) null);
+
+            var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+            binding.Initialize();
+            binding.Dispose();
+
+            wem.Verify(x => x.RemoveWeakEventListener(collection.Object));
+        }
+
+        [Fact]
+        public void Dispose_RemovesEventListener()
+        {
+            const string propertyName = "propertyName";
+
+            var source = new Mock<INotifyPropertyChanged>();
+            var collection = new Mock<INotifyCollectionChanged>();
+            var wem = new Mock<IWeakEventManager>();
+            var propertyInfo = new Mock<PropertyInfo>();
+            propertyInfo.Setup(x => x.Name).Returns(propertyName);
+            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            wem.Setup(x =>
+                    x.AddWeakEventListener(
+                        It.IsAny<INotifyPropertyChanged>(),
+                        It.IsAny<Action<INotifyPropertyChanged, PropertyChangedEventArgs>>()))
+                .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
+                    (sender, action) =>
+                        sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged) s, a));
+            propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
+                .Returns(collection.Object);
+
+            var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+            binding.Initialize();
+            binding.Dispose();
+
+            wem.Verify(x => x.RemoveWeakEventListener(source.Object));
         }
 
         [Fact]
@@ -54,27 +145,52 @@ namespace MvvmBlazor.Tests.Internal.Bindings
         }
 
         [Fact]
-        public void ShouldNotRaiseBindingValueChangedOnCollectionWhenUninitialized()
+        public void Equals_SameSourceAndProperty()
         {
             const string propertyName = "propertyName";
 
             var source = new Mock<INotifyPropertyChanged>();
-            var collection = new Mock<ObservableCollection<object>>();
+            var wem = new Mock<IWeakEventManager>();
+
+            var propertyInfo = new Mock<PropertyInfo>();
+            propertyInfo.Setup(x => x.Name).Returns(propertyName);
+
+            var binding1 = new Binding(source.Object, propertyInfo.Object, wem.Object);
+            var binding2 = new Binding(source.Object, propertyInfo.Object, wem.Object);
+
+            binding1.GetHashCode().ShouldBe(binding2.GetHashCode());
+            binding1.Equals(binding2).ShouldBeTrue();
+        }
+
+        [Fact]
+        public void IgnoresPropertyChangedEvent_WhenPropertyNameDoesNotMatch()
+        {
+            const string propertyName = "propertyName";
+
+            var source = new Mock<INotifyPropertyChanged>();
+            var collection = new Mock<INotifyCollectionChanged>();
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
             propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
-            propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
+            wem.Setup(x =>
+                    x.AddWeakEventListener(
+                        It.IsAny<INotifyPropertyChanged>(),
+                        It.IsAny<Action<INotifyPropertyChanged, PropertyChangedEventArgs>>()))
+                .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
+                    (sender, action) =>
+                        sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged) s, a));
+            propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
+                .Returns(collection.Object);
 
-            var hasChanged = false;
+            var bindingValueChangedRaised = false;
             var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
-            binding.BindingValueChanged += (_, __) => hasChanged = true;
+            binding.Initialize();
+            binding.BindingValueChanged += (s, e) => bindingValueChangedRaised = true;
 
-            collection.Raise(x => x.CollectionChanged += null,
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
-                    new List<object> {new object()}));
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("foo"));
 
-            hasChanged.ShouldBeFalse();
+            bindingValueChangedRaised.ShouldBeFalse();
         }
 
         [Fact]
@@ -195,143 +311,27 @@ namespace MvvmBlazor.Tests.Internal.Bindings
         }
 
         [Fact]
-        public void AddsCollectionEventListener_WhenPropertyChangesToNotNull()
+        public void ShouldNotRaiseBindingValueChangedOnCollectionWhenUninitialized()
         {
             const string propertyName = "propertyName";
 
             var source = new Mock<INotifyPropertyChanged>();
-            var collection = new Mock<INotifyCollectionChanged>();
+            var collection = new Mock<ObservableCollection<object>>();
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
             propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
-            wem.Setup(x =>
-                    x.AddWeakEventListener(
-                        It.IsAny<INotifyPropertyChanged>(),
-                        It.IsAny<Action<INotifyPropertyChanged, PropertyChangedEventArgs>>()))
-                .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                    (sender, action) =>
-                        sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged) s, a));
-            propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
-                .Returns(collection.Object);
+            propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
 
+            var hasChanged = false;
             var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
-            binding.Initialize();
+            binding.BindingValueChanged += (_, __) => hasChanged = true;
 
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
-            wem.Verify(x => x.AddWeakEventListener(It.IsAny<INotifyCollectionChanged>(),
-                It.IsAny<Action<INotifyCollectionChanged, NotifyCollectionChangedEventArgs>>()));
-        }
+            collection.Raise(x => x.CollectionChanged += null,
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
+                    new List<object> {new object()}));
 
-        [Fact]
-        public void AddsCollectionEventListener_WhenInitializing()
-        {
-            const string propertyName = "propertyName";
-
-            var source = new Mock<INotifyPropertyChanged>();
-            var collection = new Mock<INotifyCollectionChanged>();
-            var wem = new Mock<IWeakEventManager>();
-            var propertyInfo = new Mock<PropertyInfo>();
-            propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
-            propertyInfo.SetupSequence(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
-                .Returns(collection.Object);
-
-            var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
-            binding.Initialize();
-
-            wem.Verify(x =>
-                x.AddWeakEventListener(
-                    It.IsAny<INotifyCollectionChanged>(),
-                    It.IsAny<Action<INotifyCollectionChanged, NotifyCollectionChangedEventArgs>>()));
-        }
-
-        [Fact]
-        public void IgnoresPropertyChangedEvent_WhenPropertyNameDoesNotMatch()
-        {
-            const string propertyName = "propertyName";
-
-            var source = new Mock<INotifyPropertyChanged>();
-            var collection = new Mock<INotifyCollectionChanged>();
-            var wem = new Mock<IWeakEventManager>();
-            var propertyInfo = new Mock<PropertyInfo>();
-            propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
-            wem.Setup(x =>
-                    x.AddWeakEventListener(
-                        It.IsAny<INotifyPropertyChanged>(),
-                        It.IsAny<Action<INotifyPropertyChanged, PropertyChangedEventArgs>>()))
-                .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                    (sender, action) =>
-                        sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged) s, a));
-            propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
-                .Returns(collection.Object);
-
-            var bindingValueChangedRaised = false;
-            var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
-            binding.Initialize();
-            binding.BindingValueChanged += (s, e) => bindingValueChangedRaised = true;
-
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("foo"));
-
-            bindingValueChangedRaised.ShouldBeFalse();
-        }
-
-        [Fact]
-        public void Dispose_RemovesEventListener()
-        {
-            const string propertyName = "propertyName";
-
-            var source = new Mock<INotifyPropertyChanged>();
-            var collection = new Mock<INotifyCollectionChanged>();
-            var wem = new Mock<IWeakEventManager>();
-            var propertyInfo = new Mock<PropertyInfo>();
-            propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
-            wem.Setup(x =>
-                    x.AddWeakEventListener(
-                        It.IsAny<INotifyPropertyChanged>(),
-                        It.IsAny<Action<INotifyPropertyChanged, PropertyChangedEventArgs>>()))
-                .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                    (sender, action) =>
-                        sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s, a));
-            propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
-                .Returns(collection.Object);
-
-            var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
-            binding.Initialize();
-            binding.Dispose();
-
-            wem.Verify(x => x.RemoveWeakEventListener(source.Object));
-        }
-
-        [Fact]
-        public void Dispose_RemovesCollectionListener()
-        {
-            const string propertyName = "propertyName";
-
-            var source = new Mock<INotifyPropertyChanged>();
-            var collection = new Mock<INotifyCollectionChanged>();
-            var wem = new Mock<IWeakEventManager>();
-            var propertyInfo = new Mock<PropertyInfo>();
-            propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
-            wem.Setup(x =>
-                    x.AddWeakEventListener(
-                        It.IsAny<INotifyPropertyChanged>(),
-                        It.IsAny<Action<INotifyPropertyChanged, PropertyChangedEventArgs>>()))
-                .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                    (sender, action) =>
-                        sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s, a));
-            propertyInfo.SetupSequence(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
-                .Returns(collection.Object)
-                .Returns((object)null);
-
-            var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
-            binding.Initialize();
-            binding.Dispose();
-
-            wem.Verify(x => x.RemoveWeakEventListener(collection.Object));
+            hasChanged.ShouldBeFalse();
         }
 
         [Fact]

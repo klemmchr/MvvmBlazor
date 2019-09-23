@@ -1,6 +1,7 @@
 ﻿using MvvmBlazor.ViewModel;
 
-namespace MvvmBlazor.Tests.Components {
+namespace MvvmBlazor.Tests.Components
+{
     public class TestViewModel : ViewModelBase
     {
         public string _testProperty;
