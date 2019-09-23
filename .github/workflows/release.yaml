@@ -1,7 +1,7 @@
 on: 
   push:
     branches:    
-      - master
+      - release
 
 name: Release
 
@@ -20,7 +20,7 @@ jobs:
         dotnet-version: '3.0.100'
 
     - name: Build
-      run: dotnet build --configuration Release src /p:Version=$VERSION
+      run: dotnet build --configuration Release src
 
     - name: Test
       run: dotnet test --configuration Release src
