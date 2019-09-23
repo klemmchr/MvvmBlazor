@@ -108,7 +108,7 @@ namespace MvvmBlazor.Tests.ViewModel
             }
 
 
-            public bool SetProperty<T>(ref T field, T value, string? propertyName = null)
+            public bool SetProperty<T>(ref T field, T value, string propertyName = null)
             {
                 return Set(ref field, value, propertyName);
             }
