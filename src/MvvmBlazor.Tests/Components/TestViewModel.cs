@@ -3,7 +3,7 @@
 namespace MvvmBlazor.Tests.Components {
     public class TestViewModel : ViewModelBase
     {
-        private string _testProperty;
+        public string _testProperty;
 
         public string TestProperty
         {

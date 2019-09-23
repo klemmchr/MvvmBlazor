@@ -17,13 +17,13 @@ namespace MvvmBlazor.Components
         private IBindingFactory _bindingFactory;
         private IWeakEventManager _weakEventManager;
 
-        protected readonly IDependencyResolver DependencyResolver;
+        protected IDependencyResolver Resolver { get; }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         protected internal MvvmComponentBase(IDependencyResolver dependencyResolver)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            DependencyResolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
+            Resolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
             InitializeDependencies();
         }
 
@@ -31,7 +31,7 @@ namespace MvvmBlazor.Components
         protected MvvmComponentBase()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            DependencyResolver = Components.DependencyResolver.Default ??
+            Resolver = Components.DependencyResolver.Default ??
                                   throw new InvalidOperationException(
                                       $"Mvvm blazor is uninitialized. Make sure to call '{nameof(ServiceCollectionExtensions.AddMvvm)}()' and '{nameof(ApplicationBuilderExtensions.UseMvvm)}()' in your Startup class.");
             InitializeDependencies();
@@ -39,8 +39,8 @@ namespace MvvmBlazor.Components
 
         private void InitializeDependencies()
         {
-            _weakEventManagerFactory = DependencyResolver.GetService<IWeakEventManagerFactory>();
-            _bindingFactory = DependencyResolver.GetService<IBindingFactory>();
+            _weakEventManagerFactory = Resolver.GetService<IWeakEventManagerFactory>();
+            _bindingFactory = Resolver.GetService<IBindingFactory>();
             _weakEventManager = _weakEventManagerFactory.Create();
         }
 
@@ -51,9 +51,9 @@ namespace MvvmBlazor.Components
         }
 
         public virtual TValue AddBinding<TViewModel, TValue>(TViewModel viewModel,
-            Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
+            Expression<Func<TViewModel, TValue>> propertyExpression) where TViewModel : ViewModelBase
         {
-            var propertyInfo = ValidateAndResolveBindingContext(viewModel, property);
+            var propertyInfo = ValidateAndResolveBindingContext(viewModel, propertyExpression);
 
             var binding = _bindingFactory.Create(viewModel, propertyInfo, _weakEventManagerFactory.Create());
             if (_bindings.Contains(binding)) return (TValue) binding.GetValue();
@@ -71,11 +71,14 @@ namespace MvvmBlazor.Components
             InvokeAsync(StateHasChanged);
         }
 
-        protected PropertyInfo ValidateAndResolveBindingContext<TViewModel, TValue>(ViewModelBase? viewModel,
+        protected static PropertyInfo ValidateAndResolveBindingContext<TViewModel, TValue>(TViewModel viewModel,
             Expression<Func<TViewModel, TValue>> property)
         {
             if (viewModel is null)
                 throw new BindingException("ViewModelType is null");
+
+            if (property is null)
+                throw new BindingException("Property expression is null");
 
             if (!(property.Body is MemberExpression m))
                 throw new BindingException("Binding member needs to be a property");
@@ -93,8 +96,8 @@ namespace MvvmBlazor.Components
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)

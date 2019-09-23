@@ -158,6 +158,29 @@ namespace MvvmBlazor.Tests.Components
             component.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public void Dispose_DisposesBindingContext()
+        {
+            var viewModel = new TestViewModel();
+            var resolver = new Mock<IDependencyResolver>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
+            wemf.Setup(x => x.Create()).Returns(wem.Object);
+            resolver.Setup(x => x.GetService<TestViewModel>()).Returns(viewModel);
+            resolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object);
+            resolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object);
+            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
+                It.IsAny<IWeakEventManager>())).Returns(binding.Object);
+
+            var component = new Mock<MvvmComponentBase<TestViewModel>>(resolver.Object);
+            component.Object.Bind(x => x.TestProperty);
+
+            component.Verify(x => x.AddBinding(viewModel, It.IsAny<Expression<Func<TestViewModel, string>>>()));
+            component.VerifyNoOtherCalls();
+        }
+
         private class MockMvvmComponentBase : MvvmComponentBase<ViewModelBase>
         {
             public MockMvvmComponentBase(IDependencyResolver dependencyResolver) : base(dependencyResolver) { }

@@ -65,7 +65,7 @@ namespace MvvmBlazor.Tests.Components
         }
 
         [Fact]
-        public void AddBinding_Throws_WhenMemberIsNotAProperty()
+        public void AddBinding_Throws_WhenBindingMemberIsAMethod()
         {
             var viewModel = new TestViewModel();
             var dependencyResolver = new Mock<IDependencyResolver>();
@@ -81,6 +81,87 @@ namespace MvvmBlazor.Tests.Components
 
             var component = new TestComponent(dependencyResolver.Object);
             Should.Throw<BindingException>(() => component.AddBinding(viewModel, x => x.ShouldRender()));
+
+            dependencyResolver.Verify();
+            wemf.Verify();
+            dependencyResolver.VerifyNoOtherCalls();
+            wemf.VerifyNoOtherCalls();
+            bindingFactory.VerifyNoOtherCalls();
+            binding.VerifyNoOtherCalls();
+            wem.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void AddBinding_Throws_WhenViewModelIsNull()
+        {
+            var viewModel = new TestViewModel();
+            var dependencyResolver = new Mock<IDependencyResolver>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
+            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
+            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
+            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
+                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
+
+            var component = new TestComponent(dependencyResolver.Object);
+            Should.Throw<BindingException>(() => component.AddBinding<TestViewModel, string>(null, x => x.TestProperty));
+
+            dependencyResolver.Verify();
+            wemf.Verify();
+            dependencyResolver.VerifyNoOtherCalls();
+            wemf.VerifyNoOtherCalls();
+            bindingFactory.VerifyNoOtherCalls();
+            binding.VerifyNoOtherCalls();
+            wem.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void AddBinding_Throws_WhenPropertyExpressionIsNull()
+        {
+            var viewModel = new TestViewModel();
+            var dependencyResolver = new Mock<IDependencyResolver>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
+            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
+            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
+            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
+                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
+
+            var component = new TestComponent(dependencyResolver.Object);
+            Should.Throw<BindingException>(() => component.AddBinding<TestViewModel, string>(viewModel, null));
+
+            dependencyResolver.Verify();
+            wemf.Verify();
+            dependencyResolver.VerifyNoOtherCalls();
+            wemf.VerifyNoOtherCalls();
+            bindingFactory.VerifyNoOtherCalls();
+            binding.VerifyNoOtherCalls();
+            wem.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void AddBinding_Throws_WhenBindingMemberIsAField()
+        {
+            var viewModel = new TestViewModel();
+            var dependencyResolver = new Mock<IDependencyResolver>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
+            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
+            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
+            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
+                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
+
+            var component = new TestComponent(dependencyResolver.Object);
+            Should.Throw<BindingException>(() => component.AddBinding(viewModel, x => x._testProperty));
 
             dependencyResolver.Verify();
             wemf.Verify();
@@ -161,6 +242,41 @@ namespace MvvmBlazor.Tests.Components
             binding.Verify();
             binding.Verify(x => x.Initialize());
             wem.Verify(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged), It.IsAny<Action<IBinding, EventArgs>>()));
+            dependencyResolver.VerifyNoOtherCalls();
+            wemf.VerifyNoOtherCalls();
+            bindingFactory.VerifyNoOtherCalls();
+            binding.VerifyNoOtherCalls();
+            wem.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void Dispose_RemovesEventListenersForBindings()
+        {
+            var viewModel = new TestViewModel();
+            var dependencyResolver = new Mock<IDependencyResolver>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
+            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
+            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
+            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
+                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
+            binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
+
+            var component = new TestComponent(dependencyResolver.Object);
+            component.AddBinding(viewModel, x => x.TestProperty);
+            component.Dispose();
+
+            dependencyResolver.Verify();
+            wemf.Verify();
+            bindingFactory.Verify();
+            binding.Verify();
+            binding.Verify(x => x.Initialize());
+            binding.Verify(x => x.Dispose());
+            wem.Verify(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged), It.IsAny<Action<IBinding, EventArgs>>()));
+            wem.Verify(x => x.RemoveWeakEventListener(It.IsAny<IBinding>()));
             dependencyResolver.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();

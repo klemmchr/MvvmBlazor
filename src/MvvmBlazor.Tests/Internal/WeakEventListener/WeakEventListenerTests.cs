@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Moq;
 using MvvmBlazor.Internal.WeakEventListener;
 using Shouldly;
 using Xunit;
@@ -9,265 +11,137 @@ namespace MvvmBlazor.Tests.Internal.WeakEventListener
 {
     public class WeakEventManagerTests
     {
-        private TestPublisher _publisher;
-        private TestSubscriber _subscriber;
-
-        private void Setup()
-        {
-            // we need to instantiate these in a separate method because there are some debug features that can keep objects
-            // alive for the entire scope of the method they are created in even when they go out of scope and GC.Collect
-            // is called explicitly
-            _publisher = new TestPublisher();
-            _subscriber = new TestSubscriber(_publisher);
-        }
-
         [Fact]
-        public void WeakEventManager_AddWeakEventListener_FiresEvent_Test()
+        public void WeakEventManager_AddWeakEventListener_Custom_FiresEvent()
         {
-            var publisher = new TestPublisher();
-            var subscriber = new TestSubscriber(publisher);
+            var source = new Mock<INotifyPropertyChanged>();
 
-            publisher.Fire();
+            var invocations = 0;
 
-            subscriber.Invocations.ShouldBe(1);
-        }
+            var wem = new WeakEventManager();
+            wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(source.Object, nameof(INotifyPropertyChanged.PropertyChanged), (s, a) =>
+            {
+                s.ShouldBe(source.Object);
 
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_Typed_FiresEvent_Test()
-        {
-            var publisher = new TestPublisher();
-            var subscriber = new TestSubscriber();
-            subscriber.StartTyped(publisher);
+                invocations++;
+            });
 
-            publisher.Fire();
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
 
-            subscriber.Invocations.ShouldBe(1);
-        }
-
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_Custom_FiresEvent_Test()
-        {
-            var publisher = new TestPublisher();
-            var subscriber = new TestSubscriber();
-            subscriber.StartCustom(publisher);
-
-            publisher.FireProperty();
-
-            subscriber.Invocations.ShouldBe(1);
+            invocations.ShouldBe(1);
         }
         
         [Fact]
-        public void WeakEventManager_AddWeakEventListener_Property_FiresEvent_Test()
+        public void WeakEventManager_AddWeakEventListener_Property_FiresEvent()
         {
-            var publisher = new TestPublisher();
-            var subscriber = new TestSubscriber();
-            subscriber.StartProperty(publisher);
+            const string propertyName = "TestProperty";
 
-            publisher.FireProperty();
+            var source = new Mock<INotifyPropertyChanged>();
+            
+            var invocations = 0;
 
-            subscriber.Invocations.ShouldBe(1);
+            var wem = new WeakEventManager();
+            wem.AddWeakEventListener(source.Object, (s, a) =>
+            {
+                s.ShouldBe(source.Object);
+                a.PropertyName.ShouldBe(propertyName);
+
+                invocations++;
+            });
+
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
+
+            invocations.ShouldBe(1);
         }
 
         [Fact]
-        public void WeakEventManager_AddWeakEventListener_FiresEventAfterGC_Test()
+        public void WeakEventManager_AddWeakEventListener_Collection_FiresEvent()
         {
-            Setup();
+            var collectionAddObject = new object();
+            var source = new Mock<INotifyCollectionChanged>();
+
+            var invocations = 0;
+
+            var wem = new WeakEventManager();
+            wem.AddWeakEventListener(source.Object, (s, a) =>
+            {
+                s.ShouldBe(source.Object);
+                a.Action.ShouldBe(NotifyCollectionChangedAction.Add);
+                a.NewItems.Count.ShouldBe(1);
+                a.NewItems[0].ShouldBe(collectionAddObject);
+
+                invocations++;
+            });
+
+            source.Raise(x => x.CollectionChanged += null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, collectionAddObject));
+
+            invocations.ShouldBe(1);
+        }
+
+        [Fact]
+        public void WeakEventManager_AddWeakEventListener_FiresEventAfterGC()
+        {
+            var source = new Mock<INotifyPropertyChanged>();
+
+            var invocations = 0;
+
+            var wem = new WeakEventManager();
+            wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(source.Object, nameof(INotifyPropertyChanged.PropertyChanged), (s, a) =>
+            {
+                s.ShouldBe(source.Object);
+
+                invocations++;
+            });
 
             GC.Collect();
 
-            _publisher.Fire();
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
 
-            _subscriber.Invocations.ShouldBe(1);
+            invocations.ShouldBe(1);
         }
 
         [Fact]
-        public void WeakEventManager_RemoveWeakEventListener_EventNoLongerFires_Test()
+        public void WeakEventManager_RemoveWeakEventListener_EventNoLongerFires()
         {
-            var publisher = new TestPublisher();
-            var subscriber = new TestSubscriber(publisher);
+            var source = new Mock<INotifyPropertyChanged>();
 
-            subscriber.Stop();
-            publisher.Fire();
+            var invocations = 0;
 
-            subscriber.Invocations.ShouldBe(0);
+            var wem = new WeakEventManager();
+            wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(source.Object, nameof(INotifyPropertyChanged.PropertyChanged), (s, a) =>
+            {
+                s.ShouldBe(source.Object);
+
+                invocations++;
+            });
+
+            wem.RemoveWeakEventListener(source.Object);
+
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
+
+            invocations.ShouldBe(0);
         }
 
         [Fact]
-        public void WeakEventManager_ClearWeakEventListeners_EventNoLongerFires_Test()
+        public void WeakEventManager_ClearWeakEventListeners_EventNoLongerFires()
         {
-            var publisher = new TestPublisher();
-            var subscriber = new TestSubscriber(publisher);
+            var source = new Mock<INotifyPropertyChanged>();
 
-            subscriber.Clear();
-            publisher.Fire();
+            var invocations = 0;
 
-            subscriber.Invocations.ShouldBe(0);
-        }
+            var wem = new WeakEventManager();
+            wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(source.Object, nameof(INotifyPropertyChanged.PropertyChanged), (s, a) =>
+            {
+                s.ShouldBe(source.Object);
 
-        [Fact]
-        public void WeakEventManager_RemoveWeakEventListener_CustomDelegateEventNoLongerFires_Test()
-        {
-            var publisher = new TestPublisher();
-            var subscriber = new TestSubscriber(publisher);
-            subscriber.StartProperty(publisher);
+                invocations++;
+            });
 
-            subscriber.Stop();
-            publisher.FireProperty();
+            wem.ClearWeakEventListeners();
 
-            subscriber.Invocations.ShouldBe(0);
-        }
+            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
 
-        [Fact]
-        public void WeakEventManager_ClearWeakEventListeners_ClearsAllListeners_Test()
-        {
-            var publisher1 = new TestPublisher();
-            var publisher2 = new TestPublisher();
-            var subscriber = new TestSubscriber(publisher1);
-            subscriber.Start(publisher2);
-
-            subscriber.Clear();
-            publisher1.Fire();
-            publisher2.Fire();
-
-            subscriber.Invocations.ShouldBe(0);
-        }
-
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_Publisher_GC_Test()
-        {
-            Setup();
-            var reference = new WeakReference(_subscriber);
-
-            _subscriber = null;
-
-            GC.Collect();
-
-            reference.IsAlive.ShouldBeFalse();
-            _publisher.Fire();
-        }
-
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_Subscriber_GC_Test()
-        {
-            Setup();
-            var reference = new WeakReference(_publisher);
-
-            _publisher = null;
-            _subscriber.Publisher = null;
-
-            GC.Collect();
-
-            reference.IsAlive.ShouldBeFalse();
-        }
-
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_Both_GC_Test()
-        {
-            Setup();
-            var reference1 = new WeakReference(_publisher);
-            var reference2 = new WeakReference(_subscriber);
-
-            _publisher = null;
-            _subscriber = null;
-
-            GC.Collect();
-
-            reference1.IsAlive.ShouldBeFalse();
-            reference2.IsAlive.ShouldBeFalse();
-        }
-    }
-
-    public class TestEventArgs : EventArgs
-    {
-        public string Value { get; }
-
-        public TestEventArgs(string value)
-        {
-            Value = value;
-        }
-    }
-
-    public interface ITestEventSource : INotifyPropertyChanged
-    {
-        event EventHandler<TestEventArgs> TheEvent;
-    }
-
-    public class TestPublisherBase : ITestEventSource
-    {
-        public event EventHandler<TestEventArgs> TheEvent;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnTheEvent([CallerMemberName] string name = "")
-        {
-            TheEvent?.Invoke(this, new TestEventArgs(name));
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string name = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-    }
-
-    public class TestPublisher : TestPublisherBase
-    {
-        public void Fire() => OnTheEvent();
-        public void FireProperty() => OnPropertyChanged();
-    }
-
-    public class TestSubscriber
-    {
-        public int Invocations { get; private set; }
-
-        public TestPublisher Publisher { get; set; }
-
-        private readonly WeakEventManager _manager = new WeakEventManager();
-
-        public TestSubscriber() { }
-
-        public TestSubscriber(TestPublisher publisher)
-        {
-            Publisher = publisher;
-            _manager.AddWeakEventListener<TestPublisher, TestEventArgs>(publisher, nameof(publisher.TheEvent), OnTheEvent);
-        }
-
-        public void StartTyped(TestPublisher publisher)
-        {
-            _manager.AddWeakEventListener<TestPublisher, TestEventArgs>(publisher, (t, e) => t.TheEvent += e, (t, e) => t.TheEvent -= e, OnTheEvent);
-        }
-
-        public void Start(TestPublisher publisher)
-        {
-            _manager.AddWeakEventListener<TestPublisher, TestEventArgs>(publisher, nameof(publisher.TheEvent), OnTheEvent);
-        }
-
-        public void StartProperty(TestPublisher publisher)
-        {
-            _manager.AddWeakEventListener<TestPublisher>(publisher, OnPropertyChanged);
-        }
-
-        public void StartCustom(TestPublisher publisher)
-        {
-            _manager.AddWeakEventListener<TestPublisher, PropertyChangedEventArgs>(publisher, nameof(publisher.PropertyChanged), OnPropertyChanged);
-        }
-        
-        public void Stop()
-        {
-            _manager.RemoveWeakEventListener(Publisher);
-        }
-
-        public void Clear()
-        {
-            _manager.ClearWeakEventListeners();
-        }
-
-        private void OnTheEvent(TestPublisher sender, TestEventArgs e)
-        {
-            Invocations++;
-        }
-
-        private void OnPropertyChanged(TestPublisher sender, PropertyChangedEventArgs e)
-        {
-            Invocations++;
+            invocations.ShouldBe(0);
         }
     }
 }

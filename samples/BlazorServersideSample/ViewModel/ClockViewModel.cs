@@ -27,9 +27,10 @@ namespace BlazorServersideSample.ViewModel
             DateTime = DateTime.Now;
         }
 
-        public override void Cleanup()
+        protected override void Dispose(bool disposing)
         {
-            _timer.Dispose();
+            if(disposing)
+                _timer.Dispose();
         }
     }
 }

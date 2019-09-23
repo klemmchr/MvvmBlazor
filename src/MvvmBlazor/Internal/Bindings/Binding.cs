@@ -19,6 +19,7 @@ namespace MvvmBlazor.Internal.Bindings
     {
         private readonly IWeakEventManager _weakEventManager;
         private INotifyCollectionChanged? _boundCollection;
+        private bool _isCollection;
 
         public Binding(INotifyPropertyChanged source, PropertyInfo propertyInfo, IWeakEventManager weakEventManager)
         {
@@ -30,46 +31,49 @@ namespace MvvmBlazor.Internal.Bindings
         public INotifyPropertyChanged Source { get; }
         public PropertyInfo PropertyInfo { get; }
 
-        
-
         public event EventHandler? BindingValueChanged;
 
         public void Initialize()
         {
+            _isCollection = typeof(INotifyCollectionChanged).IsAssignableFrom(PropertyInfo.ReflectedType);
             _weakEventManager.AddWeakEventListener(Source, SourceOnPropertyChanged);
             AddCollectionBindings();
         }
 
         public object GetValue()
         {
-            return PropertyInfo.GetValue(Source);
+            return PropertyInfo.GetValue(Source, null);
         }
 
         private void AddCollectionBindings()
         {
-            if (typeof(INotifyCollectionChanged).IsAssignableFrom(PropertyInfo.ReflectedType))
-            {
-                var collection = (INotifyCollectionChanged) GetValue();
-                _weakEventManager.AddWeakEventListener(collection, CollectionOnCollectionChanged);
-                _boundCollection = collection;
-            }
+            if (!_isCollection || !(GetValue() is INotifyCollectionChanged collection))
+                return;
+
+            _weakEventManager.AddWeakEventListener(collection, CollectionOnCollectionChanged);
+            _boundCollection = collection;
         }
 
         private void SourceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            // Check if property name of event matches the property name of the binding
-            if (e.PropertyName == PropertyInfo.Name)
+            // This should just listen to the bindings property
+            if (e.PropertyName != PropertyInfo.Name)
+                return;
+
+            if (_isCollection)
             {
                 // If our binding is a collection binding we need to remove the event
                 // and reinitialize the collection bindings
                 if (_boundCollection != null)
                 {
                     _weakEventManager.RemoveWeakEventListener(_boundCollection);
-                    AddCollectionBindings();
                 }
-
-                BindingValueChanged?.Invoke(this, EventArgs.Empty);
+                    
+                AddCollectionBindings();
             }
+                
+
+            BindingValueChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void CollectionOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -81,6 +85,7 @@ namespace MvvmBlazor.Internal.Bindings
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)

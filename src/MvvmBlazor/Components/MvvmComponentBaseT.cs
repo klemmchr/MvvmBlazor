@@ -27,7 +27,7 @@ namespace MvvmBlazor.Components
 
         private void SetBindingContext()
         {
-            BindingContext = DependencyResolver.GetService<T>();
+            BindingContext = Resolver.GetService<T>();
         }
 
         protected internal TValue Bind<TValue>(Expression<Func<T, TValue>> property)
@@ -82,26 +82,10 @@ namespace MvvmBlazor.Components
         /// <inheritdoc />
         public sealed override async Task SetParametersAsync(ParameterView parameters)
         {
-            await base.SetParametersAsync(parameters);
+            await base.SetParametersAsync(parameters).ConfigureAwait(false);
 
             if (BindingContext != null)
-                await BindingContext.SetParametersAsync(parameters);
-        }
-
-        #endregion
-
-        #region IDisposable Support
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (disposing) BindingContext?.Dispose();
-        }
-
-        ~MvvmComponentBase()
-        {
-            Dispose(false);
+                await BindingContext.SetParametersAsync(parameters).ConfigureAwait(false);
         }
 
         #endregion

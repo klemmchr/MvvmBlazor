@@ -50,6 +50,7 @@ namespace MvvmBlazor.Internal.WeakEventListener
             where T : class
             where TArgs : EventArgs
         {
+            if (source == null) throw new ArgumentNullException(nameof(source));
             _listeners.Add(new WeakEventListener<T, TArgs>(source, eventName, handler), handler);
         }
 
@@ -59,6 +60,7 @@ namespace MvvmBlazor.Internal.WeakEventListener
         public void AddWeakEventListener<T>(T source, Action<T, PropertyChangedEventArgs> handler)
             where T : class, INotifyPropertyChanged
         {
+            if (source == null) throw new ArgumentNullException(nameof(source));
             _listeners.Add(new PropertyChangedWeakEventListener<T>(source, handler), handler);
         }
 
@@ -68,18 +70,8 @@ namespace MvvmBlazor.Internal.WeakEventListener
         public void AddWeakEventListener<T>(T source, Action<T, NotifyCollectionChangedEventArgs> handler)
             where T : class, INotifyCollectionChanged
         {
+            if (source == null) throw new ArgumentNullException(nameof(source));
             _listeners.Add(new CollectionChangedWeakEventListener<T>(source, handler), handler);
-        }
-
-        /// <summary>
-        /// Registers the given delegate as a handler for the event specified by lamba expressions for registering and unregistering the event
-        /// </summary>
-        public void AddWeakEventListener<T, TArgs>(T source, Action<T, EventHandler<TArgs>> register,
-            Action<T, EventHandler<TArgs>> unregister, Action<T, TArgs> handler)
-            where T : class
-            where TArgs : EventArgs
-        {
-            _listeners.Add(new TypedWeakEventListener<T, TArgs>(source, register, unregister, handler), handler);
         }
         
         /// <summary>
@@ -88,6 +80,7 @@ namespace MvvmBlazor.Internal.WeakEventListener
         public void RemoveWeakEventListener<T>(T source)
             where T : class
         {
+            if (source == null) throw new ArgumentNullException(nameof(source));
             var toRemove = new List<IWeakEventListener>();
             foreach (var listener in _listeners.Keys)
             {

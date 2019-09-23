@@ -7,16 +7,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace MvvmBlazor.ViewModel
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, ICleanup, IDisposable
+    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
-        public virtual void Cleanup() { }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Dispose(true);
-        }
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
@@ -31,16 +23,26 @@ namespace MvvmBlazor.ViewModel
             return false;
         }
 
+
+
+        #region IDisposable support
+
         ~ViewModelBase()
         {
             Dispose(false);
         }
 
-        protected void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (disposing)
-                Cleanup();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+        
+        #endregion
 
         #region Lifecycle Methods
 
@@ -56,7 +58,7 @@ namespace MvvmBlazor.ViewModel
         ///     Override this method if you will perform an asynchronous operation and
         ///     want the component to refresh when that operation is completed.
         /// </summary>
-        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.</returns>
+        /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
         public virtual Task OnInitializedAsync()
         {
             return Task.CompletedTask;
@@ -72,7 +74,7 @@ namespace MvvmBlazor.ViewModel
         ///     Method invoked when the component has received parameters from its parent in
         ///     the render tree, and the incoming values have been assigned to properties.
         /// </summary>
-        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.</returns>
+        /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
         public virtual Task OnParametersSetAsync()
         {
             return Task.CompletedTask;
@@ -101,13 +103,13 @@ namespace MvvmBlazor.ViewModel
         /// </summary>
         /// <param name="firstRender">
         ///     Set to <c>true</c> if this is the first time
-        ///     <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)" /> has been invoked
+        ///     <see cref="ComponentBase.OnAfterRender(bool)" /> has been invoked
         ///     on this component instance; otherwise <c>false</c>.
         /// </param>
         /// <remarks>
-        ///     The <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)" /> and
-        ///     <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)" /> lifecycle methods
-        ///     are useful for performing interop, or interacting with values recieved from <c>@ref</c>.
+        ///     The <see cref="ComponentBase.OnAfterRender(bool)" /> and
+        ///     <see cref="ComponentBase.OnAfterRenderAsync(bool)" /> lifecycle methods
+        ///     are useful for performing interop, or interacting with values received from <c>@ref</c>.
         ///     Use the <paramref name="firstRender" /> parameter to ensure that initialization work is only performed
         ///     once.
         /// </remarks>
@@ -115,20 +117,20 @@ namespace MvvmBlazor.ViewModel
 
         /// <summary>
         ///     Method invoked after each time the component has been rendered. Note that the component does
-        ///     not automatically re-render after the completion of any returned <see cref="T:System.Threading.Tasks.Task" />,
+        ///     not automatically re-render after the completion of any returned <see cref="Task" />,
         ///     because
         ///     that would cause an infinite render loop.
         /// </summary>
         /// <param name="firstRender">
         ///     Set to <c>true</c> if this is the first time
-        ///     <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)" /> has been invoked
+        ///     <see cref="ComponentBase.OnAfterRender(bool)" /> has been invoked
         ///     on this component instance; otherwise <c>false</c>.
         /// </param>
-        /// <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.</returns>
+        /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
         /// <remarks>
-        ///     The <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)" /> and
-        ///     <see cref="M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)" /> lifecycle methods
-        ///     are useful for performing interop, or interacting with values recieved from <c>@ref</c>.
+        ///     The <see cref="ComponentBase.OnAfterRender(bool)" /> and
+        ///     <see cref="ComponentBase.OnAfterRenderAsync(bool)" /> lifecycle methods
+        ///     are useful for performing interop, or interacting with values received from <c>@ref</c>.
         ///     Use the <paramref name="firstRender" /> parameter to ensure that initialization work is only performed
         ///     once.
         /// </remarks>
@@ -142,29 +144,29 @@ namespace MvvmBlazor.ViewModel
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>
-        ///     A <see cref="T:System.Threading.Tasks.Task" /> that completes when the component has finished updating and
+        ///     A <see cref="Task" /> that completes when the component has finished updating and
         ///     rendering itself.
         /// </returns>
         /// <remarks>
         ///     <para>
         ///         The
         ///         <see
-        ///             cref="M:Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)" />
+        ///             cref="ComponentBase.SetParametersAsync(ParameterView)" />
         ///         method should be passed the entire set of parameter values each
         ///         time
         ///         <see
-        ///             cref="M:Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)" />
+        ///             cref="ComponentBase.SetParametersAsync(ParameterView)" />
         ///         is called. It not required that the caller supply a parameter
         ///         value for all parameters that are logically understood by the component.
         ///     </para>
         ///     <para>
         ///         The default implementation of
         ///         <see
-        ///             cref="M:Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)" />
+        ///             cref="ComponentBase.SetParametersAsync(ParameterView)" />
         ///         will set the value of each property
-        ///         decorated with <see cref="T:Microsoft.AspNetCore.Components.ParameterAttribute" /> or
-        ///         <see cref="T:Microsoft.AspNetCore.Components.CascadingParameterAttribute" /> that has
-        ///         a corresponding value in the <see cref="T:Microsoft.AspNetCore.Components.ParameterView" />. Parameters that do
+        ///         decorated with <see cref="ParameterAttribute" /> or
+        ///         <see cref="CascadingParameterAttribute" /> that has
+        ///         a corresponding value in the <see cref="ParameterView" />. Parameters that do
         ///         not have a corresponding value
         ///         will be unchanged.
         ///     </para>
