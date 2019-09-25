@@ -33,6 +33,8 @@ namespace MvvmBlazor.Components
                        throw new InvalidOperationException(
                            $"Mvvm blazor is uninitialized. Make sure to call '{nameof(ServiceCollectionExtensions.AddMvvm)}()' and '{nameof(ApplicationBuilderExtensions.UseMvvm)}()' in your Startup class.");
             InitializeDependencies();
+
+            
         }
 
         protected IDependencyResolver Resolver { get; }

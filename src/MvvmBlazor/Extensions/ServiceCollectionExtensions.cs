@@ -12,6 +12,7 @@ namespace MvvmBlazor.Extensions
             serviceCollection.AddSingleton<IDependencyResolver, DependencyResolver>();
             serviceCollection.AddSingleton<IWeakEventManagerFactory, WeakEventManagerFactory>();
             serviceCollection.AddSingleton<IBindingFactory, BindingFactory>();
+            serviceCollection.AddHttpContextAccessor();
 
             return serviceCollection;
         }
