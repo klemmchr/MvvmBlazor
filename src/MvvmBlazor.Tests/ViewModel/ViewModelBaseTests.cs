@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using Moq;
 using MvvmBlazor.ViewModel;
 using Shouldly;
@@ -9,6 +8,43 @@ namespace MvvmBlazor.Tests.ViewModel
 {
     public class ViewModelBaseTests
     {
+        private class TestViewModel : ViewModelBase
+        {
+            private readonly IDisposable _disposable;
+
+            public TestViewModel() { }
+
+            public TestViewModel(IDisposable disposable)
+            {
+                _disposable = disposable;
+            }
+
+
+            public bool SetProperty<T>(ref T field, T value, string propertyName = null)
+            {
+                return Set(ref field, value, propertyName);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                    _disposable?.Dispose();
+            }
+        }
+
+        [Fact]
+        public void Dispose_Disposes()
+        {
+            var disposable = new Mock<IDisposable>();
+
+            var vm = new TestViewModel(disposable.Object);
+
+            vm.Dispose();
+
+            disposable.Verify(x => x.Dispose());
+            disposable.VerifyNoOtherCalls();
+        }
+
         [Fact]
         public void Set_ReturnsFalse_OnReferenceEqual()
         {
@@ -42,10 +78,10 @@ namespace MvvmBlazor.Tests.ViewModel
 
             var int1 = 1;
             TestField(ref int1, 1);
-            
+
             var string1 = "test";
             TestField(ref string1, "test");
-            
+
             var double1 = 23.3;
             TestField(ref double1, 23.3);
         }
@@ -81,43 +117,6 @@ namespace MvvmBlazor.Tests.ViewModel
 
             var double1 = 23.3;
             TestField(ref double1, 2.3);
-        }
-
-        [Fact]
-        public void Dispose_Disposes()
-        {
-            var disposable = new Mock<IDisposable>();
-
-            var vm = new TestViewModel(disposable.Object);
-
-            vm.Dispose();
-
-            disposable.Verify(x => x.Dispose());
-            disposable.VerifyNoOtherCalls();
-        }
-
-
-        private class TestViewModel : ViewModelBase
-        {
-            private readonly IDisposable _disposable;
-
-            public TestViewModel() { }
-            public TestViewModel(IDisposable disposable)
-            {
-                _disposable = disposable;
-            }
-
-
-            public bool SetProperty<T>(ref T field, T value, string propertyName = null)
-            {
-                return Set(ref field, value, propertyName);
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                if(disposing)
-                    _disposable?.Dispose();
-            }
         }
     }
 }

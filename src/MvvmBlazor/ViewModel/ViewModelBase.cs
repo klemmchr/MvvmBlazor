@@ -24,7 +24,6 @@ namespace MvvmBlazor.ViewModel
         }
 
 
-
         #region IDisposable support
 
         ~ViewModelBase()
@@ -38,10 +37,8 @@ namespace MvvmBlazor.ViewModel
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-        }
-        
+        protected virtual void Dispose(bool disposing) { }
+
         #endregion
 
         #region Lifecycle Methods

@@ -10,7 +10,7 @@ namespace MvvmBlazor.Extensions
         public static IApplicationBuilder UseMvvm(this IApplicationBuilder applicationBuilder)
         {
             if (applicationBuilder == null) throw new ArgumentNullException(nameof(applicationBuilder));
-            
+
             var dependencyResolver = applicationBuilder.ApplicationServices.GetRequiredService<IDependencyResolver>();
             DependencyResolver.Default = dependencyResolver;
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MvvmBlazor.Internal.WeakEventListener
+﻿namespace MvvmBlazor.Internal.WeakEventListener
 {
     internal interface IWeakEventManagerFactory
     {
