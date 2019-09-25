@@ -21,7 +21,11 @@ namespace MvvmBlazor.Components
 
         public T GetService<T>()
         {
-            return _serviceProvider.GetRequiredService<T>();
+            // Create a scope to be able to access scoped services
+#pragma warning disable IDISP001
+            using var scope = _serviceProvider.CreateScope();
+#pragma warning restore IDISP001
+            return scope.ServiceProvider.GetRequiredService<T>();
         }
     }
 }
