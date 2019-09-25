@@ -11,8 +11,8 @@ namespace MvvmBlazor.Components
 
     internal class DependencyResolver : IDependencyResolver
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IServiceProvider _serviceProvider;
 
         public DependencyResolver(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
         {
@@ -25,7 +25,7 @@ namespace MvvmBlazor.Components
         public T GetService<T>()
         {
             // Use http context services if available
-            if(_httpContextAccessor.HttpContext != null)
+            if (_httpContextAccessor.HttpContext != null)
                 return _httpContextAccessor.HttpContext.RequestServices.GetRequiredService<T>();
 
             // Otherwise create a scope and resolve it

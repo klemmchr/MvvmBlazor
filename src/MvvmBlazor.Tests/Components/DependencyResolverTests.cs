@@ -11,6 +11,32 @@ namespace MvvmBlazor.Tests.Components
     public class DependencyResolverTests
     {
         [Fact]
+        public void GetService_GetsServiceFromHttpContext()
+        {
+            var scope = new Mock<IServiceScope>();
+            var scopeFactory = new Mock<IServiceScopeFactory>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var contextAccessor = new Mock<IHttpContextAccessor>();
+            var httpContext = new Mock<HttpContext>();
+            serviceProvider.Setup(x => x.GetService(typeof(object))).Returns(new object()).Verifiable();
+            contextAccessor.SetupGet(x => x.HttpContext).Returns(httpContext.Object);
+            httpContext.SetupGet(x => x.RequestServices).Returns(serviceProvider.Object);
+
+            var resolver = new DependencyResolver(serviceProvider.Object, contextAccessor.Object);
+            var res = resolver.GetService<object>();
+            res.ShouldNotBeNull();
+
+            serviceProvider.Verify();
+            contextAccessor.VerifyGet(x => x.HttpContext);
+            httpContext.VerifyGet(x => x.RequestServices);
+
+            contextAccessor.VerifyNoOtherCalls();
+            serviceProvider.VerifyNoOtherCalls();
+            scopeFactory.VerifyNoOtherCalls();
+            scope.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public void GetService_GetsServiceFromProvider()
         {
             var scope = new Mock<IServiceScope>();
@@ -32,6 +58,31 @@ namespace MvvmBlazor.Tests.Components
             scope.Verify(x => x.Dispose());
             serviceProvider.Verify();
             contextAccessor.VerifyGet(x => x.HttpContext);
+
+            contextAccessor.VerifyNoOtherCalls();
+            serviceProvider.VerifyNoOtherCalls();
+            scopeFactory.VerifyNoOtherCalls();
+            scope.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void GetService_ThrowsException_WhenHttpContextServiceIsUnregistered()
+        {
+            var scope = new Mock<IServiceScope>();
+            var scopeFactory = new Mock<IServiceScopeFactory>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var contextAccessor = new Mock<IHttpContextAccessor>();
+            var httpContext = new Mock<HttpContext>();
+            serviceProvider.Setup(x => x.GetService(typeof(object))).Returns((object) null).Verifiable();
+            contextAccessor.SetupGet(x => x.HttpContext).Returns(httpContext.Object);
+            httpContext.SetupGet(x => x.RequestServices).Returns(serviceProvider.Object);
+
+            var resolver = new DependencyResolver(serviceProvider.Object, contextAccessor.Object);
+            Should.Throw<InvalidOperationException>(() => resolver.GetService<object>());
+
+            serviceProvider.Verify();
+            contextAccessor.VerifyGet(x => x.HttpContext);
+            httpContext.VerifyGet(x => x.RequestServices);
 
             contextAccessor.VerifyNoOtherCalls();
             serviceProvider.VerifyNoOtherCalls();
@@ -68,57 +119,6 @@ namespace MvvmBlazor.Tests.Components
             scopeFactory.VerifyNoOtherCalls();
             scope.VerifyNoOtherCalls();
             scopeServiceProvider.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public void GetService_GetsServiceFromHttpContext()
-        {
-            var scope = new Mock<IServiceScope>();
-            var scopeFactory = new Mock<IServiceScopeFactory>();
-            var serviceProvider = new Mock<IServiceProvider>();
-            var contextAccessor = new Mock<IHttpContextAccessor>();
-            var httpContext = new Mock<HttpContext>();
-            serviceProvider.Setup(x => x.GetService(typeof(object))).Returns(new object()).Verifiable();
-            contextAccessor.SetupGet(x => x.HttpContext).Returns(httpContext.Object);
-            httpContext.SetupGet(x => x.RequestServices).Returns(serviceProvider.Object);
-            
-            var resolver = new DependencyResolver(serviceProvider.Object, contextAccessor.Object);
-            var res = resolver.GetService<object>();
-            res.ShouldNotBeNull();
-
-            serviceProvider.Verify();
-            contextAccessor.VerifyGet(x => x.HttpContext);
-            httpContext.VerifyGet(x => x.RequestServices);
-
-            contextAccessor.VerifyNoOtherCalls();
-            serviceProvider.VerifyNoOtherCalls();
-            scopeFactory.VerifyNoOtherCalls();
-            scope.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public void GetService_ThrowsException_WhenHttpContextServiceIsUnregistered()
-        {
-            var scope = new Mock<IServiceScope>();
-            var scopeFactory = new Mock<IServiceScopeFactory>();
-            var serviceProvider = new Mock<IServiceProvider>();
-            var contextAccessor = new Mock<IHttpContextAccessor>();
-            var httpContext = new Mock<HttpContext>();
-            serviceProvider.Setup(x => x.GetService(typeof(object))).Returns((object) null).Verifiable();
-            contextAccessor.SetupGet(x => x.HttpContext).Returns(httpContext.Object);
-            httpContext.SetupGet(x => x.RequestServices).Returns(serviceProvider.Object);
-
-            var resolver = new DependencyResolver(serviceProvider.Object, contextAccessor.Object);
-            Should.Throw<InvalidOperationException>(() => resolver.GetService<object>());
-
-            serviceProvider.Verify();
-            contextAccessor.VerifyGet(x => x.HttpContext);
-            httpContext.VerifyGet(x => x.RequestServices);
-
-            contextAccessor.VerifyNoOtherCalls();
-            serviceProvider.VerifyNoOtherCalls();
-            scopeFactory.VerifyNoOtherCalls();
-            scope.VerifyNoOtherCalls();
         }
 
         [Fact]
