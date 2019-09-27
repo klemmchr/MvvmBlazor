@@ -53,10 +53,7 @@ namespace BlazorServersideSample
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            // Use mvvm for server
-            app.UseMvvm();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

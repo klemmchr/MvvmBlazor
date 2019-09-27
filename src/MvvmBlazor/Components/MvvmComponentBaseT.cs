@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Components
@@ -12,11 +13,10 @@ namespace MvvmBlazor.Components
         public MvvmComponentBase()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            SetBindingContext();
         }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        internal MvvmComponentBase(IDependencyResolver dependencyResolver) : base(dependencyResolver)
+        internal MvvmComponentBase(IServiceProvider serviceProvider) : base(serviceProvider)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
             SetBindingContext();
@@ -26,7 +26,7 @@ namespace MvvmBlazor.Components
 
         private void SetBindingContext()
         {
-            BindingContext = Resolver.GetService<T>();
+            BindingContext ??= ServiceProvider.GetRequiredService<T>();
         }
 
         protected internal TValue Bind<TValue>(Expression<Func<T, TValue>> property)
@@ -39,6 +39,8 @@ namespace MvvmBlazor.Components
         /// <inheritdoc />
         protected sealed override void OnInitialized()
         {
+            base.OnInitialized();
+            SetBindingContext();
             BindingContext?.OnInitialized();
         }
 
