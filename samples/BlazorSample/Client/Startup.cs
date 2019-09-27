@@ -24,9 +24,6 @@ namespace BlazorSample.Client
         public void Configure(IComponentsApplicationBuilder app)
         {
             app.AddComponent<App>("app");
-
-            // Add mvvm to client
-            app.UseMvvm();
         }
     }
 }

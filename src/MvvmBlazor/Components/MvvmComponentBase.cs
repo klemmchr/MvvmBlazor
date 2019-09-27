@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using MvvmBlazor.Extensions;
 using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Internal.WeakEventListener;
@@ -18,10 +20,10 @@ namespace MvvmBlazor.Components
         private IWeakEventManagerFactory _weakEventManagerFactory;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        protected internal MvvmComponentBase(IDependencyResolver dependencyResolver)
+        protected internal MvvmComponentBase(IServiceProvider serviceProvider)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            Resolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
+            ServiceProvider = serviceProvider;
             InitializeDependencies();
         }
 
@@ -29,19 +31,16 @@ namespace MvvmBlazor.Components
         protected MvvmComponentBase()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            Resolver = DependencyResolver.Default ??
-                       throw new InvalidOperationException(
-                           $"Mvvm blazor is uninitialized. Make sure to call '{nameof(ServiceCollectionExtensions.AddMvvm)}()' and '{nameof(ApplicationBuilderExtensions.UseMvvm)}()' in your Startup class.");
-            InitializeDependencies();
         }
 
-        protected IDependencyResolver Resolver { get; }
+        [Inject]
+        protected IServiceProvider ServiceProvider { get; set;  }
 
         private void InitializeDependencies()
         {
-            _weakEventManagerFactory = Resolver.GetService<IWeakEventManagerFactory>();
-            _bindingFactory = Resolver.GetService<IBindingFactory>();
-            _weakEventManager = _weakEventManagerFactory.Create();
+            _weakEventManagerFactory ??= ServiceProvider.GetRequiredService<IWeakEventManagerFactory>();
+            _bindingFactory ??= ServiceProvider.GetRequiredService<IBindingFactory>();
+            _weakEventManager ??= _weakEventManagerFactory.Create();
         }
 
         protected internal TValue Bind<TViewModel, TValue>(TViewModel viewModel,
@@ -66,6 +65,11 @@ namespace MvvmBlazor.Components
             _bindings.Add(binding);
 
             return (TValue) binding.GetValue();
+        }
+
+        protected override void OnInitialized()
+        {
+            InitializeDependencies();
         }
 
         internal virtual void BindingOnBindingValueChanged(object sender, EventArgs e)

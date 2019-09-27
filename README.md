@@ -12,34 +12,12 @@ MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). Y
 ### Startup
 The library needs to be initialized in order to use it. This is done in your `Startup` class.
 
-BlazorServerside:
 ```csharp
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddMvvm();
-    }
-
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-        app.UseMvvm();
-    }
-}
-```
-
-Blazor:
-```csharp
-public class Startup
-{
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddMvvm();
-    }
-
-    public void Configure(IComponentsApplicationBuilder app)
-    {
-        app.UseMvvm();
     }
 }
 ```

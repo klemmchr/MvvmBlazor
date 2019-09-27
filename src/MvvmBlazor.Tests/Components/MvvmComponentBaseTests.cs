@@ -5,6 +5,7 @@ using Moq;
 using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Internal.WeakEventListener;
+using MvvmBlazor.Tests.TestUtils;
 using Shouldly;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace MvvmBlazor.Tests.Components
     {
         internal class TestComponent : MvvmComponentBase
         {
-            internal TestComponent(IDependencyResolver dependencyResolver) : base(dependencyResolver) { }
+            internal TestComponent(IServiceProvider serviceProvider) : base(serviceProvider) { }
             public Action BindingChangedAction { get; set; }
 
             internal override void BindingOnBindingValueChanged(object sender, EventArgs e)
@@ -27,30 +28,35 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_AddsBinding()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var wem = new Mock<IWeakEventManager>();
-            var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
-            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var binding = new SafeMock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
+            wem.Setup(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
+                It.IsAny<Action<IBinding, EventArgs>>())).Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
             binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
+            binding.Setup(x => x.Initialize());
 
-            var component = new TestComponent(dependencyResolver.Object);
+            var component = new TestComponent(serviceProvider.Object);
             var res = component.AddBinding(viewModel, x => x.TestProperty);
             res.ShouldBe("Test");
 
-            dependencyResolver.Verify();
+            serviceProvider.Verify();
             wemf.Verify();
+            wem.Verify();
             bindingFactory.Verify();
             binding.Verify();
             binding.Verify(x => x.Initialize());
-            wem.Verify(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
-                It.IsAny<Action<IBinding, EventArgs>>()));
-            dependencyResolver.VerifyNoOtherCalls();
+
+            serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
@@ -61,33 +67,38 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_SkipsAddingBindingIfAlreadyExists()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var wem = new Mock<IWeakEventManager>();
-            var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
-            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var binding = new SafeMock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
             binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
+            binding.Setup(x => x.Initialize()).Verifiable();
+            wem.Setup(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
+                It.IsAny<Action<IBinding, EventArgs>>())).Verifiable();
 
-            var component = new TestComponent(dependencyResolver.Object);
+            var component = new TestComponent(serviceProvider.Object);
             var res = component.AddBinding(viewModel, x => x.TestProperty);
             res.ShouldBe("Test");
 
             res = component.AddBinding(viewModel, x => x.TestProperty);
             res.ShouldBe("Test");
 
-            dependencyResolver.Verify();
+            serviceProvider.Verify();
             wemf.Verify();
+            wem.Verify();
             bindingFactory.Verify();
             binding.Verify();
-            binding.Verify(x => x.Initialize());
-            wem.Verify(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
-                It.IsAny<Action<IBinding, EventArgs>>()));
-            dependencyResolver.VerifyNoOtherCalls();
+            binding.Verify();
+
+            serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
@@ -98,23 +109,25 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_Throws_WhenBindingMemberIsAField()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var wem = new Mock<IWeakEventManager>();
-            var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
-            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var binding = new SafeMock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
 
-            var component = new TestComponent(dependencyResolver.Object);
+            var component = new TestComponent(serviceProvider.Object);
             Should.Throw<BindingException>(() => component.AddBinding(viewModel, x => x._testProperty));
 
-            dependencyResolver.Verify();
+            serviceProvider.Verify();
             wemf.Verify();
-            dependencyResolver.VerifyNoOtherCalls();
+            serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
@@ -125,23 +138,25 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_Throws_WhenBindingMemberIsAMethod()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var wem = new Mock<IWeakEventManager>();
-            var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
-            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var binding = new SafeMock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
 
-            var component = new TestComponent(dependencyResolver.Object);
+            var component = new TestComponent(serviceProvider.Object);
             Should.Throw<BindingException>(() => component.AddBinding(viewModel, x => x.ShouldRender()));
 
-            dependencyResolver.Verify();
+            serviceProvider.Verify();
             wemf.Verify();
-            dependencyResolver.VerifyNoOtherCalls();
+            serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
@@ -152,23 +167,25 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_Throws_WhenPropertyExpressionIsNull()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var wem = new Mock<IWeakEventManager>();
-            var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
-            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var binding = new SafeMock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
 
-            var component = new TestComponent(dependencyResolver.Object);
+            var component = new TestComponent(serviceProvider.Object);
             Should.Throw<BindingException>(() => component.AddBinding<TestViewModel, string>(viewModel, null));
 
-            dependencyResolver.Verify();
+            serviceProvider.Verify();
             wemf.Verify();
-            dependencyResolver.VerifyNoOtherCalls();
+            serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
@@ -179,24 +196,26 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_Throws_WhenViewModelIsNull()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var wem = new Mock<IWeakEventManager>();
-            var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
-            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var binding = new SafeMock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
 
-            var component = new TestComponent(dependencyResolver.Object);
+            var component = new TestComponent(serviceProvider.Object);
             Should.Throw<BindingException>(() =>
                 component.AddBinding<TestViewModel, string>(null, x => x.TestProperty));
 
-            dependencyResolver.Verify();
+            serviceProvider.Verify();
             wemf.Verify();
-            dependencyResolver.VerifyNoOtherCalls();
+            serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
@@ -207,11 +226,15 @@ namespace MvvmBlazor.Tests.Components
         public void Bind_AddsBinding()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var component = new Mock<MvvmComponentBase>(dependencyResolver.Object);
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object);
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var component = new SafeMock<MvvmComponentBase>(serviceProvider.Object);
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             component.Setup(x => x.AddBinding(viewModel, y => y.TestProperty)).Returns("Test").Verifiable();
+            wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
 
             var res = component.Object.Bind(viewModel, x => x.TestProperty);
             res.ShouldBe("Test");
@@ -223,40 +246,44 @@ namespace MvvmBlazor.Tests.Components
         public void Binding_BindingValueChanged_GetsInvoked()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var wem = new Mock<IWeakEventManager>();
-            var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
-            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var binding = new SafeMock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
             wem.Setup(x =>
                     x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
                         It.IsAny<Action<IBinding, EventArgs>>()))
                 .Callback<IBinding, string, Action<IBinding, EventArgs>>((b, e, a) =>
-                    b.BindingValueChanged += (s, args) => a(b, args));
+                    b.BindingValueChanged += (s, args) => a(b, args)).Verifiable();
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
             binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
+            binding.Setup(x => x.Initialize()).Verifiable();
 
             var bindingChangedInvoked = false;
-            var component = new TestComponent(dependencyResolver.Object);
-            component.BindingChangedAction = () => bindingChangedInvoked = true;
+            var component = new TestComponent(serviceProvider.Object)
+            {
+                BindingChangedAction = () => bindingChangedInvoked = true
+            };
             var res = component.AddBinding(viewModel, x => x.TestProperty);
 
             binding.Raise(x => x.BindingValueChanged += null, EventArgs.Empty);
             res.ShouldBe("Test");
             bindingChangedInvoked.ShouldBeTrue();
 
-            dependencyResolver.Verify();
+            serviceProvider.Verify();
             wemf.Verify();
             bindingFactory.Verify();
             binding.Verify();
-            binding.Verify(x => x.Initialize());
-            wem.Verify(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
-                It.IsAny<Action<IBinding, EventArgs>>()));
-            dependencyResolver.VerifyNoOtherCalls();
+            wem.Verify();
+
+            serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
@@ -267,32 +294,36 @@ namespace MvvmBlazor.Tests.Components
         public void Dispose_RemovesEventListenersForBindings()
         {
             var viewModel = new TestViewModel();
-            var dependencyResolver = new Mock<IDependencyResolver>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
-            var wem = new Mock<IWeakEventManager>();
-            var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
-            dependencyResolver.Setup(x => x.GetService<IWeakEventManagerFactory>()).Returns(wemf.Object).Verifiable();
-            dependencyResolver.Setup(x => x.GetService<IBindingFactory>()).Returns(bindingFactory.Object).Verifiable();
+            var serviceProvider = new SafeMock<IServiceProvider>();
+            var wemf = new SafeMock<IWeakEventManagerFactory>();
+            var wem = new SafeMock<IWeakEventManager>();
+            var bindingFactory = new SafeMock<IBindingFactory>();
+            var binding = new SafeMock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
+            wem.Setup(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
+                It.IsAny<Action<IBinding, EventArgs>>())).Verifiable();
+            wem.Setup(x => x.RemoveWeakEventListener(It.IsAny<IBinding>())).Verifiable();
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
             binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
-
-            var component = new TestComponent(dependencyResolver.Object);
+            binding.Setup(x => x.Initialize()).Verifiable();
+            binding.Setup(x => x.Dispose()).Verifiable();
+            
+            var component = new TestComponent(serviceProvider.Object);
             component.AddBinding(viewModel, x => x.TestProperty);
             component.Dispose();
-
-            dependencyResolver.Verify();
+            
+            serviceProvider.Verify();
             wemf.Verify();
             bindingFactory.Verify();
             binding.Verify();
-            binding.Verify(x => x.Initialize());
-            binding.Verify(x => x.Dispose());
-            wem.Verify(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
-                It.IsAny<Action<IBinding, EventArgs>>()));
-            wem.Verify(x => x.RemoveWeakEventListener(It.IsAny<IBinding>()));
-            dependencyResolver.VerifyNoOtherCalls();
+            wem.Verify();
+            
+            serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
