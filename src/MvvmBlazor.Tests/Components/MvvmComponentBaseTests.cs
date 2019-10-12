@@ -5,7 +5,6 @@ using Moq;
 using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Internal.WeakEventListener;
-using MvvmBlazor.Tests.TestUtils;
 using Shouldly;
 using Xunit;
 
@@ -28,11 +27,11 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_AddsBinding()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var binding = new SafeMock<IBinding>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
@@ -67,11 +66,11 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_SkipsAddingBindingIfAlreadyExists()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var binding = new SafeMock<IBinding>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
@@ -109,11 +108,11 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_Throws_WhenBindingMemberIsAField()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var binding = new SafeMock<IBinding>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
@@ -138,11 +137,11 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_Throws_WhenBindingMemberIsAMethod()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var binding = new SafeMock<IBinding>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
@@ -167,11 +166,11 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_Throws_WhenPropertyExpressionIsNull()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var binding = new SafeMock<IBinding>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
@@ -196,11 +195,11 @@ namespace MvvmBlazor.Tests.Components
         public void AddBinding_Throws_WhenViewModelIsNull()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var binding = new SafeMock<IBinding>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
@@ -226,11 +225,11 @@ namespace MvvmBlazor.Tests.Components
         public void Bind_AddsBinding()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var component = new SafeMock<MvvmComponentBase>(serviceProvider.Object);
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var component = new Mock<MvvmComponentBase>(serviceProvider.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             component.Setup(x => x.AddBinding(viewModel, y => y.TestProperty)).Returns("Test").Verifiable();
@@ -246,11 +245,11 @@ namespace MvvmBlazor.Tests.Components
         public void Binding_BindingValueChanged_GetsInvoked()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var binding = new SafeMock<IBinding>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
@@ -294,11 +293,11 @@ namespace MvvmBlazor.Tests.Components
         public void Dispose_RemovesEventListenersForBindings()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new SafeMock<IServiceProvider>();
-            var wemf = new SafeMock<IWeakEventManagerFactory>();
-            var wem = new SafeMock<IWeakEventManager>();
-            var bindingFactory = new SafeMock<IBindingFactory>();
-            var binding = new SafeMock<IBinding>();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
