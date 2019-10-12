@@ -106,7 +106,7 @@ class ViewModel: ViewModelBase
 }
 ```
 
-The parameter will be passed before `OnInitialized` and `OnInitializedAsync` are invoked. Therefore, the parameters are available from any point lifecycle method has been invoked.
+The parameter will be passed before `OnInitialized` and `OnInitializedAsync` are invoked. Therefore, the parameters are available from any lifecycle method.
 You can't access them in your constructor and you're not supposed to do that either.
 
 #### Dispose
