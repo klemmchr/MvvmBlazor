@@ -35,7 +35,7 @@ namespace MvvmBlazor.Internal.Bindings
 
         public void Initialize()
         {
-            _isCollection = typeof(INotifyCollectionChanged).IsAssignableFrom(PropertyInfo.ReflectedType);
+            _isCollection = typeof(INotifyCollectionChanged).IsAssignableFrom(PropertyInfo.PropertyType);
             _weakEventManager.AddWeakEventListener(Source, SourceOnPropertyChanged);
             AddCollectionBindings();
         }
