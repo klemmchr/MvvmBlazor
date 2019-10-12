@@ -23,7 +23,6 @@ namespace MvvmBlazor.ViewModel
             return false;
         }
 
-
         #region IDisposable support
 
         ~ViewModelBase()

@@ -19,6 +19,7 @@ namespace BlazorSample.Client
             services.AddTransient<FetchDataViewModel>();
             services.AddTransient<CounterViewModel>();
             services.AddTransient<ClockViewModel>();
+            services.AddTransient<ParametersViewModel>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)

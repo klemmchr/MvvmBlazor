@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Net;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using MvvmBlazor.Extensions;
 using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Internal.WeakEventListener;
 using MvvmBlazor.ViewModel;
@@ -30,11 +28,9 @@ namespace MvvmBlazor.Components
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         protected MvvmComponentBase()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        {
-        }
+        { }
 
-        [Inject]
-        protected IServiceProvider ServiceProvider { get; set;  }
+        [Inject] protected IServiceProvider ServiceProvider { get; set; }
 
         private void InitializeDependencies()
         {

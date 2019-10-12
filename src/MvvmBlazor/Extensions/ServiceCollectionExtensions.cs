@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
+using MvvmBlazor.Internal.Parameters;
 using MvvmBlazor.Internal.WeakEventListener;
 
 namespace MvvmBlazor.Extensions
@@ -11,6 +11,9 @@ namespace MvvmBlazor.Extensions
         {
             serviceCollection.AddSingleton<IWeakEventManagerFactory, WeakEventManagerFactory>();
             serviceCollection.AddSingleton<IBindingFactory, BindingFactory>();
+            serviceCollection.AddSingleton<IParameterResolver, ParameterResolver>();
+            serviceCollection.AddSingleton<IParameterCache, ParameterCache>();
+            serviceCollection.AddSingleton<IViewModelParameterSetter, ViewModelParameterSetter>();
             serviceCollection.AddHttpContextAccessor();
 
             return serviceCollection;

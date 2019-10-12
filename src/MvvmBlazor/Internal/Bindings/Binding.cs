@@ -115,7 +115,7 @@ namespace MvvmBlazor.Internal.Bindings
         {
             var hash = 13;
             hash = hash * 7 + Source.GetHashCode();
-            hash = hash * 7 + PropertyInfo.Name.GetHashCode();
+            hash = hash * 7 + PropertyInfo.Name.GetHashCode(StringComparison.InvariantCulture);
 
             return hash;
         }
