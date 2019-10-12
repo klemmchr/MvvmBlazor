@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MvvmBlazor.Internal.Parameters
 {
@@ -19,7 +18,7 @@ namespace MvvmBlazor.Internal.Parameters
             if (type == null) throw new ArgumentNullException(nameof(type));
             return _cache.TryGetValue(type, out var info) ? info : null;
         }
-        
+
         public void Set(Type type, ParameterInfo info)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));

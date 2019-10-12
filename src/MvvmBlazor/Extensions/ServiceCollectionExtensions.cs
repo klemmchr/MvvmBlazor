@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Internal.Parameters;
 using MvvmBlazor.Internal.WeakEventListener;

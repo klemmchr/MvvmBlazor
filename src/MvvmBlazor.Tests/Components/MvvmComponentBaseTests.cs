@@ -312,17 +312,17 @@ namespace MvvmBlazor.Tests.Components
             binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
             binding.Setup(x => x.Initialize()).Verifiable();
             binding.Setup(x => x.Dispose()).Verifiable();
-            
+
             var component = new TestComponent(serviceProvider.Object);
             component.AddBinding(viewModel, x => x.TestProperty);
             component.Dispose();
-            
+
             serviceProvider.Verify();
             wemf.Verify();
             bindingFactory.Verify();
             binding.Verify();
             wem.Verify();
-            
+
             serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();

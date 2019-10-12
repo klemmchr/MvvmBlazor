@@ -54,7 +54,7 @@ namespace BlazorServersideSample
             app.UseStaticFiles();
 
             app.UseRouting();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using MvvmBlazor.ViewModel;
@@ -13,8 +12,8 @@ namespace MvvmBlazor.Internal.Parameters
 
     internal class ViewModelParameterSetter : IViewModelParameterSetter
     {
-        private readonly IParameterResolver _parameterResolver;
         private readonly IParameterCache _parameterCache;
+        private readonly IParameterResolver _parameterResolver;
 
         public ViewModelParameterSetter(IParameterResolver parameterResolver, IParameterCache parameterCache)
         {

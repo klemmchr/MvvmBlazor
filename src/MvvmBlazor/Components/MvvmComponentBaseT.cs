@@ -15,8 +15,7 @@ namespace MvvmBlazor.Components
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public MvvmComponentBase()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        {
-        }
+        { }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         internal MvvmComponentBase(IServiceProvider serviceProvider) : base(serviceProvider)

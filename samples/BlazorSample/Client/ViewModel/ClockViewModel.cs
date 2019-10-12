@@ -29,7 +29,7 @@ namespace BlazorSample.Client.ViewModel
 
         protected override void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
                 _timer.Dispose();
         }
     }
