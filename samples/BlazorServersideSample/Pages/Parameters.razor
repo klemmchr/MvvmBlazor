@@ -1,0 +1,19 @@
+﻿@page "/parameters/{name}"
+@inherits MvvmComponentBase<ParameterViewModel>
+
+<h1>Clock</h1>
+
+<div class="alert alert-primary" role="alert">
+    You can also pass down parameters to your view model. If you set a binding context you can 
+    declare your parameters just as you would before but you also declare them in your view model.
+    They will be passed down to it automatically.
+</div>
+
+<p>My Name is @Bind(x => x.Name).</p>
+
+@code {
+
+    [Parameter]
+    public string Name { get; set; }
+
+}

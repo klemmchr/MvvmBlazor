@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Moq;
 using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
+using MvvmBlazor.Internal.Parameters;
 using MvvmBlazor.Internal.WeakEventListener;
 using MvvmBlazor.ViewModel;
 using Shouldly;
@@ -22,10 +23,12 @@ namespace MvvmBlazor.Tests.Components
             var serviceProvider = new Mock<IServiceProvider>();
             var wemf = new Mock<IWeakEventManagerFactory>();
             var bindingFactory = new Mock<IBindingFactory>();
+            var viewModelParameterSetter = new Mock<IViewModelParameterSetter>();
             serviceProvider.Setup(x => x.GetService(typeof(ViewModelBase))).Returns(viewModel.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
+            serviceProvider.Setup(x => x.GetService(typeof(IViewModelParameterSetter))).Returns(viewModelParameterSetter.Object);
 
             return (viewModel, serviceProvider);
         }

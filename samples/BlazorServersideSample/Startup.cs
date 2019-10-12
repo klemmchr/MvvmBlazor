@@ -33,6 +33,7 @@ namespace BlazorServersideSample
             services.AddTransient<FetchDataViewModel>();
             services.AddTransient<CounterViewModel>();
             services.AddTransient<ClockViewModel>();
+            services.AddTransient<ParameterViewModel>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
