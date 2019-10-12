@@ -18,8 +18,8 @@ namespace MvvmBlazor.Internal.Parameters
 
         public ViewModelParameterSetter(IParameterResolver parameterResolver, IParameterCache parameterCache)
         {
-            _parameterResolver = parameterResolver;
-            _parameterCache = parameterCache;
+            _parameterResolver = parameterResolver ?? throw new ArgumentNullException(nameof(parameterResolver));
+            _parameterCache = parameterCache ?? throw new ArgumentNullException(nameof(parameterCache));
         }
 
         public void ResolveAndSet(ComponentBase component, ViewModelBase viewModel)
@@ -29,7 +29,8 @@ namespace MvvmBlazor.Internal.Parameters
 
             var componentType = component.GetType();
 
-            if (!_parameterCache.TryGet(componentType, out var parameterInfo))
+            var parameterInfo = _parameterCache.Get(componentType);
+            if (parameterInfo == null)
             {
                 var componentParameters = _parameterResolver.ResolveParameters(componentType);
                 var viewModelParameters = _parameterResolver.ResolveParameters(viewModel.GetType());

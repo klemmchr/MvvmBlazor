@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +13,9 @@ namespace MvvmBlazor.Internal.Parameters
 
         public ParameterInfo(IEnumerable<PropertyInfo> componentProperties, IEnumerable<PropertyInfo> viewModelProperties)
         {
+            if (componentProperties == null) throw new ArgumentNullException(nameof(componentProperties));
+            if (viewModelProperties == null) throw new ArgumentNullException(nameof(viewModelProperties));
+
             var viewModelPropDict = viewModelProperties.ToDictionary(x => x.Name);
 
             foreach (var componentProperty in componentProperties)

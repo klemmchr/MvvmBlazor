@@ -7,7 +7,6 @@ namespace MvvmBlazor.Internal.Parameters
     internal interface IParameterCache
     {
         ParameterInfo? Get(Type type);
-        bool TryGet(Type type, out ParameterInfo info);
         void Set(Type type, ParameterInfo info);
     }
 
@@ -20,13 +19,7 @@ namespace MvvmBlazor.Internal.Parameters
             if (type == null) throw new ArgumentNullException(nameof(type));
             return _cache.TryGetValue(type, out var info) ? info : null;
         }
-
-        public bool TryGet(Type type, out ParameterInfo info)
-        {
-            if (type == null) throw new ArgumentNullException(nameof(type));
-            return _cache.TryGetValue(type, out info);
-        }
-
+        
         public void Set(Type type, ParameterInfo info)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));

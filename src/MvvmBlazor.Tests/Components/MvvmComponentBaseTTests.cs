@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
@@ -29,6 +30,7 @@ namespace MvvmBlazor.Tests.Components
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IViewModelParameterSetter))).Returns(viewModelParameterSetter.Object);
+            serviceProvider.Setup(x => x.GetService(typeof(Mock<IViewModelParameterSetter>))).Returns(viewModelParameterSetter);
 
             return (viewModel, serviceProvider);
         }
@@ -84,7 +86,7 @@ namespace MvvmBlazor.Tests.Components
         public void AfterRender_CalledOnBindingContext()
         {
             var (viewModel, serviceProvider) = GetServiceProvider();
-
+            
             var component = new MockMvvmComponentBase(serviceProvider.Object);
             component.AfterRender(true);
 
@@ -157,8 +159,6 @@ namespace MvvmBlazor.Tests.Components
         [Fact]
         public void OnInitialized_CalledOnBindingContext()
         {
-            var task = new Task(() => { });
-
             var (viewModel, serviceProvider) = GetServiceProvider();
 
             var component = new MockMvvmComponentBase(serviceProvider.Object);
@@ -166,6 +166,34 @@ namespace MvvmBlazor.Tests.Components
 
             viewModel.Verify(x => x.OnInitialized());
             viewModel.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void OnInitialized_SetsViewModelParameters()
+        {
+            var (viewModel, serviceProvider) = GetServiceProvider();
+            var viewModelParameterSetter =
+                serviceProvider.Object.GetRequiredService<Mock<IViewModelParameterSetter>>();
+
+            var component = new MockMvvmComponentBase(serviceProvider.Object);
+            component.Initialized();
+
+            viewModelParameterSetter.Verify(x => x.ResolveAndSet(component, viewModel.Object));
+            viewModelParameterSetter.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void OnParametersSet_SetsViewModelParameters()
+        {
+            var (viewModel, serviceProvider) = GetServiceProvider();
+            var viewModelParameterSetter =
+                serviceProvider.Object.GetRequiredService<Mock<IViewModelParameterSetter>>();
+
+            var component = new MockMvvmComponentBase(serviceProvider.Object);
+            component.ParametersSet();
+
+            viewModelParameterSetter.Verify(x => x.ResolveAndSet(component, viewModel.Object));
+            viewModelParameterSetter.VerifyNoOtherCalls();
         }
 
         [Fact]

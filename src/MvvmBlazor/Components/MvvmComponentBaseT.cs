@@ -63,6 +63,7 @@ namespace MvvmBlazor.Components
         /// <inheritdoc />
         protected sealed override void OnParametersSet()
         {
+            SetParameters();
             BindingContext?.OnParametersSet();
         }
 

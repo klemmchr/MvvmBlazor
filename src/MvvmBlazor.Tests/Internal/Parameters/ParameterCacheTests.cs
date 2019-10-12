@@ -12,13 +12,6 @@ namespace MvvmBlazor.Tests.Internal.Parameters
     public class ParameterCacheTests
     {
         [Fact]
-        public void TryGet_ValidatesParameters()
-        {
-            var cache = new ParameterCache();
-            Should.Throw<ArgumentNullException>(() => cache.TryGet(null, out _));
-        }
-
-        [Fact]
         public void Get_ValidatesParameters()
         {
             var cache = new ParameterCache();
@@ -44,19 +37,6 @@ namespace MvvmBlazor.Tests.Internal.Parameters
             cache.Set(type, parameterInfo);
 
             cache.Get(type).ShouldBeSameAs(parameterInfo);
-        }
-
-        [Fact]
-        public void TryGet_GetsCachedEntry()
-        {
-            var type = typeof(ParameterCacheTests);
-            var parameterInfo = new ParameterInfo(new List<PropertyInfo>(), new List<PropertyInfo>());
-
-            var cache = new ParameterCache();
-            cache.Set(type, parameterInfo);
-
-            cache.TryGet(type, out var cached).ShouldBeTrue();
-            cached.ShouldBeSameAs(parameterInfo);
         }
     }
 }
