@@ -24,7 +24,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.PropertyType).Returns(typeof(INotifyCollectionChanged));
             propertyInfo.SetupSequence(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
                 .Returns(collection.Object);
 
@@ -47,7 +47,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.PropertyType).Returns(typeof(INotifyCollectionChanged));
             wem.Setup(x =>
                     x.AddWeakEventListener(
                         It.IsAny<INotifyPropertyChanged>(),
@@ -76,7 +76,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.PropertyType).Returns(typeof(INotifyCollectionChanged));
             wem.Setup(x =>
                     x.AddWeakEventListener(
                         It.IsAny<INotifyPropertyChanged>(),
@@ -105,7 +105,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.PropertyType).Returns(typeof(INotifyCollectionChanged));
             wem.Setup(x =>
                     x.AddWeakEventListener(
                         It.IsAny<INotifyPropertyChanged>(),
@@ -172,7 +172,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.PropertyType).Returns(typeof(INotifyCollectionChanged));
             wem.Setup(x =>
                     x.AddWeakEventListener(
                         It.IsAny<INotifyPropertyChanged>(),
@@ -222,7 +222,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
 
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.PropertyType).Returns(typeof(INotifyCollectionChanged));
             propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
             wem.Setup(x =>
                     x.AddWeakEventListener(
@@ -291,7 +291,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.PropertyType).Returns(typeof(INotifyCollectionChanged));
             wem.Setup(x =>
                     x.AddWeakEventListener(
                         It.IsAny<INotifyPropertyChanged>(),
@@ -320,7 +320,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
             var wem = new Mock<IWeakEventManager>();
             var propertyInfo = new Mock<PropertyInfo>();
             propertyInfo.Setup(x => x.Name).Returns(propertyName);
-            propertyInfo.Setup(x => x.ReflectedType).Returns(typeof(INotifyCollectionChanged));
+            propertyInfo.Setup(x => x.PropertyType).Returns(typeof(INotifyCollectionChanged));
             propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
 
             var hasChanged = false;
