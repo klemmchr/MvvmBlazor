@@ -33,6 +33,7 @@ namespace BlazorServersideSample
             services.AddTransient<FetchDataViewModel>();
             services.AddTransient<CounterViewModel>();
             services.AddTransient<ClockViewModel>();
+            services.AddTransient<ParametersViewModel>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,7 +54,7 @@ namespace BlazorServersideSample
             app.UseStaticFiles();
 
             app.UseRouting();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

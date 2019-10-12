@@ -86,6 +86,29 @@ public int CurrentCount
 #### Lifecycle methods
 View models have access to the same lifecycle methods as a component when they are set as a binding context. They are documented [here](https://docs.microsoft.com/en-us/aspnet/core/blazor/components?view=aspnetcore-3.0#lifecycle-methods).
 
+#### Parameters
+Parameters are automatically populated to the view model. Declare a parameter in your component
+
+```csharp
+@code {
+    [Parameter]
+    public string Name { get; set; }
+}
+```
+
+and declare the same parameter in your view model
+
+```csharp
+class ViewModel: ViewModelBase
+{
+    [Parameter]
+    public string Name { get; set; }
+}
+```
+
+The parameter will be passed before `OnInitialized` and `OnInitializedAsync` are invoked. Therefore, the parameters are available from any lifecycle method.
+You can't access them in your constructor and you're not supposed to do that either.
+
 #### Dispose
 View models are implementing the [`IDisposable` pattern of Blazor](https://docs.microsoft.com/en-us/aspnet/core/blazor/components?view=aspnetcore-3.0#component-disposal-with-idisposable). Inside ViewModels, Disposing is achieved by overriding the `Dispose(bool disposing)` method.
 
