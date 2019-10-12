@@ -5,7 +5,6 @@ using Moq;
 using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
 using MvvmBlazor.Internal.WeakEventListener;
-using MvvmBlazor.Tests.TestUtils;
 using Shouldly;
 using Xunit;
 
