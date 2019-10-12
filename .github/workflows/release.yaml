@@ -1,7 +1,6 @@
-on: 
-  push:
-    branches:    
-      - release
+on:
+  release:
+    types: [published]
 
 name: Release
 
