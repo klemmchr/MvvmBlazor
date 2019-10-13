@@ -7,10 +7,7 @@ BlazorMVVM is a small framework for building Blazor and BlazorServerside apps. W
 
 ## Get started
 MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). You will need .NET Core 3.0 or later to use this library.
-
-## Usage
-### Startup
-The library needs to be initialized in order to use it. This is done in your `Startup` class.
+The library needs to be added to the DI container in order to use it. This is done in your `Startup` class.
 
 ```csharp
 public class Startup
@@ -22,6 +19,7 @@ public class Startup
 }
 ```
 
+## Usage
 ### Components
 Components need to inherit the base class `MvvmBlazor.Components.MvvmComponentBase` if you want to inject your view model manually. You can set a binding on any view model you like to.
 
