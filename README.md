@@ -112,3 +112,11 @@ View models are implementing the [`IDisposable` pattern of Blazor](https://docs.
 
 ## Examples
 Examples for Blazor and Serverside Blazor can be found [here](https://github.com/chris579/MvvmBlazor/tree/master/samples).
+
+
+## Known projects
+This projects are know to use `MvvmBlazor`. They can be used as a reference for different implementation scenarios that go beyond the samples.
+
+- [BlazorPlanningPoker](https://github.com/brandon-james105/BlazorPlanningPoker)
+
+If you want to see your project here, just create an issue.
