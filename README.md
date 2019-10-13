@@ -115,7 +115,7 @@ Examples for Blazor and Serverside Blazor can be found [here](https://github.com
 
 
 ## Known projects
-This projects are know to use `MvvmBlazor`. They can be used as a reference for different implementation scenarios that go beyond the samples.
+These projects are know to use `MvvmBlazor`. They can be used as a reference for different implementation scenarios that go beyond the samples.
 
 - [BlazorPlanningPoker](https://github.com/brandon-james105/BlazorPlanningPoker)
 
