@@ -47,6 +47,39 @@ Current time: @Bind(ClockViewModel, x => x.DateTime)
 
 Bindings also handle background updating automatically. No need to invoke the main thread.
 
+#### Collection Bininds
+If you want to have a collection that automatically notifies the component when it has changed you should use one that implements `INotifyCollectionChanged`, e.g. `ObservableCollection<T>`.
+
+In List scenarios you often chain view models to achieve bindings for every list element on it's corresponding view model. Given this view models
+
+```csharp
+class MainViewModel
+{
+    public ObservableCollection<SubViewModel> Items { get; }
+}
+
+class SubViewModel
+{
+    private string _name;
+    public string Name
+    {
+        get => _name;
+        set => Set(ref, _name, value);
+    }
+}
+```
+
+you can use bindings on your sub view models like this
+
+```csharp
+@foreach (var item in Bind(x => x.Items))
+{
+    <label>@Bind(item, x => x.Name)</label>
+}
+```
+This way the name of every list item is bound to it's corresponding entry in the view. If you change the name on any list item, it will be changed in the view too.
+
+
 ### EventHandlers
 Event handles work just the way they work in blazor. When you use the non generic base class you can bind any injected object on them.
 
