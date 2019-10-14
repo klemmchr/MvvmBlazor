@@ -1,6 +1,6 @@
 ﻿using MvvmBlazor.ViewModel;
 
-namespace BlazorSample.Client.ViewModel
+namespace BlazorSample.ViewModels
 {
     public class CounterViewModel : ViewModelBase
     {

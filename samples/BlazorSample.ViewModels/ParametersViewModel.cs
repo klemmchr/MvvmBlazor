@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MvvmBlazor.ViewModel;
 
-namespace BlazorServersideSample.ViewModel
+namespace BlazorSample.ViewModels
 {
     public class ParametersViewModel : ViewModelBase
     {

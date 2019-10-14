@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj" />
+    <ProjectReference Include="..\BlazorSample.Components\BlazorSample.Components.csproj" />
   </ItemGroup>
 
 </Project>

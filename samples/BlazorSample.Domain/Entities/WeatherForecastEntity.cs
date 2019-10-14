@@ -1,8 +1,8 @@
 using System;
 
-namespace BlazorServersideSample.Data
+namespace BlazorSample.Domain.Entities
 {
-    public class WeatherForecast
+    public class WeatherForecastEntity
     {
         public DateTime Date { get; set; }
 

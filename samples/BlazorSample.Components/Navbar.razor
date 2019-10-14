@@ -1,0 +1,42 @@
+﻿@inherits MvvmComponentBase<NavbarViewModel>
+
+<MatDrawerContainer Class="navbar">
+    <MatDrawer @bind -Opened="@BindingContext.IsMenuOpen" Class="left-sidebar">
+        <div class="logo-container">
+            <img src="/img/logo.svg" />
+        </div>
+
+        <MatNavMenu>
+            @foreach (var item in Bind(x => x.NavbarItems))
+            {
+                <MatNavItem Href="@item.Template">@item.DisplayName</MatNavItem>
+            }
+        </MatNavMenu>
+    </MatDrawer>
+    <MatDrawerContent>
+        <MatAppBarContainer>
+            <MatAppBar Fixed="true">
+                <MatAppBarRow>
+                    <MatAppBarSection>
+                        <MatIconButton Icon="menu" OnClick="@BindingContext.ToggleMenu"></MatIconButton>
+                        <MatAppBarTitle>Ausbildungsnachweise</MatAppBarTitle>
+                    </MatAppBarSection>
+                </MatAppBarRow>
+            </MatAppBar>
+            <MatAppBarContent>
+                <div class="content-container">
+                    @ChildContent
+                </div>
+            </MatAppBarContent>
+        </MatAppBarContainer>
+    </MatDrawerContent>
+</MatDrawerContainer>
+
+
+
+@code
+{
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

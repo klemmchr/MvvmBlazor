@@ -2,7 +2,7 @@
 using System.Timers;
 using MvvmBlazor.ViewModel;
 
-namespace BlazorServersideSample.ViewModel
+namespace BlazorSample.ViewModels
 {
     public class ClockViewModel : ViewModelBase
     {
