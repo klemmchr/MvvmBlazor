@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using BlazorSample.ViewModels.Navbar;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorSample.ViewModels.Extensions
 {
@@ -10,6 +11,7 @@ namespace BlazorSample.ViewModels.Extensions
             serviceCollection.AddTransient<CounterViewModel>();
             serviceCollection.AddTransient<ClockViewModel>();
             serviceCollection.AddTransient<ParametersViewModel>();
+            serviceCollection.AddScoped<NavbarViewModel>();
 
             return serviceCollection;
         }

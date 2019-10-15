@@ -1,3 +1,5 @@
+using BlazorSample.Components.Extensions;
+using BlazorSample.Domain.Extensions;
 using BlazorSample.Domain.Services;
 using BlazorSample.ViewModels.Extensions;
 using BlazorServersideSample.Services;
@@ -30,7 +32,7 @@ namespace BlazorServersideSample
             // Add mvvm to server
             services.AddMvvm();
 
-            services.AddViewModels();
+            services.AddDomain().AddComponents().AddViewModels();
             services.AddSingleton<IWeatherForecastGetter, WeatherForecastGetter>();
         }
 

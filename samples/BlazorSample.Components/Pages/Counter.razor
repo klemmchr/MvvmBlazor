@@ -2,22 +2,33 @@
 @inherits MvvmComponentBase<CounterViewModel>
 @inject ClockViewModel ClockViewModel
 
-<h1>Counter</h1>
+<MatCard>
+    <MatCardContent>
+        <MatSubtitle1>
+            The view model gets auto injected and can be accessed with the property <pre style="display: inline">BindingContext</pre>.
+            You can use this property to bind event handlers on your controls.
+        </MatSubtitle1>
+    </MatCardContent>
+</MatCard>
+<br />
 
-<div class="alert alert-primary" role="alert">
-    The view model gets auto injected and can be accessed with the property <pre style="display: inline">BindingContext</pre>.
-    You can use this property to bind event handlers on your controls.
-</div>
 
-<p>Current count: @Bind(x => x.CurrentCount)</p>
+<MatBody2>Current count: @Bind(x => x.CurrentCount)</MatBody2>
 
-<button class="btn btn-primary" @onclick="@BindingContext.IncrementCount">Click me</button>
+<MatButton OnClick="@BindingContext.IncrementCount" Raised="true">Click me</MatButton>
 
-        <br/><br/><br/>
+<br />
+<br />
+<br />
 
-        <div class="alert alert-primary" role="alert">
+<MatCard>
+    <MatCardContent>
+        <MatSubtitle1>
             You can also bind additional view models that you simply inject by yourself.
             The lifecycle methods on such view models will not be invoked by this component.
-        </div>
+        </MatSubtitle1>
+    </MatCardContent>
+</MatCard>
+<br />
 
-        <p>Current time: @Bind(ClockViewModel, x => x.DateTime)</p>
+<MatBody2>Current time: @Bind(ClockViewModel, x => x.DateTime)</MatBody2>

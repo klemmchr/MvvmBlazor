@@ -1,15 +1,18 @@
 ﻿@inherits MvvmComponentBase<NavbarViewModel>
 
 <MatDrawerContainer Class="navbar">
-    <MatDrawer @bind -Opened="@BindingContext.IsMenuOpen" Class="left-sidebar">
-        <div class="logo-container">
-            <img src="/img/logo.svg" />
-        </div>
-
+    <MatDrawer @bind-Opened="@BindingContext.IsMenuOpen" Class="left-sidebar">
         <MatNavMenu>
             @foreach (var item in Bind(x => x.NavbarItems))
             {
-                <MatNavItem Href="@item.Template">@item.DisplayName</MatNavItem>
+            <MatNavItem Href="@item.Template" Selected="@Bind(item, x => x.IsActive)">
+                @if (!string.IsNullOrEmpty(item.Icon))
+                {
+                    <MatIcon Icon="@item.Icon" class="icon"></MatIcon>
+                }
+
+                @item.DisplayName
+            </MatNavItem>
             }
         </MatNavMenu>
     </MatDrawer>
@@ -19,7 +22,7 @@
                 <MatAppBarRow>
                     <MatAppBarSection>
                         <MatIconButton Icon="menu" OnClick="@BindingContext.ToggleMenu"></MatIconButton>
-                        <MatAppBarTitle>Ausbildungsnachweise</MatAppBarTitle>
+                        <MatAppBarTitle>MvvmBlazor Sample App</MatAppBarTitle>
                     </MatAppBarSection>
                 </MatAppBarRow>
             </MatAppBar>
@@ -31,8 +34,6 @@
         </MatAppBarContainer>
     </MatDrawerContent>
 </MatDrawerContainer>
-
-
 
 @code
 {

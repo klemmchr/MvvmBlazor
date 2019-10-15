@@ -2,44 +2,36 @@
 
 @inherits MvvmComponentBase<FetchDataViewModel>
 
-<h1>Weather forecast</h1>
-
-<div class="alert alert-primary" role="alert">
-    To use a view model with your component simply inherit from the base class
-    <pre style="display: inline">MvvmComponentBase</pre> and specify your view model type for this component as a generic argument.
-    Your view model will have access to all lifecycle methods you also have on your component.
-    As soon as any value changes via the <pre style="display: inline">Set</pre> method on your view model the component will refresh if needed.
-</div>
-
-<p>This component demonstrates fetching data from a service.</p>
+<MatCard>
+    <MatCardContent>
+        <MatSubtitle1>
+            To use a view model with your component simply inherit from the base class
+            <pre style="display: inline">MvvmComponentBase</pre> and specify your view model type for this component as a generic argument.
+            Your view model will have access to all lifecycle methods you also have on your component.
+            As soon as any value changes via the <pre style="display: inline">Set</pre> method on your view model the component will refresh if needed.
+        </MatSubtitle1>
+    </MatCardContent>
+</MatCard>
+<br />
 
 @if (Bind(x => x.Forecasts) == null)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
+    <MatProgressBar Indeterminate="true"></MatProgressBar>
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
+    <MatTable Items="@BindingContext.Forecasts">
+        <MatTableHeader>
             <th>Date</th>
             <th>Temp. (C)</th>
             <th>Temp. (F)</th>
             <th>Summary</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var forecast in Bind(x => x.Forecasts))
-        {
-            <tr>
-                <td>@forecast.Date.ToShortDateString()</td>
-                <td>@forecast.TemperatureC</td>
-                <td>@forecast.TemperatureF</td>
-                <td>@forecast.Summary</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Date.ToShortDateString()</td>
+            <td>@context.TemperatureC</td>
+            <td>@context.TemperatureF</td>
+            <td>@context.Summary</td>
+        </MatTableRow>
+    </MatTable>
 }
