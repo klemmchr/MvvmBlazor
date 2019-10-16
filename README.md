@@ -47,6 +47,39 @@ Current time: @Bind(ClockViewModel, x => x.DateTime)
 
 Bindings also handle background updating automatically. No need to invoke the main thread.
 
+#### Collection Bininds
+If you want to have a collection that automatically notifies the component when it has changed you should use one that implements `INotifyCollectionChanged`, e.g. `ObservableCollection<T>`.
+
+In List scenarios you often chain view models to achieve bindings for every list element on it's corresponding view model. Given this view models
+
+```csharp
+class MainViewModel
+{
+    public ObservableCollection<SubViewModel> Items { get; }
+}
+
+class SubViewModel
+{
+    private string _name;
+    public string Name
+    {
+        get => _name;
+        set => Set(ref, _name, value);
+    }
+}
+```
+
+you can use bindings on your sub view models like this
+
+```csharp
+@foreach (var item in Bind(x => x.Items))
+{
+    <label>@Bind(item, x => x.Name)</label>
+}
+```
+This way the name of every list item is bound to it's corresponding entry in the view. If you change the name on any list item, it will be changed in the view too.
+
+
 ### EventHandlers
 Event handles work just the way they work in blazor. When you use the non generic base class you can bind any injected object on them.
 
@@ -113,6 +146,26 @@ View models are implementing the [`IDisposable` pattern of Blazor](https://docs.
 ## Examples
 Examples for Blazor and Serverside Blazor can be found [here](https://github.com/chris579/MvvmBlazor/tree/master/samples).
 
+You will find several projects in there
+- *BlazorServersideSample*  
+  A server for the blazor serverside sample
+- *BlazorClientsideSample.Server*  
+  The server for the blazor clientside sample  
+- *BlazorClientsideSample.Client*  
+  The client for the blazor clientside sample  
+
+These projects act as wrapper projects for the main functionality that is shared among these examples.
+
+- *BlazorSample.Components*  
+  The components and pages for the samples
+- *BlazorSample.ViewModels*  
+  The view models for the pages
+- *BlazorSample.Domain*  
+  Domain logic, stuff shared between components and view models
+
+This sample tries to incorporate a ports and adapters architectural approach and shows that this library works the same for the client and the server. It also displays the advantages of the MVVM pattern which allows you to share the logic for your frontend even when the business logic differs.
+
+As an example the weather forecast view model just references the interface of the service that is responsible to gather data. For Blazor serverside, it directly populates it, for Blazor serverside it gathers them from an api. The advantages of such patterns will especially get interesting when Blazor Native and Blazor Embedded will be available.
 
 ## Known projects
 These projects are know to use `MvvmBlazor`. They can be used as a reference for different implementation scenarios that go beyond the samples.

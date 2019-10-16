@@ -1,0 +1,47 @@
+﻿@page "/fetchdata"
+
+@inherits MvvmComponentBase<WeatherForecastsViewModel>
+
+<MatCard>
+    <MatCardContent>
+        <MatSubtitle1>
+            To use a view model with your component simply inherit from the base class
+            <pre style="display: inline">MvvmComponentBase</pre> and specify your view model type for this component as a generic argument.
+            Your view model will have access to all lifecycle methods you also have on your component.
+            As soon as any value changes via the <pre style="display: inline">Set</pre> method on your view model the component will refresh if needed.
+        </MatSubtitle1>
+    </MatCardContent>
+</MatCard>
+<br />
+
+<MatCard>
+    <MatCardContent>
+        <MatSubtitle1>
+            In list scenarios you often nest view models to achieve bindings on the list items. This is especially needed when the data of the item changes.
+            You can click the randomize button and see that the list gets updated. 
+        </MatSubtitle1>
+    </MatCardContent>
+</MatCard>
+<br />
+
+@if (Bind(x => x.Forecasts) == null)
+{
+    <MatProgressBar Indeterminate="true"></MatProgressBar>
+}
+else
+{
+    <MatButton Raised="true" OnClick="@BindingContext.RandomizeData">Randomize</MatButton>
+    <br/>
+
+    <MatList SingleSelection="true" TwoLine="true">
+        @foreach (var forecast in Bind(x => x.Forecasts)!)
+        {
+            <MatListItem>
+                <MatListItemText>
+                    <MatListItemPrimaryText>@forecast.Date.ToShortDateString() @forecast.Summary</MatListItemPrimaryText>
+                    <MatListItemSecondaryText>@Bind(forecast, x => x.TemperatureC)°C (@Bind(forecast, x => x.TemperatureF)°F)</MatListItemSecondaryText>
+                </MatListItemText>
+            </MatListItem>
+        }
+    </MatList>
+}

@@ -1,0 +1,27 @@
+﻿@page "/parameters/{name}"
+@inherits MvvmComponentBase<ParametersViewModel>
+
+<MatCard>
+    <MatCardContent>
+        <MatSubtitle1>
+            You can also pass down parameters to your view model. If you set a binding context you can
+            declare your parameters just as you would before but you also declare them in your view model.
+            They will be passed down to it automatically.
+            Enter a new value down below and click the button. See how the url changed and the parameter is shown.
+        </MatSubtitle1>
+    </MatCardContent>
+</MatCard>
+<br />
+
+<MatBody2>My Name is @Bind(x => x.Name)</MatBody2>
+<br />
+
+<MatTextField @bind-Value="@BindingContext.NewName" Label="New name"></MatTextField>
+<MatButton OnClick="@BindingContext.NavigateToNewName" Raised="true">Navigate</MatButton>
+
+@code {
+
+    [Parameter]
+    public string? Name { get; set; }
+
+}

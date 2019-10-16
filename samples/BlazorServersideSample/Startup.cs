@@ -1,5 +1,9 @@
-using BlazorServersideSample.Data;
-using BlazorServersideSample.ViewModel;
+using BlazorSample.Components.Extensions;
+using BlazorSample.Domain.Extensions;
+using BlazorSample.Domain.Services;
+using BlazorSample.ViewModels.Extensions;
+using BlazorServersideSample.Services;
+using EmbeddedBlazorContent;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,16 +28,12 @@ namespace BlazorServersideSample
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
             // Add mvvm to server
             services.AddMvvm();
 
-            // Register view models
-            services.AddTransient<FetchDataViewModel>();
-            services.AddTransient<CounterViewModel>();
-            services.AddTransient<ClockViewModel>();
-            services.AddTransient<ParametersViewModel>();
+            services.AddDomain().AddComponents().AddViewModels();
+            services.AddSingleton<IWeatherForecastGetter, WeatherForecastGetter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +52,7 @@ namespace BlazorServersideSample
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseEmbeddedBlazorContent(typeof(MatBlazor.BaseMatComponent).Assembly);
 
             app.UseRouting();
 
