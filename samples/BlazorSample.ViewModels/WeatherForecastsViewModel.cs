@@ -38,7 +38,7 @@ namespace BlazorSample.ViewModels
         {
             var random = new Random();
 
-            foreach (var weatherForecastEntity in _forecasts)
+            foreach (var weatherForecastEntity in _forecasts!)
             {
                 weatherForecastEntity.TemperatureC = random.Next(10, 40);
                 weatherForecastEntity.TemperatureF = random.Next(50, 200);

@@ -34,7 +34,7 @@ else
     <br/>
 
     <MatList SingleSelection="true" TwoLine="true">
-        @foreach (var forecast in Bind(x => x.Forecasts))
+        @foreach (var forecast in Bind(x => x.Forecasts)!)
         {
             <MatListItem>
                 <MatListItemText>
