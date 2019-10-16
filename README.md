@@ -146,6 +146,26 @@ View models are implementing the [`IDisposable` pattern of Blazor](https://docs.
 ## Examples
 Examples for Blazor and Serverside Blazor can be found [here](https://github.com/chris579/MvvmBlazor/tree/master/samples).
 
+You will find several projects in there
+- *BlazorServersideSample*  
+  A server for the blazor serverside sample
+- *BlazorClientsideSample.Server*  
+  The server for the blazor clientside sample  
+- *BlazorClientsideSample.Client*  
+  The client for the blazor clientside sample  
+
+These projects act as wrapper projects for the main functionality that is shared among these examples.
+
+- *BlazorSample.Components*  
+  The components and pages for the samples
+- *BlazorSample.ViewModels*  
+  The view models for the pages
+- *BlazorSample.Domain*  
+  Domain logic, stuff shared between components and view models
+
+This sample tries to incorporate a ports and adapters architectural approach and shows that this library works the same for the client and the server. It also displays the advantages of the MVVM pattern which allows you to share the logic for your frontend even when the business logic differs.
+
+As an example the weather forecast view model just references the interface of the service that is responsible to gather data. For Blazor serverside, it directly populates it, for Blazor serverside it gathers them from an api. The advantages of such patterns will especially get interesting when Blazor Native and Blazor Embedded will be available.
 
 ## Known projects
 These projects are know to use `MvvmBlazor`. They can be used as a reference for different implementation scenarios that go beyond the samples.
