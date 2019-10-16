@@ -7,7 +7,7 @@ namespace BlazorSample.ViewModels.Extensions
     {
         public static IServiceCollection AddViewModels(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<FetchDataViewModel>();
+            serviceCollection.AddTransient<WeatherForecastsViewModel>();
             serviceCollection.AddTransient<CounterViewModel>();
             serviceCollection.AddTransient<ClockViewModel>();
             serviceCollection.AddTransient<ParametersViewModel>();

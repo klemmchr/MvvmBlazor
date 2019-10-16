@@ -5,7 +5,7 @@ using BlazorSample.Domain.Entities;
 using BlazorSample.Domain.Services;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazorSample.Client.Services
+namespace BlazorClientsideSample.Client.Services
 {
     public class WeatherForecastGetter: IWeatherForecastGetter
     {

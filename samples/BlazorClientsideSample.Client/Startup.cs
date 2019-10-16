@@ -1,11 +1,13 @@
-using BlazorSample.Client.Services;
+using BlazorClientsideSample.Client.Services;
+using BlazorSample.Components.Extensions;
+using BlazorSample.Domain.Extensions;
 using BlazorSample.Domain.Services;
 using BlazorSample.ViewModels.Extensions;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MvvmBlazor.Extensions;
 
-namespace BlazorSample.Client
+namespace BlazorClientsideSample.Client
 {
     public class Startup
     {
@@ -14,8 +16,7 @@ namespace BlazorSample.Client
             // Add mvvm to client
             services.AddMvvm();
 
-            // Register view models
-            services.AddViewModels();
+            services.AddDomain().AddComponents().AddViewModels();
 
             services.AddSingleton<IWeatherForecastGetter, WeatherForecastGetter>();
         }

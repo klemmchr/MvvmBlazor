@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace BlazorSample.Server
+namespace BlazorClientsideSample.Server
 {
     public class Startup
     {

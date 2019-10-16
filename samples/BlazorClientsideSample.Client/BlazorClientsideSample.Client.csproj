@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BlazorSample.Components\BlazorSample.Components.csproj" />
-    <ProjectReference Include="..\..\BlazorSample.Domain\BlazorSample.Domain.csproj" />
+    <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj" />
+    <ProjectReference Include="..\BlazorSample.Components\BlazorSample.Components.csproj" />
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "BlazorSample.Server": {
+    "BlazorClientsideSample.Server": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

@@ -16,11 +16,10 @@ namespace BlazorSample.Components.Extensions
         {
             serviceCollection.AddNavigationItem<Index>("Index", MatIconNames.Home);
             serviceCollection.AddNavigationItem<Counter>("Counter", MatIconNames.Add);
-            serviceCollection.AddNavigationItem<FetchData>("FetchData", MatIconNames.Cloud_download);
+            serviceCollection.AddNavigationItem<WeatherForecasts>("Weather forecasts", MatIconNames.Cloud);
             serviceCollection.AddNavigationItem<Clock>("Clock", MatIconNames.Alarm);
             serviceCollection.AddNavigationItem<Parameters>("Parameters", MatIconNames.List);
 
-            serviceCollection.AddScoped<HttpClient>();
             return serviceCollection;
         }
     }

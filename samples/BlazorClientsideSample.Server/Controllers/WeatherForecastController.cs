@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using BlazorSample.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
-namespace BlazorSample.Server.Controllers
+namespace BlazorClientsideSample.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]

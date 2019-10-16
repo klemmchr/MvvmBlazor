@@ -12,9 +12,9 @@ namespace BlazorSample.ViewModels
             _navigationManager = navigationManager;
         }
 
-        [Parameter] public string Name { get; set; }
+        [Parameter] public string? Name { get; set; }
 
-        public string NewName { get; set; }
+        public string? NewName { get; set; }
 
         public void NavigateToNewName()
         {
