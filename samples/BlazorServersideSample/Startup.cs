@@ -3,7 +3,6 @@ using BlazorSample.Domain.Extensions;
 using BlazorSample.Domain.Services;
 using BlazorSample.ViewModels.Extensions;
 using BlazorServersideSample.Services;
-using EmbeddedBlazorContent;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -52,7 +51,6 @@ namespace BlazorServersideSample
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseEmbeddedBlazorContent(typeof(MatBlazor.BaseMatComponent).Assembly);
 
             app.UseRouting();
 
