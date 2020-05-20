@@ -56,6 +56,12 @@ namespace MvvmBlazor.Internal.Bindings
 
         private void SourceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName is null)
+            {
+                BindingValueChanged?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
             // This should just listen to the bindings property
             if (e.PropertyName != PropertyInfo.Name)
                 return;
