@@ -2,6 +2,7 @@ MvvmBlazor
 ================
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fchris579%2FMvvmBlazor%2Fbadge&style=flat-square)](https://github.com/chris579/MvvmBlazor/actions)
 [![NuGet](https://img.shields.io/nuget/v/MvvmBlazor.svg?style=flat-square)](https://www.nuget.org/packages/MvvmBlazor)
+[![Gitter](https://badges.gitter.im/MvvmBlazor/community.svg)](https://gitter.im/MvvmBlazor/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 BlazorMVVM is a small framework for building Blazor and BlazorServerside apps. With it's simple to use MVVM pattern you can boost up your development speed while minimizing the hazzle to just make it work.
 
