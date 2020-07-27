@@ -29,18 +29,18 @@ namespace BlazorClientsideSample.Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBlazorDebugging();
+                app.UseWebAssemblyDebugging();
             }
 
+            app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
-            app.UseClientSideBlazorFiles<Client.Startup>();
 
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-                endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }
