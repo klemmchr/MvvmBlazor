@@ -1,18 +1,38 @@
-﻿using Microsoft.AspNetCore.Blazor.Hosting;
+﻿using BlazorClientsideSample.Client.Services;
+using BlazorSample.Components.Extensions;
+using BlazorSample.Domain.Extensions;
+using BlazorSample.Domain.Services;
+using BlazorSample.ViewModels.Extensions;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using MvvmBlazor.Extensions;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace BlazorClientsideSample.Client
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-        public static IWebAssemblyHostBuilder CreateHostBuilder(string[] args)
-        {
-            return BlazorWebAssemblyHost.CreateDefaultBuilder()
-                .UseBlazorStartup<Startup>();
+            builder.RootComponents.Add<App>("app");
+
+            builder.Services.AddMvvm();
+            builder.Services.AddDomain().AddComponents().AddViewModels();
+
+            builder.Services.AddSingleton(new HttpClient
+            {
+                BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+            });
+
+            builder.Services.AddSingleton<IWeatherForecastGetter, WeatherForecastGetter>();
+
+            var host = builder.Build();
+
+            await host.RunAsync();
         }
     }
 }
