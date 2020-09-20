@@ -16,11 +16,16 @@ namespace MvvmBlazor.ViewModel
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
                 field = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                OnPropertyChanged(propertyName!);
                 return true;
             }
 
             return false;
+        }
+
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #region IDisposable support
