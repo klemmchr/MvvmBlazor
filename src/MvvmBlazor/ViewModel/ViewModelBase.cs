@@ -22,11 +22,11 @@ namespace MvvmBlazor.ViewModel
             {
                 field = value;
                 OnPropertyChanged(propertyName!);
-                if (!_subscriptions.ContainsKey(propertyName))
+                if (!_subscriptions.ContainsKey(propertyName!))
                 {
                     return true;
                 }
-                foreach (var action in _subscriptions[propertyName])
+                foreach (var action in _subscriptions[propertyName!])
                 {
                     action(value!);
                 }
