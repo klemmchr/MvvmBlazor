@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MvvmBlazor.Internal.Bindings;
 
 namespace MvvmBlazor.ViewModel
 {
@@ -50,16 +51,23 @@ namespace MvvmBlazor.ViewModel
            });
         }
 
-        protected void SubscribeAsync<T>(Expression<Func<T>>? expression, Func<T, Task> func)
+        protected void SubscribeAsync<T>(Expression<Func<T>>? property, Func<T, Task> func)
         {
-            var member = expression?.Body as MemberExpression;
-            var propInfo = member?.Member as PropertyInfo;
-            if (propInfo == null)
+            if (property is null)
             {
-                return;
+                throw new BindingException("Property cannot be null");
+            }
+            if (!(property.Body is MemberExpression m))
+            {
+                throw new BindingException("Subscription member must be a property");
             }
 
-            var propertyName = propInfo.Name;
+            if (!(m.Member is PropertyInfo propertyInfo))
+            {
+                throw new BindingException("Subscription member must be a property");
+            }
+            
+            var propertyName = propertyInfo.Name;
             if (!_subscriptions.ContainsKey(propertyName))
             {
                 _subscriptions[propertyName] = new List<Func<object, Task>>();
