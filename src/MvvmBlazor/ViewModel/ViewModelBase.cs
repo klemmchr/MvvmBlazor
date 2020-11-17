@@ -11,8 +11,8 @@ namespace MvvmBlazor.ViewModel
 {
     public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
-        private readonly Dictionary<string, List<Action<object>>> _subscriptions
-            = new Dictionary<string, List<Action<object>>>();
+        private readonly Dictionary<string, List<Func<object, Task>>> _subscriptions
+            = new Dictionary<string, List<Func<object, Task>>>();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -43,6 +43,15 @@ namespace MvvmBlazor.ViewModel
 
         protected void Subscribe<T>(Expression<Func<T>>? expression, Action<T> action)
         {
+           SubscribeAsync(expression, arg =>
+           {
+               action(arg);
+               return Task.CompletedTask;
+           });
+        }
+
+        protected void SubscribeAsync<T>(Expression<Func<T>>? expression, Func<T, Task> func)
+        {
             var member = expression?.Body as MemberExpression;
             var propInfo = member?.Member as PropertyInfo;
             if (propInfo == null)
@@ -53,10 +62,10 @@ namespace MvvmBlazor.ViewModel
             var propertyName = propInfo.Name;
             if (!_subscriptions.ContainsKey(propertyName))
             {
-                _subscriptions[propertyName] = new List<Action<object>>();
+                _subscriptions[propertyName] = new List<Func<object, Task>>();
             }
 
-            _subscriptions[propertyName].Add(value => action((T) value));
+            _subscriptions[propertyName].Add(async value => await func((T) value).ConfigureAwait(false));
         }
 
         #region IDisposable support
