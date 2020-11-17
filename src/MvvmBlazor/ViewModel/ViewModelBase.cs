@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -9,6 +11,9 @@ namespace MvvmBlazor.ViewModel
 {
     public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
+        private readonly Dictionary<string, List<Action<object>>> _subscriptions
+            = new Dictionary<string, List<Action<object>>>();
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
@@ -17,6 +22,14 @@ namespace MvvmBlazor.ViewModel
             {
                 field = value;
                 OnPropertyChanged(propertyName!);
+                if (!_subscriptions.ContainsKey(propertyName))
+                {
+                    return true;
+                }
+                foreach (var action in _subscriptions[propertyName])
+                {
+                    action(value!);
+                }
                 return true;
             }
 
@@ -26,6 +39,24 @@ namespace MvvmBlazor.ViewModel
         public virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void Subscribe<T>(Expression<Func<T>>? expression, Action<T> action)
+        {
+            var member = expression?.Body as MemberExpression;
+            var propInfo = member?.Member as PropertyInfo;
+            if (propInfo == null)
+            {
+                return;
+            }
+
+            var propertyName = propInfo.Name;
+            if (!_subscriptions.ContainsKey(propertyName))
+            {
+                _subscriptions[propertyName] = new List<Action<object>>();
+            }
+
+            _subscriptions[propertyName].Add(value => action((T) value));
         }
 
         #region IDisposable support
