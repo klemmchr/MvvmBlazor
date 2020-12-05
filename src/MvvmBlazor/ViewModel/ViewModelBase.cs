@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MvvmBlazor.Internal.Bindings;
 
 namespace MvvmBlazor.ViewModel
 {
     public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
+        private readonly Dictionary<string, List<Func<object, Task>>> _subscriptions
+            = new Dictionary<string, List<Func<object, Task>>>();
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
@@ -17,6 +23,14 @@ namespace MvvmBlazor.ViewModel
             {
                 field = value;
                 OnPropertyChanged(propertyName!);
+                if (!_subscriptions.ContainsKey(propertyName!))
+                {
+                    return true;
+                }
+                foreach (var action in _subscriptions[propertyName!])
+                {
+                    action(value!);
+                }
                 return true;
             }
 
@@ -26,6 +40,40 @@ namespace MvvmBlazor.ViewModel
         public virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void Subscribe<T>(Expression<Func<T>>? expression, Action<T> action)
+        {
+           SubscribeAsync(expression, arg =>
+           {
+               action(arg);
+               return Task.CompletedTask;
+           });
+        }
+
+        protected void SubscribeAsync<T>(Expression<Func<T>>? property, Func<T, Task> func)
+        {
+            if (property is null)
+            {
+                throw new BindingException("Property cannot be null");
+            }
+            if (!(property.Body is MemberExpression m))
+            {
+                throw new BindingException("Subscription member must be a property");
+            }
+
+            if (!(m.Member is PropertyInfo propertyInfo))
+            {
+                throw new BindingException("Subscription member must be a property");
+            }
+            
+            var propertyName = propertyInfo.Name;
+            if (!_subscriptions.ContainsKey(propertyName))
+            {
+                _subscriptions[propertyName] = new List<Func<object, Task>>();
+            }
+
+            _subscriptions[propertyName].Add(async value => await func((T) value).ConfigureAwait(false));
         }
 
         #region IDisposable support
