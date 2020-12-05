@@ -6,11 +6,14 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Authors>Christian Klemm</Authors>
     <Description>A lightweight Blazor Mvvm Library</Description>
-    <PackageProjectUrl>https://github.com/chris579/MvvmBlazor</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/klemmchr/MvvmBlazor</PackageProjectUrl>
     <RepositoryUrl>https://github.com/chris579/MvvmBlazor</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <PackageTags>Blazor,Mvvm</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Blazor;Mvvm</PackageTags>
     <Nullable>enable</Nullable>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +27,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
