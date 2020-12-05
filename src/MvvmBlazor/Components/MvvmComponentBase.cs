@@ -34,9 +34,9 @@ namespace MvvmBlazor.Components
 
         private void InitializeDependencies()
         {
-            _weakEventManagerFactory ??= ServiceProvider.GetRequiredService<IWeakEventManagerFactory>();
-            _bindingFactory ??= ServiceProvider.GetRequiredService<IBindingFactory>();
-            _weakEventManager ??= _weakEventManagerFactory.Create();
+            _weakEventManagerFactory = ServiceProvider.GetRequiredService<IWeakEventManagerFactory>();
+            _bindingFactory = ServiceProvider.GetRequiredService<IBindingFactory>();
+            _weakEventManager = _weakEventManagerFactory.Create();
         }
 
         protected internal TValue Bind<TViewModel, TValue>(TViewModel viewModel,
@@ -87,8 +87,8 @@ namespace MvvmBlazor.Components
 
             if (!(m.Member is PropertyInfo p))
                 throw new BindingException("Binding member needs to be a property");
-
-            if (p.DeclaringType != viewModel.GetType())
+            
+            if (typeof(TViewModel).GetProperty(p.Name) is null)
                 throw new BindingException($"Cannot find property {p.Name} in type {viewModel.GetType().FullName}");
 
             return p;
