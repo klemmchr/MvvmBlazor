@@ -112,24 +112,21 @@ namespace MvvmBlazor.Tests.Components
             var wemf = new Mock<IWeakEventManagerFactory>();
             var wem = new Mock<IWeakEventManager>();
             var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
                 .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
-            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
-                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
 
             var component = new TestComponent(serviceProvider.Object);
             Should.Throw<BindingException>(() => component.AddBinding(viewModel, x => x._testProperty));
 
             serviceProvider.Verify();
             wemf.Verify();
-            serviceProvider.VerifyNoOtherCalls();
+
             wemf.VerifyNoOtherCalls();
+            serviceProvider.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
-            binding.VerifyNoOtherCalls();
             wem.VerifyNoOtherCalls();
         }
 
@@ -141,24 +138,21 @@ namespace MvvmBlazor.Tests.Components
             var wemf = new Mock<IWeakEventManagerFactory>();
             var wem = new Mock<IWeakEventManager>();
             var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
                 .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
-            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
-                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
 
             var component = new TestComponent(serviceProvider.Object);
             Should.Throw<BindingException>(() => component.AddBinding(viewModel, x => x.ShouldRender()));
 
             serviceProvider.Verify();
             wemf.Verify();
+
             serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
-            binding.VerifyNoOtherCalls();
             wem.VerifyNoOtherCalls();
         }
 
@@ -170,54 +164,47 @@ namespace MvvmBlazor.Tests.Components
             var wemf = new Mock<IWeakEventManagerFactory>();
             var wem = new Mock<IWeakEventManager>();
             var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
                 .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
-            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
-                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
 
             var component = new TestComponent(serviceProvider.Object);
             Should.Throw<BindingException>(() => component.AddBinding<TestViewModel, string>(viewModel, null));
 
             serviceProvider.Verify();
             wemf.Verify();
+
             serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
-            binding.VerifyNoOtherCalls();
             wem.VerifyNoOtherCalls();
         }
 
         [Fact]
         public void AddBinding_Throws_WhenViewModelIsNull()
         {
-            var viewModel = new TestViewModel();
             var serviceProvider = new Mock<IServiceProvider>();
             var wemf = new Mock<IWeakEventManagerFactory>();
             var wem = new Mock<IWeakEventManager>();
             var bindingFactory = new Mock<IBindingFactory>();
-            var binding = new Mock<IBinding>();
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
                 .Verifiable();
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
                 .Verifiable();
             wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
-            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
-                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
 
             var component = new TestComponent(serviceProvider.Object);
             Should.Throw<BindingException>(() =>
-                component.AddBinding<TestViewModel, string>(null, x => x.TestProperty));
+                component.AddBinding<TestViewModel, string>(null!, x => x.TestProperty));
 
             serviceProvider.Verify();
             wemf.Verify();
+
             serviceProvider.VerifyNoOtherCalls();
             wemf.VerifyNoOtherCalls();
             bindingFactory.VerifyNoOtherCalls();
-            binding.VerifyNoOtherCalls();
             wem.VerifyNoOtherCalls();
         }
 
@@ -264,6 +251,8 @@ namespace MvvmBlazor.Tests.Components
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
             binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
             binding.Setup(x => x.Initialize()).Verifiable();
+            binding.SetupAdd(m => m.BindingValueChanged += It.IsAny<EventHandler>()).Verifiable();
+            
 
             var bindingChangedInvoked = false;
             var component = new TestComponent(serviceProvider.Object)
