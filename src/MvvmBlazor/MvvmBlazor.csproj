@@ -7,7 +7,7 @@
     <Authors>Christian Klemm</Authors>
     <Description>A lightweight Blazor Mvvm Library</Description>
     <PackageProjectUrl>https://github.com/klemmchr/MvvmBlazor</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/chris579/MvvmBlazor</RepositoryUrl>
+    <RepositoryUrl>https://github.com/klemmchr/MvvmBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Blazor;Mvvm</PackageTags>
     <Nullable>enable</Nullable>
