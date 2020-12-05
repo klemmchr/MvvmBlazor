@@ -168,9 +168,3 @@ This sample tries to incorporate a ports and adapters architectural approach and
 
 As an example the weather forecast view model just references the interface of the service that is responsible to gather data. For Blazor serverside, it directly populates it, for Blazor serverside it gathers them from an api. The advantages of such patterns will especially get interesting when Blazor Native and Blazor Embedded will be available.
 
-## Known projects
-These projects are know to use `MvvmBlazor`. They can be used as a reference for different implementation scenarios that go beyond the samples.
-
-- [BlazorPlanningPoker](https://github.com/brandon-james105/BlazorPlanningPoker)
-
-If you want to see your project here, just create an issue.
