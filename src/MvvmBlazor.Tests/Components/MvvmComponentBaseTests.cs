@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reflection;
+using System.Threading.Tasks;
 using Moq;
 using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
@@ -304,6 +305,46 @@ namespace MvvmBlazor.Tests.Components
             var component = new TestComponent(serviceProvider.Object);
             component.AddBinding(viewModel, x => x.TestProperty);
             component.Dispose();
+
+            serviceProvider.Verify();
+            wemf.Verify();
+            bindingFactory.Verify();
+            binding.Verify();
+            wem.Verify();
+
+            serviceProvider.VerifyNoOtherCalls();
+            wemf.VerifyNoOtherCalls();
+            bindingFactory.VerifyNoOtherCalls();
+            binding.VerifyNoOtherCalls();
+            wem.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task DisposeAsync_RemovesEventListenersForBindings()
+        {
+            var viewModel = new TestViewModel();
+            var serviceProvider = new Mock<IServiceProvider>();
+            var wemf = new Mock<IWeakEventManagerFactory>();
+            var wem = new Mock<IWeakEventManager>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            var binding = new Mock<IBinding>();
+            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object)
+                .Verifiable();
+            serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object)
+                .Verifiable();
+            wemf.Setup(x => x.Create()).Returns(wem.Object).Verifiable();
+            wem.Setup(x => x.AddWeakEventListener(It.IsAny<IBinding>(), nameof(IBinding.BindingValueChanged),
+                It.IsAny<Action<IBinding, EventArgs>>())).Verifiable();
+            wem.Setup(x => x.RemoveWeakEventListener(It.IsAny<IBinding>())).Verifiable();
+            bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
+                It.IsAny<IWeakEventManager>())).Returns(binding.Object).Verifiable();
+            binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
+            binding.Setup(x => x.Initialize()).Verifiable();
+            binding.Setup(x => x.Dispose()).Verifiable();
+
+            var component = new TestComponent(serviceProvider.Object);
+            component.AddBinding(viewModel, x => x.TestProperty);
+            await component.DisposeAsync();
 
             serviceProvider.Verify();
             wemf.Verify();

@@ -42,7 +42,7 @@ namespace MvvmBlazor.Internal.Bindings
 
         public object GetValue()
         {
-            return PropertyInfo.GetValue(Source, null);
+            return PropertyInfo.GetValue(Source, null)!;
         }
 
         private void AddCollectionBindings()
@@ -112,7 +112,7 @@ namespace MvvmBlazor.Internal.Bindings
             return $"{PropertyInfo?.DeclaringType?.Name}.{PropertyInfo?.Name}";
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Binding b && ReferenceEquals(b.Source, Source) && b.PropertyInfo.Name == PropertyInfo.Name;
         }

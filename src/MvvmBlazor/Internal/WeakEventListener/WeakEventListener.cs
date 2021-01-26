@@ -74,12 +74,12 @@ namespace MvvmBlazor.Internal.WeakEventListener
         {
             if (register == null) throw new ArgumentNullException(nameof(register));
             _unregister = unregister ?? throw new ArgumentNullException(nameof(unregister));
-            register(source, HandleEvent);
+            register(source, HandleEvent!);
         }
 
         protected override void StopListening(T source)
         {
-            _unregister(source, HandleEvent);
+            _unregister(source, HandleEvent!);
         }
     }
 
@@ -89,12 +89,12 @@ namespace MvvmBlazor.Internal.WeakEventListener
         public PropertyChangedWeakEventListener(T source, Action<T, PropertyChangedEventArgs> handler)
             : base(source, handler)
         {
-            source.PropertyChanged += HandleEvent;
+            source.PropertyChanged += HandleEvent!;
         }
 
         protected override void StopListening(T source)
         {
-            source.PropertyChanged -= HandleEvent;
+            source.PropertyChanged -= HandleEvent!;
         }
     }
 
@@ -104,12 +104,12 @@ namespace MvvmBlazor.Internal.WeakEventListener
         public CollectionChangedWeakEventListener(T source, Action<T, NotifyCollectionChangedEventArgs> handler)
             : base(source, handler)
         {
-            source.CollectionChanged += HandleEvent;
+            source.CollectionChanged += HandleEvent!;
         }
 
         protected override void StopListening(T source)
         {
-            source.CollectionChanged -= HandleEvent;
+            source.CollectionChanged -= HandleEvent!;
         }
     }
 
@@ -125,19 +125,19 @@ namespace MvvmBlazor.Internal.WeakEventListener
             _eventInfo = source.GetType().GetEvent(eventName) ??
                          throw new ArgumentException("Unknown Event Name", nameof(eventName));
             if (_eventInfo.EventHandlerType == typeof(EventHandler<TArgs>))
-                _eventInfo.AddEventHandler(source, new EventHandler<TArgs>(HandleEvent));
+                _eventInfo.AddEventHandler(source, new EventHandler<TArgs>(HandleEvent!));
             else //the event type isn't just an EventHandler<> so we have to create the delegate using reflection
                 _eventInfo.AddEventHandler(source,
-                    Delegate.CreateDelegate(_eventInfo.EventHandlerType, this, nameof(HandleEvent)));
+                    Delegate.CreateDelegate(_eventInfo.EventHandlerType!, this, nameof(HandleEvent)));
         }
 
         protected override void StopListening(T source)
         {
             if (_eventInfo.EventHandlerType == typeof(EventHandler<TArgs>))
-                _eventInfo.RemoveEventHandler(source, new EventHandler<TArgs>(HandleEvent));
+                _eventInfo.RemoveEventHandler(source, new EventHandler<TArgs>(HandleEvent!));
             else
                 _eventInfo.RemoveEventHandler(source,
-                    Delegate.CreateDelegate(_eventInfo.EventHandlerType, this, nameof(HandleEvent)));
+                    Delegate.CreateDelegate(_eventInfo.EventHandlerType!, this, nameof(HandleEvent)));
         }
     }
 }
