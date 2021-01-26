@@ -147,14 +147,14 @@ Inside ViewModels, Disposing is achieved by overriding the `Dispose(bool disposi
 Make sure to call the respective base method to ensure disposing of all bindings.
 
 ```csharp
-public void Dispose(bool disposing)
+public override void Dispose(bool disposing)
 {
     base.Dispose(disposing);
 
     // Your dispose code here
 }
 
-public ValueTask DisposeAsyncCore(bool disposing)
+public override ValueTask DisposeAsyncCore(bool disposing)
 {
     base.DisposeAsyncCore(disposing);
 
