@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BlazorSample.Domain.Entities;
+﻿using BlazorSample.Domain.Entities;
+
 using MvvmBlazor.ViewModel;
+
+using System;
 
 namespace BlazorSample.ViewModels
 {

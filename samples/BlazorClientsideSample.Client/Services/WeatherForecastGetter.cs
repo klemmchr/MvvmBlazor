@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using BlazorSample.Domain.Entities;
+﻿using BlazorSample.Domain.Entities;
 using BlazorSample.Domain.Services;
-using Microsoft.AspNetCore.Components;
+
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace BlazorClientsideSample.Client.Services
 {
@@ -18,7 +19,7 @@ namespace BlazorClientsideSample.Client.Services
 
         public Task<IEnumerable<WeatherForecastEntity>> GetForecasts()
         {
-            return _httpClient.GetJsonAsync<IEnumerable<WeatherForecastEntity>>("WeatherForecast");
+            return _httpClient.GetFromJsonAsync<IEnumerable<WeatherForecastEntity>>("WeatherForecast");
         }
     }
 }

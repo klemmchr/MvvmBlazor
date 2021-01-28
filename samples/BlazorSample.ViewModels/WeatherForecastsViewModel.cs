@@ -41,7 +41,7 @@ namespace BlazorSample.ViewModels
             foreach (var weatherForecastEntity in _forecasts!)
             {
                 weatherForecastEntity.TemperatureC = random.Next(10, 40);
-                weatherForecastEntity.TemperatureF = random.Next(50, 200);
+                weatherForecastEntity.TemperatureF = 32 + (int)(weatherForecastEntity.TemperatureC / 0.5556);
             }
         }
     }
