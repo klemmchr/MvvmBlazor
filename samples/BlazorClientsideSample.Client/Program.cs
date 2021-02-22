@@ -1,4 +1,7 @@
-﻿using BlazorClientsideSample.Client.Services;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using BlazorClientsideSample.Client.Services;
 using BlazorSample.Components.Extensions;
 using BlazorSample.Domain.Extensions;
 using BlazorSample.Domain.Services;
@@ -6,9 +9,6 @@ using BlazorSample.ViewModels.Extensions;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using MvvmBlazor.Extensions;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace BlazorClientsideSample.Client
 {

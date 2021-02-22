@@ -7,13 +7,13 @@ using BlazorSample.Domain.Services;
 
 namespace BlazorServersideSample.Services
 {
-    public class WeatherForecastGetter: IWeatherForecastGetter
+    public class WeatherForecastGetter : IWeatherForecastGetter
     {
         private static readonly string[] Summaries =
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
-        
+
         public Task<IEnumerable<WeatherForecastEntity>> GetForecasts()
         {
             var rng = new Random();

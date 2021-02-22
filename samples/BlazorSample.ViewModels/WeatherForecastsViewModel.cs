@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using BlazorSample.Domain.Entities;
 using BlazorSample.Domain.Services;
 using MvvmBlazor.ViewModel;
 
@@ -31,7 +30,9 @@ namespace BlazorSample.ViewModels
             await Task.Delay(1500);
 
             var forecastData = await _weatherForecastGetter.GetForecasts();
-            _forecasts = new ObservableCollection<WeatherForecastViewModel>(forecastData.Select(x => new WeatherForecastViewModel(x)));
+            _forecasts =
+                new ObservableCollection<WeatherForecastViewModel>(forecastData.Select(x =>
+                    new WeatherForecastViewModel(x)));
         }
 
         public void RandomizeData()

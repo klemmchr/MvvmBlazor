@@ -13,17 +13,6 @@ namespace MvvmBlazor.Tests.Components
 {
     public class MvvmComponentBaseTests
     {
-        internal class TestComponent : MvvmComponentBase
-        {
-            internal TestComponent(IServiceProvider serviceProvider) : base(serviceProvider) { }
-            public Action BindingChangedAction { get; set; }
-
-            internal override void BindingOnBindingValueChanged(object sender, EventArgs e)
-            {
-                BindingChangedAction?.Invoke();
-            }
-        }
-
         [Fact]
         public void AddBinding_AddsBinding()
         {
@@ -253,7 +242,7 @@ namespace MvvmBlazor.Tests.Components
             binding.Setup(x => x.GetValue()).Returns("Test").Verifiable();
             binding.Setup(x => x.Initialize()).Verifiable();
             binding.SetupAdd(m => m.BindingValueChanged += It.IsAny<EventHandler>()).Verifiable();
-            
+
 
             var bindingChangedInvoked = false;
             var component = new TestComponent(serviceProvider.Object)
@@ -357,6 +346,17 @@ namespace MvvmBlazor.Tests.Components
             bindingFactory.VerifyNoOtherCalls();
             binding.VerifyNoOtherCalls();
             wem.VerifyNoOtherCalls();
+        }
+
+        internal class TestComponent : MvvmComponentBase
+        {
+            internal TestComponent(IServiceProvider serviceProvider) : base(serviceProvider) { }
+            public Action BindingChangedAction { get; set; }
+
+            internal override void BindingOnBindingValueChanged(object sender, EventArgs e)
+            {
+                BindingChangedAction?.Invoke();
+            }
         }
     }
 }

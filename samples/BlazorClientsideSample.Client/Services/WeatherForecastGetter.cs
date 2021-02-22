@@ -4,11 +4,10 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using BlazorSample.Domain.Entities;
 using BlazorSample.Domain.Services;
-using Microsoft.AspNetCore.Components;
 
 namespace BlazorClientsideSample.Client.Services
 {
-    public class WeatherForecastGetter: IWeatherForecastGetter
+    public class WeatherForecastGetter : IWeatherForecastGetter
     {
         private readonly HttpClient _httpClient;
 

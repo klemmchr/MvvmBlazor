@@ -9,36 +9,6 @@ namespace MvvmBlazor.Tests.Internal.Parameters
 {
     public class ParameterResolverTests
     {
-        private class S1
-        {
-            [Parameter] public string Test { get; set; }
-        }
-
-        private class S2
-        {
-            [Parameter] public string Test { get; set; }
-
-            [Parameter] public int Foo { get; set; }
-        }
-
-        private class S3
-        {
-            [Parameter] public string Test { get; set; }
-
-            public int Foo { get; set; }
-        }
-
-        private class S4
-        {
-            [Parameter] public string Test { get; set; }
-
-            public int Foo { get; }
-            public int Doo { get; private set; }
-            public int Boo { get; internal set; }
-            public int Loo { get; protected set; }
-            public int Moo { get; protected internal set; }
-        }
-
         [Fact]
         public void ResolveParameters_IgnoresPropertiesWithoutAttribute()
         {
@@ -90,6 +60,36 @@ namespace MvvmBlazor.Tests.Internal.Parameters
         {
             var resolver = new ParameterResolver();
             Should.Throw<ArgumentNullException>(() => resolver.ResolveParameters(null));
+        }
+
+        private class S1
+        {
+            [Parameter] public string Test { get; set; }
+        }
+
+        private class S2
+        {
+            [Parameter] public string Test { get; set; }
+
+            [Parameter] public int Foo { get; set; }
+        }
+
+        private class S3
+        {
+            [Parameter] public string Test { get; set; }
+
+            public int Foo { get; set; }
+        }
+
+        private class S4
+        {
+            [Parameter] public string Test { get; set; }
+
+            public int Foo { get; }
+            public int Doo { get; private set; }
+            public int Boo { get; internal set; }
+            public int Loo { get; protected set; }
+            public int Moo { get; protected internal set; }
         }
     }
 }

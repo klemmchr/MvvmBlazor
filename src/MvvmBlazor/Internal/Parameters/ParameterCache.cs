@@ -11,7 +11,7 @@ namespace MvvmBlazor.Internal.Parameters
 
     internal class ParameterCache : IParameterCache
     {
-        private readonly Dictionary<Type, ParameterInfo> _cache = new Dictionary<Type, ParameterInfo>();
+        private readonly Dictionary<Type, ParameterInfo> _cache = new();
 
         public ParameterInfo? Get(Type type)
         {

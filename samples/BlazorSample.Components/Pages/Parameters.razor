@@ -11,10 +11,10 @@
         </MatSubtitle1>
     </MatCardContent>
 </MatCard>
-<br />
+<br/>
 
 <MatBody2>My Name is @Bind(x => x.Name)</MatBody2>
-<br />
+<br/>
 
 <MatTextField @bind-Value="@BindingContext.NewName" Label="New name"></MatTextField>
 <MatButton OnClick="@BindingContext.NavigateToNewName" Raised="true">Navigate</MatButton>

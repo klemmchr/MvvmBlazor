@@ -29,64 +29,19 @@ namespace MvvmBlazor.Tests.Components
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
-            serviceProvider.Setup(x => x.GetService(typeof(IViewModelParameterSetter))).Returns(viewModelParameterSetter.Object);
-            serviceProvider.Setup(x => x.GetService(typeof(Mock<IViewModelParameterSetter>))).Returns(viewModelParameterSetter);
+            serviceProvider.Setup(x => x.GetService(typeof(IViewModelParameterSetter)))
+                .Returns(viewModelParameterSetter.Object);
+            serviceProvider.Setup(x => x.GetService(typeof(Mock<IViewModelParameterSetter>)))
+                .Returns(viewModelParameterSetter);
 
             return (viewModel, serviceProvider);
-        }
-
-        private class MockMvvmComponentBase : MvvmComponentBase<ViewModelBase>
-        {
-            public MockMvvmComponentBase(IServiceProvider serviceProvider) : base(serviceProvider) { }
-
-            public ViewModelBase Context => BindingContext;
-
-            public void Initialized()
-            {
-                OnInitialized();
-            }
-
-            public Task InitializedAsync()
-            {
-                return OnInitializedAsync();
-            }
-
-            public void ParametersSet()
-            {
-                OnParametersSet();
-            }
-
-            public Task ParametersSetAsync()
-            {
-                return OnParametersSetAsync();
-            }
-
-            public bool Render()
-            {
-                return ShouldRender();
-            }
-
-            public void AfterRender(bool firstRender)
-            {
-                OnAfterRender(firstRender);
-            }
-
-            public Task AfterRenderAsync(bool firstRender)
-            {
-                return OnAfterRenderAsync(firstRender);
-            }
-
-            public Task ParametersAsync(ParameterView parameters)
-            {
-                return SetParametersAsync(parameters);
-            }
         }
 
         [Fact]
         public void AfterRender_CalledOnBindingContext()
         {
             var (viewModel, serviceProvider) = GetServiceProvider();
-            
+
             var component = new MockMvvmComponentBase(serviceProvider.Object);
             component.AfterRender(true);
 
@@ -259,6 +214,53 @@ namespace MvvmBlazor.Tests.Components
 
             viewModel.Verify(x => x.ShouldRender());
             viewModel.VerifyNoOtherCalls();
+        }
+
+        private class MockMvvmComponentBase : MvvmComponentBase<ViewModelBase>
+        {
+            public MockMvvmComponentBase(IServiceProvider serviceProvider) : base(serviceProvider) { }
+
+            public ViewModelBase Context => BindingContext;
+
+            public void Initialized()
+            {
+                OnInitialized();
+            }
+
+            public Task InitializedAsync()
+            {
+                return OnInitializedAsync();
+            }
+
+            public void ParametersSet()
+            {
+                OnParametersSet();
+            }
+
+            public Task ParametersSetAsync()
+            {
+                return OnParametersSetAsync();
+            }
+
+            public bool Render()
+            {
+                return ShouldRender();
+            }
+
+            public void AfterRender(bool firstRender)
+            {
+                OnAfterRender(firstRender);
+            }
+
+            public Task AfterRenderAsync(bool firstRender)
+            {
+                return OnAfterRenderAsync(firstRender);
+            }
+
+            public Task ParametersAsync(ParameterView parameters)
+            {
+                return SetParametersAsync(parameters);
+            }
         }
     }
 }
