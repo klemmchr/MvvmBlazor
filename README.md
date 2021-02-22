@@ -7,7 +7,7 @@ MvvmBlazor
 BlazorMVVM is a small framework for building Blazor and BlazorServerside apps. With its simple to use MVVM pattern you can boost up your development speed while minimizing the hazzle to just make it work.
 
 ## Get started
-MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). You will need .NET Core 3.0 or later to use this library.
+MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). You will need **.NET 5** to use this library.
 The library needs to be added to the DI container in order to use it. This is done in your `Startup` class.
 
 ```csharp
