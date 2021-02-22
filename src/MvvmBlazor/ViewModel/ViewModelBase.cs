@@ -10,7 +10,7 @@ using MvvmBlazor.Internal.Bindings;
 
 namespace MvvmBlazor.ViewModel
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         private readonly Dictionary<string, List<Func<object, Task>>> _subscriptions
             = new Dictionary<string, List<Func<object, Task>>>();
@@ -75,23 +75,6 @@ namespace MvvmBlazor.ViewModel
 
             _subscriptions[propertyName].Add(async value => await func((T) value).ConfigureAwait(false));
         }
-
-        #region IDisposable support
-
-        ~ViewModelBase()
-        {
-            Dispose(false);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing) { }
-
-        #endregion
 
         #region Lifecycle Methods
 
