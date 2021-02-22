@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MvvmBlazor.Internal.Bindings;
@@ -10,9 +11,9 @@ using MvvmBlazor.ViewModel;
 
 namespace MvvmBlazor.Components
 {
-    public abstract class MvvmComponentBase : ComponentBase, IDisposable
+    public abstract class MvvmComponentBase : ComponentBase, IDisposable, IAsyncDisposable
     {
-        private readonly HashSet<IBinding> _bindings = new HashSet<IBinding>();
+        private HashSet<IBinding> _bindings = new HashSet<IBinding>();
         private IBindingFactory _bindingFactory;
         private IWeakEventManager _weakEventManager;
         private IWeakEventManagerFactory _weakEventManagerFactory;
@@ -105,18 +106,50 @@ namespace MvvmBlazor.Components
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-                foreach (var binding in _bindings)
+            {
+                if (_bindings is not null!)
                 {
-                    _weakEventManager.RemoveWeakEventListener(binding);
-                    binding.Dispose();
+                    DisposeBindings();
+
+                    _bindings = null!;
                 }
+                
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+
+            Dispose(false);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual ValueTask DisposeAsyncCore()
+        {
+            if (_bindings is not null!)
+            {
+                DisposeBindings();
+                _bindings = null!;
+            }
+                
+            return default;
+        }
+
+        private void DisposeBindings()
+        {
+            foreach (var binding in _bindings)
+            {
+                _weakEventManager.RemoveWeakEventListener(binding);
+                binding.Dispose();
+            }
         }
 
         ~MvvmComponentBase()
         {
             Dispose(false);
         }
-
+        
         #endregion
     }
 }

@@ -4,7 +4,7 @@ using MvvmBlazor.ViewModel;
 
 namespace BlazorSample.ViewModels
 {
-    public class ClockViewModel : ViewModelBase
+    public class ClockViewModel : ViewModelBase, IDisposable
     {
         private readonly Timer _timer;
         private DateTime _dateTime = DateTime.Now;
@@ -27,10 +27,21 @@ namespace BlazorSample.ViewModels
             DateTime = DateTime.Now;
         }
 
-        protected override void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
                 _timer.Dispose();
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            Dispose(true);
+        }
+
+        ~ClockViewModel()
+        {
+            Dispose(false);
         }
     }
 }

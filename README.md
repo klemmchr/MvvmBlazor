@@ -142,7 +142,8 @@ The parameter will be passed before `OnInitialized` and `OnInitializedAsync` are
 You can't access them in your constructor and you're not supposed to do that either.
 
 #### Dispose
-View models are implementing the [`IDisposable` pattern of Blazor](https://docs.microsoft.com/en-us/aspnet/core/blazor/components?view=aspnetcore-3.0#component-disposal-with-idisposable). Inside ViewModels, Disposing is achieved by overriding the `Dispose(bool disposing)` method.
+Since ViewModels are being injected through depencency injection the DI [takes care](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-5.0#disposal-of-services) of disposing ViewModels.
+
 
 ## Examples
 Examples for Blazor and Serverside Blazor can be found [here](https://github.com/chris579/MvvmBlazor/tree/master/samples).

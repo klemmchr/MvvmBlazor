@@ -18,7 +18,7 @@ namespace BlazorClientsideSample.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-            builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddMvvm();
             builder.Services.AddDomain().AddComponents().AddViewModels();
