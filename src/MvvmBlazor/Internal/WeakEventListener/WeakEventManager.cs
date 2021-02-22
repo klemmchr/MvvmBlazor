@@ -41,7 +41,7 @@ namespace MvvmBlazor.Internal.WeakEventListener
     public class WeakEventManager : IWeakEventManager
     {
         private readonly Dictionary<IWeakEventListener, Delegate> _listeners =
-            new Dictionary<IWeakEventListener, Delegate>();
+            new();
 
         /// <summary>
         ///     Registers the given delegate as a handler for the event specified by `eventName` on the given source.

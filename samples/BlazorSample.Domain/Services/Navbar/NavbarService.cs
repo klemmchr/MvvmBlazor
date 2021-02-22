@@ -13,21 +13,24 @@ namespace BlazorSample.Domain.Services.Navbar
 
     public class NavbarService : INavbarService
     {
-        public IReadOnlyList<NavbarItem> NavbarItems { get; }
-        private readonly List<NavbarItem> _navbarItems = new List<NavbarItem>();
-        
+        private readonly List<NavbarItem> _navbarItems = new();
+
         public NavbarService(IEnumerable<NavbarItem> navbarItems)
         {
             NavbarItems = new ReadOnlyCollection<NavbarItem>(_navbarItems);
             LoadComponents(navbarItems);
         }
 
+        public IReadOnlyList<NavbarItem> NavbarItems { get; }
+
         private void LoadComponents(IEnumerable<NavbarItem> navbarItems)
         {
             foreach (var item in navbarItems)
             {
-                if (!(item.Page.BaseType == typeof(ComponentBase) || typeof(ComponentBase).IsAssignableFrom(item.Page.BaseType)))
-                    throw new InvalidOperationException($"NavItem {item.DisplayName}:{item.Page.FullName} is not a component");
+                if (!(item.Page.BaseType == typeof(ComponentBase) ||
+                      typeof(ComponentBase).IsAssignableFrom(item.Page.BaseType)))
+                    throw new InvalidOperationException(
+                        $"NavItem {item.DisplayName}:{item.Page.FullName} is not a component");
 
                 var routeAttribute = item.Page.GetCustomAttribute<RouteAttribute>();
                 if (routeAttribute == null)

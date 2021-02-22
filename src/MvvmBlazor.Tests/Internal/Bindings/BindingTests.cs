@@ -244,7 +244,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
 
             collection.Raise(x => x.CollectionChanged += null,
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
-                    new List<object> {new object()}));
+                    new List<object> {new()}));
 
             hasChanged.ShouldBeTrue();
         }
@@ -329,7 +329,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings
 
             collection.Raise(x => x.CollectionChanged += null,
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,
-                    new List<object> {new object()}));
+                    new List<object> {new()}));
 
             hasChanged.ShouldBeFalse();
         }

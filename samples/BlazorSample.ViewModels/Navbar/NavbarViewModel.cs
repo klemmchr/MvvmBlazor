@@ -9,14 +9,8 @@ namespace BlazorSample.ViewModels.Navbar
     public class NavbarViewModel : ViewModelBase
     {
         private readonly NavigationManager _navigationManager;
-        public ObservableCollection<NavbarItemViewModel> NavbarItems { get; }
 
         private bool _isMenuOpen = true;
-        public bool IsMenuOpen
-        {
-            get => _isMenuOpen;
-            set => Set(ref _isMenuOpen, value, nameof(IsMenuOpen));
-        }
 
         public NavbarViewModel(INavbarService navbarService, NavigationManager navigationManager)
         {
@@ -26,7 +20,15 @@ namespace BlazorSample.ViewModels.Navbar
                 navbarService.NavbarItems.Select(x => new NavbarItemViewModel(x.DisplayName, x.Template!, x.Icon)));
             UpdateActiveItem();
         }
-        
+
+        public ObservableCollection<NavbarItemViewModel> NavbarItems { get; }
+
+        public bool IsMenuOpen
+        {
+            get => _isMenuOpen;
+            set => Set(ref _isMenuOpen, value, nameof(IsMenuOpen));
+        }
+
         public void ToggleMenu()
         {
             IsMenuOpen = !IsMenuOpen;
@@ -37,16 +39,10 @@ namespace BlazorSample.ViewModels.Navbar
             var relativePath = _navigationManager.ToBaseRelativePath(_navigationManager.Uri);
 
             foreach (var navbarItem in NavbarItems)
-            {
                 if (string.IsNullOrEmpty(relativePath))
-                {
                     navbarItem.IsActive = navbarItem.Template == "/";
-                }
                 else
-                {
                     navbarItem.IsActive = navbarItem.Template.StartsWith("/" + relativePath);
-                }
-            }
         }
     }
 }

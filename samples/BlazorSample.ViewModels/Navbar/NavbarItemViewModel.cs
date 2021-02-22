@@ -4,6 +4,8 @@ namespace BlazorSample.ViewModels.Navbar
 {
     public class NavbarItemViewModel : ViewModelBase
     {
+        private bool _isActive;
+
         public NavbarItemViewModel(string displayName, string template, string? icon)
         {
             DisplayName = displayName;
@@ -16,8 +18,6 @@ namespace BlazorSample.ViewModels.Navbar
         public string Template { get; }
 
         public string? Icon { get; set; }
-
-        private bool _isActive;
 
         public bool IsActive
         {

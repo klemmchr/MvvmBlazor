@@ -1,12 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using BlazorSample.Components.Pages;
+﻿using BlazorSample.Components.Pages;
 using BlazorSample.Domain.Extensions;
 using MatBlazor;
-using Index = BlazorSample.Components.Pages.Index;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorSample.Components.Extensions
 {

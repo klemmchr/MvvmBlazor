@@ -13,25 +13,21 @@ namespace MvvmBlazor.Components
 {
     public abstract class MvvmComponentBase : ComponentBase, IDisposable, IAsyncDisposable
     {
-        private HashSet<IBinding> _bindings = new HashSet<IBinding>();
-        private IBindingFactory _bindingFactory;
-        private IWeakEventManager _weakEventManager;
-        private IWeakEventManagerFactory _weakEventManagerFactory;
+        private IBindingFactory _bindingFactory = null!;
+        private HashSet<IBinding> _bindings = new();
+        private IWeakEventManager _weakEventManager = null!;
+        private IWeakEventManagerFactory _weakEventManagerFactory = null!;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         protected internal MvvmComponentBase(IServiceProvider serviceProvider)
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
             ServiceProvider = serviceProvider;
             InitializeDependencies();
         }
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        protected MvvmComponentBase()
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        { }
+        // ReSharper disable once UnusedMember.Global
+        protected MvvmComponentBase() {}
 
-        [Inject] protected IServiceProvider ServiceProvider { get; set; }
+        [Inject] protected IServiceProvider ServiceProvider { get; set; } = null!;
 
         private void InitializeDependencies()
         {
@@ -88,7 +84,7 @@ namespace MvvmBlazor.Components
 
             if (!(m.Member is PropertyInfo p))
                 throw new BindingException("Binding member needs to be a property");
-            
+
             if (typeof(TViewModel).GetProperty(p.Name) is null)
                 throw new BindingException($"Cannot find property {p.Name} in type {viewModel.GetType().FullName}");
 
@@ -106,15 +102,12 @@ namespace MvvmBlazor.Components
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 if (_bindings is not null!)
                 {
                     DisposeBindings();
 
                     _bindings = null!;
                 }
-                
-            }
         }
 
         public async ValueTask DisposeAsync()
@@ -132,7 +125,7 @@ namespace MvvmBlazor.Components
                 DisposeBindings();
                 _bindings = null!;
             }
-                
+
             return default;
         }
 
@@ -149,7 +142,7 @@ namespace MvvmBlazor.Components
         {
             Dispose(false);
         }
-        
+
         #endregion
     }
 }

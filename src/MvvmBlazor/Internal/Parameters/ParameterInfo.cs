@@ -8,7 +8,7 @@ namespace MvvmBlazor.Internal.Parameters
     internal class ParameterInfo
     {
         private readonly Dictionary<PropertyInfo, PropertyInfo> _parameters =
-            new Dictionary<PropertyInfo, PropertyInfo>();
+            new();
 
         public ParameterInfo(IEnumerable<PropertyInfo> componentProperties,
             IEnumerable<PropertyInfo> viewModelProperties)
