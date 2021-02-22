@@ -24,27 +24,8 @@ namespace MvvmBlazor.Tests.ViewModel
             {
                 return Set(ref field, value, propertyName);
             }
-
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                    _disposable?.Dispose();
-            }
         }
-
-        [Fact]
-        public void Dispose_Disposes()
-        {
-            var disposable = new Mock<IDisposable>();
-
-            var vm = new TestViewModel(disposable.Object);
-
-            vm.Dispose();
-
-            disposable.Verify(x => x.Dispose());
-            disposable.VerifyNoOtherCalls();
-        }
-
+        
         [Fact]
         public void Set_ReturnsFalse_OnReferenceEqual()
         {
