@@ -22,6 +22,12 @@ namespace BlazorSample.ViewModels
             set => Set(ref _dateTime, value);
         }
 
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            Dispose(true);
+        }
+
         private void TimerOnElapsed(object sender, ElapsedEventArgs e)
         {
             DateTime = DateTime.Now;
@@ -31,12 +37,6 @@ namespace BlazorSample.ViewModels
         {
             if (disposing)
                 _timer.Dispose();
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Dispose(true);
         }
 
         ~ClockViewModel()

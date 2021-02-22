@@ -1,5 +1,4 @@
 ﻿using System;
-using Moq;
 using MvvmBlazor.ViewModel;
 using Shouldly;
 using Xunit;
@@ -8,24 +7,6 @@ namespace MvvmBlazor.Tests.ViewModel
 {
     public class ViewModelBaseTests
     {
-        private class TestViewModel : ViewModelBase
-        {
-            private readonly IDisposable _disposable;
-
-            public TestViewModel() { }
-
-            public TestViewModel(IDisposable disposable)
-            {
-                _disposable = disposable;
-            }
-
-
-            public bool SetProperty<T>(ref T field, T value, string propertyName = null)
-            {
-                return Set(ref field, value, propertyName);
-            }
-        }
-        
         [Fact]
         public void Set_ReturnsFalse_OnReferenceEqual()
         {
@@ -98,6 +79,24 @@ namespace MvvmBlazor.Tests.ViewModel
 
             var double1 = 23.3;
             TestField(ref double1, 2.3);
+        }
+
+        private class TestViewModel : ViewModelBase
+        {
+            private readonly IDisposable _disposable;
+
+            public TestViewModel() { }
+
+            public TestViewModel(IDisposable disposable)
+            {
+                _disposable = disposable;
+            }
+
+
+            public bool SetProperty<T>(ref T field, T value, string propertyName = null)
+            {
+                return Set(ref field, value, propertyName);
+            }
         }
     }
 }

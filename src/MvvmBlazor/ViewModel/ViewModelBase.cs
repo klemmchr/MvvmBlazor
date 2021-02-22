@@ -13,7 +13,7 @@ namespace MvvmBlazor.ViewModel
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
         private readonly Dictionary<string, List<Func<object, Task>>> _subscriptions
-            = new Dictionary<string, List<Func<object, Task>>>();
+            = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -23,14 +23,8 @@ namespace MvvmBlazor.ViewModel
             {
                 field = value;
                 OnPropertyChanged(propertyName!);
-                if (!_subscriptions.ContainsKey(propertyName!))
-                {
-                    return true;
-                }
-                foreach (var action in _subscriptions[propertyName!])
-                {
-                    action(value!);
-                }
+                if (!_subscriptions.ContainsKey(propertyName!)) return true;
+                foreach (var action in _subscriptions[propertyName!]) action(value!);
                 return true;
             }
 
@@ -44,34 +38,25 @@ namespace MvvmBlazor.ViewModel
 
         protected void Subscribe<T>(Expression<Func<T>>? expression, Action<T> action)
         {
-           SubscribeAsync(expression, arg =>
-           {
-               action(arg);
-               return Task.CompletedTask;
-           });
+            SubscribeAsync(expression, arg =>
+            {
+                action(arg);
+                return Task.CompletedTask;
+            });
         }
 
         protected void SubscribeAsync<T>(Expression<Func<T>>? property, Func<T, Task> func)
         {
-            if (property is null)
-            {
-                throw new BindingException("Property cannot be null");
-            }
+            if (property is null) throw new BindingException("Property cannot be null");
             if (!(property.Body is MemberExpression m))
-            {
                 throw new BindingException("Subscription member must be a property");
-            }
 
             if (!(m.Member is PropertyInfo propertyInfo))
-            {
                 throw new BindingException("Subscription member must be a property");
-            }
-            
+
             var propertyName = propertyInfo.Name;
             if (!_subscriptions.ContainsKey(propertyName))
-            {
                 _subscriptions[propertyName] = new List<Func<object, Task>>();
-            }
 
             _subscriptions[propertyName].Add(async value => await func((T) value).ConfigureAwait(false));
         }

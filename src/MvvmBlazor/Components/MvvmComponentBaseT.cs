@@ -12,16 +12,20 @@ namespace MvvmBlazor.Components
     {
         private IViewModelParameterSetter? _viewModelParameterSetter;
         
-
         internal MvvmComponentBase(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             SetBindingContext();
         }
 
-        protected internal T? BindingContext { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once PublicConstructorInAbstractClass
+        public MvvmComponentBase() {}
+
+        protected internal T BindingContext { get; set; } = null!;
 
         private void SetBindingContext()
         {
+            // ReSharper disable once ConstantNullCoalescingCondition
             BindingContext ??= ServiceProvider.GetRequiredService<T>();
         }
 
