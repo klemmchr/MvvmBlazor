@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>Christian Klemm</Authors>
     <Description>A lightweight Blazor Mvvm Library</Description>
     <PackageProjectUrl>https://github.com/klemmchr/MvvmBlazor</PackageProjectUrl>
