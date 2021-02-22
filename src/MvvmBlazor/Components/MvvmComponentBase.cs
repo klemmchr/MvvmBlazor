@@ -13,23 +13,16 @@ namespace MvvmBlazor.Components
 {
     public abstract class MvvmComponentBase : ComponentBase, IDisposable, IAsyncDisposable
     {
-        private HashSet<IBinding> _bindings = new HashSet<IBinding>();
-        private IBindingFactory _bindingFactory;
-        private IWeakEventManager _weakEventManager;
-        private IWeakEventManagerFactory _weakEventManagerFactory;
+        private HashSet<IBinding> _bindings = new();
+        private IBindingFactory _bindingFactory = null!;
+        private IWeakEventManager _weakEventManager = null!;
+        private IWeakEventManagerFactory _weakEventManagerFactory = null!;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         protected internal MvvmComponentBase(IServiceProvider serviceProvider)
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
             ServiceProvider = serviceProvider;
             InitializeDependencies();
         }
-
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        protected MvvmComponentBase()
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        { }
 
         [Inject] protected IServiceProvider ServiceProvider { get; set; }
 
@@ -113,7 +106,6 @@ namespace MvvmBlazor.Components
 
                     _bindings = null!;
                 }
-                
             }
         }
 

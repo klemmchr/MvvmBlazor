@@ -10,21 +10,15 @@ namespace MvvmBlazor.Components
 {
     public abstract class MvvmComponentBase<T> : MvvmComponentBase where T : ViewModelBase
     {
-        private IViewModelParameterSetter _viewModelParameterSetter;
+        private IViewModelParameterSetter? _viewModelParameterSetter;
+        
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public MvvmComponentBase()
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        { }
-
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         internal MvvmComponentBase(IServiceProvider serviceProvider) : base(serviceProvider)
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
             SetBindingContext();
         }
 
-        protected internal T BindingContext { get; set; }
+        protected internal T? BindingContext { get; set; }
 
         private void SetBindingContext()
         {
@@ -33,19 +27,25 @@ namespace MvvmBlazor.Components
 
         private void SetParameters()
         {
+            if (BindingContext is null)
+                throw new InvalidOperationException($"{nameof(BindingContext)} is not set");
+
             _viewModelParameterSetter ??= ServiceProvider.GetRequiredService<IViewModelParameterSetter>();
             _viewModelParameterSetter.ResolveAndSet(this, BindingContext);
         }
 
         protected internal TValue Bind<TValue>(Expression<Func<T, TValue>> property)
         {
+            if (BindingContext is null)
+                throw new InvalidOperationException($"{nameof(BindingContext)} is not set");
+
             return AddBinding(BindingContext, property);
         }
 
         #region Lifecycle Methods
 
         /// <inheritdoc />
-        protected sealed override void OnInitialized()
+        protected override void OnInitialized()
         {
             base.OnInitialized();
             SetBindingContext();
@@ -54,44 +54,44 @@ namespace MvvmBlazor.Components
         }
 
         /// <inheritdoc />
-        protected sealed override Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
             return BindingContext?.OnInitializedAsync() ?? Task.CompletedTask;
         }
 
         /// <inheritdoc />
-        protected sealed override void OnParametersSet()
+        protected override void OnParametersSet()
         {
             SetParameters();
             BindingContext?.OnParametersSet();
         }
 
         /// <inheritdoc />
-        protected sealed override Task OnParametersSetAsync()
+        protected override Task OnParametersSetAsync()
         {
             return BindingContext?.OnParametersSetAsync() ?? Task.CompletedTask;
         }
 
         /// <inheritdoc />
-        protected sealed override bool ShouldRender()
+        protected override bool ShouldRender()
         {
             return BindingContext?.ShouldRender() ?? true;
         }
 
         /// <inheritdoc />
-        protected sealed override void OnAfterRender(bool firstRender)
+        protected override void OnAfterRender(bool firstRender)
         {
             BindingContext?.OnAfterRender(firstRender);
         }
 
         /// <inheritdoc />
-        protected sealed override Task OnAfterRenderAsync(bool firstRender)
+        protected override Task OnAfterRenderAsync(bool firstRender)
         {
             return BindingContext?.OnAfterRenderAsync(firstRender) ?? Task.CompletedTask;
         }
 
         /// <inheritdoc />
-        public sealed override async Task SetParametersAsync(ParameterView parameters)
+        public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters).ConfigureAwait(false);
 
