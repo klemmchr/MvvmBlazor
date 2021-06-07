@@ -1,6 +1,6 @@
 ﻿namespace MvvmBlazor.Internal.WeakEventListener
 {
-    internal interface IWeakEventManagerFactory
+    public interface IWeakEventManagerFactory
     {
         IWeakEventManager Create();
     }

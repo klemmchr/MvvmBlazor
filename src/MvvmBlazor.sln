@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorClientsideSample.Clie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorClientsideSample.Server", "..\samples\BlazorClientsideSample.Server\BlazorClientsideSample.Server.csproj", "{33D6D643-2C45-4B4B-9691-7D0D67D0E304}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmBlazor.CodeGenerators", "MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj", "{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,18 @@ Global
 		{33D6D643-2C45-4B4B-9691-7D0D67D0E304}.Release|x64.Build.0 = Release|Any CPU
 		{33D6D643-2C45-4B4B-9691-7D0D67D0E304}.Release|x86.ActiveCfg = Release|Any CPU
 		{33D6D643-2C45-4B4B-9691-7D0D67D0E304}.Release|x86.Build.0 = Release|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Debug|x64.Build.0 = Debug|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Debug|x86.Build.0 = Debug|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|x64.ActiveCfg = Release|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|x64.Build.0 = Release|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|x86.ActiveCfg = Release|Any CPU
+		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

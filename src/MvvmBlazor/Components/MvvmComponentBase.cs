@@ -45,7 +45,7 @@ namespace MvvmBlazor.Components
 
         public virtual TValue AddBinding<TViewModel, TValue>(TViewModel viewModel,
             Expression<Func<TViewModel, TValue>> propertyExpression) where TViewModel : ViewModelBase
-        {
+        { 
             var propertyInfo = ValidateAndResolveBindingContext(viewModel, propertyExpression);
 
             var binding = _bindingFactory.Create(viewModel, propertyInfo, _weakEventManagerFactory.Create());
