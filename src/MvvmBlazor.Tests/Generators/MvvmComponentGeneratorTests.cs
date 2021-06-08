@@ -20,9 +20,9 @@ namespace MvvmBlazor.Tests.Generators
         public void GeneratesError_WhenComponentIsNotPartial()
         {
             var inputCompilation = CreateCompilation(@$"
-[{nameof(MvvmBlazor)}.{nameof(Components)}.{nameof(MvvmComponentAttribute)}]
-public class TestComponent {{}}
-");
+                [{nameof(MvvmComponentAttribute)}]
+                public class TestComponent {{}}
+            ");
 
             var generator = new MvvmComponentGenerator();
             GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
@@ -37,7 +37,7 @@ public class TestComponent {{}}
         private static Compilation CreateCompilation(string source)
             => CSharpCompilation.Create("compilation",
                 new[] { CSharpSyntaxTree.ParseText(source) },
-                new[] { MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location) },
+                new[] { MetadataReference.CreateFromFile(typeof(System.Reflection.Binder).GetTypeInfo().Assembly.Location) },
                 new CSharpCompilationOptions(OutputKind.ConsoleApplication));
     }
 }

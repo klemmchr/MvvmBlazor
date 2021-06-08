@@ -11,12 +11,21 @@ using System.Threading.Tasks;
 
 namespace MvvmBlazor.Components
 {
-    public class Binder<TViewModel>
-        where TViewModel: ViewModelBase
+    public interface IBinder: IDisposable
+    {
+        Action<IBinding, EventArgs>? ValueChangedCallback { get; set; }
+
+        TValue Bind<TViewModel, TValue>(TViewModel viewModel, Expression<Func<TViewModel, TValue>> propertyExpression)
+            where TViewModel: ViewModelBase;
+    }
+
+    internal class Binder: IBinder
     {
         private readonly IBindingFactory _bindingFactory;
         private readonly IWeakEventManager _weakEventManager;
         private HashSet<IBinding> _bindings = new();
+
+        public Action<IBinding, EventArgs>? ValueChangedCallback { get; set; }
 
         public Binder(IBindingFactory bindingFactory, IWeakEventManager weakEventManager)
         {
@@ -24,16 +33,20 @@ namespace MvvmBlazor.Components
             _weakEventManager = weakEventManager;
         }
 
-        public TValue Bind<TValue>(TViewModel viewModel,
+        public TValue Bind<TViewModel, TValue>(TViewModel viewModel,
             Expression<Func<TViewModel, TValue>> propertyExpression)
+            where TViewModel: ViewModelBase
         { 
+            if (ValueChangedCallback is null)
+                throw new BindingException($"{nameof(ValueChangedCallback)} is null");
+
             var propertyInfo = ValidateAndResolveBindingContext(viewModel, propertyExpression);
 
             var binding = _bindingFactory.Create(viewModel, propertyInfo, _weakEventManager);
             if (_bindings.Contains(binding)) return (TValue) binding.GetValue();
 
-            //_weakEventManager.AddWeakEventListener<IBinding, EventArgs>(binding, nameof(Binding.BindingValueChanged),
-                //BindingOnBindingValueChanged);
+            _weakEventManager.AddWeakEventListener<IBinding, EventArgs>(binding, nameof(Binding.BindingValueChanged),
+                ValueChangedCallback);
             binding.Initialize();
 
             _bindings.Add(binding);
@@ -41,8 +54,9 @@ namespace MvvmBlazor.Components
             return (TValue) binding.GetValue();
         }
 
-        protected static PropertyInfo ValidateAndResolveBindingContext<TValue>(TViewModel viewModel,
+        protected static PropertyInfo ValidateAndResolveBindingContext<TViewModel, TValue>(TViewModel viewModel,
             Expression<Func<TViewModel, TValue>> property)
+            where TViewModel: ViewModelBase
         {
             if (viewModel is null)
                 throw new BindingException("ViewModelType is null");
@@ -60,6 +74,36 @@ namespace MvvmBlazor.Components
                 throw new BindingException($"Cannot find property {p.Name} in type {viewModel.GetType().FullName}");
 
             return p;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                if (_bindings is not null!)
+                {
+                    DisposeBindings();
+                    _bindings = null!;
+                }
+        }
+
+        private void DisposeBindings()
+        {
+            foreach (var binding in _bindings)
+            {
+                _weakEventManager.RemoveWeakEventListener(binding);
+                binding.Dispose();
+            }
+        }
+
+        ~Binder()
+        {
+            Dispose(false);
         }
     }
 }
