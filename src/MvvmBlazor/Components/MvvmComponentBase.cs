@@ -7,7 +7,7 @@ using MvvmBlazor.ViewModel;
 namespace MvvmBlazor.Components
 {
     [MvvmComponent]
-    public abstract class MvvmComponentBase : ComponentBase
+    public abstract partial class MvvmComponentBase : ComponentBase
     {
         
     }
