@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -30,33 +31,51 @@ namespace MvvmBlazor.CodeGenerators
         public void Execute(GeneratorExecutionContext context)
         {
             if (context.SyntaxContextReceiver is not MvvmSyntaxReceiver syntaxReceiver ||
-                syntaxReceiver.ComponentClass is null ||
-                syntaxReceiver.ComponentSymbol is null)
+                syntaxReceiver.ComponentClassContexts.Count == 0)
                 return;
 
-            var componentClass = syntaxReceiver.ComponentClass;
-            if (!componentClass.Modifiers.Any(SyntaxKind.PartialKeyword))
+            foreach (var componentClassContext in syntaxReceiver.ComponentClassContexts)
             {
-                context.ReportDiagnostic(Diagnostic.Create(ComponentNotPartialError, Location.Create(componentClass.SyntaxTree, TextSpan.FromBounds(componentClass.SpanStart,componentClass.SpanStart)), componentClass.Identifier));
-                return;
-            }
 
-            var componentBaseType = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase")!;
-            if(!IsComponent(syntaxReceiver.ComponentSymbol, componentBaseType!))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(ComponentWrongBaseClassError, Location.Create(componentClass.SyntaxTree, TextSpan.FromBounds(componentClass.SpanStart,componentClass.SpanStart)), componentClass.Identifier, componentBaseType.GetMetadataName()));
-                return;
-            }
+                var componentClass = componentClassContext.ComponentClass;
+                if (!componentClass.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(ComponentNotPartialError,
+                        Location.Create(componentClass.SyntaxTree,
+                            TextSpan.FromBounds(componentClass.SpanStart, componentClass.SpanStart)),
+                        componentClass.Identifier));
+                    continue;
+                }
 
-            if(componentClass.TypeParameterList is null || componentClass.TypeParameterList.Parameters.Count == 0)
-            {
-                var componentSourceText = SourceText.From(GenerateComponentCode(syntaxReceiver), Encoding.UTF8);
-                context.AddSource(componentClass.Identifier + ".Generated.cs", componentSourceText);
-                return;
+                var componentBaseType =
+                    context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase")!;
+                if (!IsComponent(componentClassContext.ComponentSymbol, componentBaseType!))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(ComponentWrongBaseClassError,
+                        Location.Create(componentClass.SyntaxTree,
+                            TextSpan.FromBounds(componentClass.SpanStart, componentClass.SpanStart)),
+                        componentClass.Identifier, componentBaseType.GetMetadataName()));
+                    continue;
+                }
+
+                if (componentClass.TypeParameterList is null || componentClass.TypeParameterList.Parameters.Count == 0)
+                {
+                    var componentSourceText = SourceText.From(GenerateComponentCode(componentClassContext), Encoding.UTF8);
+                    context.AddSource(componentClass.Identifier + ".Generated.cs", componentSourceText);
+                    continue;
+                }
+
+                var genericComponentSourceText =
+                    SourceText.From(GenerateGenericComponentCode(componentClassContext), Encoding.UTF8);
+
+                var genericPostFix = componentClass.TypeParameterList.Parameters.Count == 0
+                    ? "T"
+                    : string.Join(",",
+                        Enumerable.Range(0, componentClass.TypeParameterList.Parameters.Count)
+                            .Select(i => $"T{i}"));
+
+                context.AddSource(componentClass.Identifier + $"{{{genericPostFix}}}.Generated.cs", genericComponentSourceText);
             }
-            
-            var genericComponentSourceText = SourceText.From(GenerateGenericComponentCode(syntaxReceiver), Encoding.UTF8);
-            context.AddSource(componentClass.Identifier + ".Generated.cs", genericComponentSourceText);
         }
 
         public void Initialize(GeneratorInitializationContext context)
@@ -66,16 +85,16 @@ namespace MvvmBlazor.CodeGenerators
 
         private bool IsComponent(INamedTypeSymbol componentToCheck, INamedTypeSymbol componentBaseType)
         {
-            if(componentToCheck.BaseType is null)
+            if (componentToCheck.BaseType is null)
                 return false;
 
-            if(componentToCheck.BaseType.GetMetadataName() == componentBaseType.GetMetadataName())
+            if (componentToCheck.BaseType.GetMetadataName() == componentBaseType.GetMetadataName())
                 return true;
-            
+
             return IsComponent(componentToCheck.BaseType, componentBaseType);
         }
 
-        private string GenerateComponentCode(MvvmSyntaxReceiver syntaxReceiver)
+        private string GenerateComponentCode(MvvmComponentClassContext componentClassContext)
         {
             return $@"
                 using System;
@@ -85,20 +104,20 @@ namespace MvvmBlazor.CodeGenerators
                 using MvvmBlazor.Components;
                 using MvvmBlazor.ViewModel;
 
-                namespace {syntaxReceiver.ComponentSymbol!.ContainingNamespace}
+                namespace {componentClassContext.ComponentSymbol!.ContainingNamespace}
                 {{
-                    public partial class {syntaxReceiver.ComponentClass!.Identifier}:
-                        {syntaxReceiver.ComponentSymbol!.BaseType!.GetMetadataName()}
+                    public partial class {componentClassContext.ComponentClass!.Identifier}:
+                        {componentClassContext.ComponentSymbol!.BaseType!.GetMetadataName()}
                     {{
                         public IBinder Binder {{ get; private set; }} = null!;
 
-                        protected internal {syntaxReceiver.ComponentClass!.Identifier}(IServiceProvider serviceProvider)
+                        protected internal {componentClassContext.ComponentClass!.Identifier}(IServiceProvider serviceProvider)
                         {{
                             ServiceProvider = serviceProvider;
                             InitializeDependencies();
                         }}
 
-                        protected {syntaxReceiver.ComponentClass!.Identifier}() {{}}
+                        protected {componentClassContext.ComponentClass!.Identifier}() {{}}
 
                         [Inject] protected IServiceProvider ServiceProvider {{ get; set; }} = null!;
 
@@ -136,7 +155,7 @@ namespace MvvmBlazor.CodeGenerators
             ";
         }
 
-        private string GenerateGenericComponentCode(MvvmSyntaxReceiver syntaxReceiver)
+        private string GenerateGenericComponentCode(MvvmComponentClassContext componentClassContext)
         {
             return $@"
                 using System;
@@ -147,20 +166,20 @@ namespace MvvmBlazor.CodeGenerators
                 using MvvmBlazor.Internal.Parameters;
                 using MvvmBlazor.ViewModel;
 
-                namespace {syntaxReceiver.ComponentSymbol!.ContainingNamespace}
+                namespace {componentClassContext.ComponentSymbol!.ContainingNamespace}
                 {{
-                    public abstract class {syntaxReceiver.ComponentClass!.Identifier}<T> :
-                        {syntaxReceiver.ComponentSymbol!.BaseType!.GetMetadataName()}
+                    public abstract partial class {componentClassContext.ComponentClass!.Identifier}<T> :
+                        {componentClassContext.ComponentSymbol!.BaseType!.GetMetadataName()}
                         where T : ViewModelBase
                     {{
                         private IViewModelParameterSetter? _viewModelParameterSetter;
     
-                        protected internal {syntaxReceiver.ComponentClass!.Identifier}(IServiceProvider serviceProvider) : base(serviceProvider)
+                        protected internal {componentClassContext.ComponentClass!.Identifier}(IServiceProvider serviceProvider) : base(serviceProvider)
                         {{
                             SetBindingContext();
                         }}
 
-                        protected {syntaxReceiver.ComponentClass!.Identifier}() {{}}
+                        protected {componentClassContext.ComponentClass!.Identifier}() {{}}
 
                         protected T? BindingContext {{ get; set; }}
 

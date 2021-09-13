@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Linq;
 
@@ -6,8 +7,7 @@ namespace MvvmBlazor.CodeGenerators
 {
     class MvvmSyntaxReceiver : ISyntaxContextReceiver
     {
-        public ClassDeclarationSyntax? ComponentClass { get; private set; }
-        public INamedTypeSymbol? ComponentSymbol { get; private set; }
+        public List<MvvmComponentClassContext> ComponentClassContexts { get; } = new();
 
         public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
         {
@@ -18,10 +18,9 @@ namespace MvvmBlazor.CodeGenerators
             if (symbol is not null && symbol.GetAttributes().Any(ad => ad.AttributeClass != null &&
                     ad.AttributeClass.ToDisplayString() == "MvvmBlazor.Components.MvvmComponentAttribute"))
             {
-                ComponentSymbol = symbol;
-                ComponentClass = cds;
+                ComponentClassContexts.Add(new MvvmComponentClassContext(cds, symbol));
             }
-                
+
         }
     }
 }
