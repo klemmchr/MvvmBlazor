@@ -11,7 +11,8 @@ namespace MvvmBlazor.Components
     public abstract class MvvmComponentBase<T> : MvvmComponentBase where T : ViewModelBase
     {
         private IViewModelParameterSetter? _viewModelParameterSetter;
-        
+        private bool isDisposed;
+
         internal MvvmComponentBase(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             SetBindingContext();
@@ -19,7 +20,7 @@ namespace MvvmBlazor.Components
 
         // ReSharper disable once UnusedMember.Global
         // ReSharper disable once PublicConstructorInAbstractClass
-        public MvvmComponentBase() {}
+        public MvvmComponentBase() { }
 
         protected internal T BindingContext { get; set; } = null!;
 
@@ -75,6 +76,40 @@ namespace MvvmBlazor.Components
         {
             return BindingContext?.OnParametersSetAsync() ?? Task.CompletedTask;
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed)
+                return;
+            if (disposing)
+            {
+                if (this.BindingContext is IDisposable)
+                {
+                    (this.BindingContext as IDisposable).Dispose();
+                }
+                isDisposed = true;
+            }
+            base.Dispose(disposing);
+        }
+
+        protected override ValueTask DisposeAsyncCore()
+        {
+            if (isDisposed)
+                return default;
+            if (BindingContext is IDisposable bindingContext)
+            {
+                bindingContext.Dispose();
+            }
+            else if (BindingContext is IAsyncDisposable bindingContextAsyc)
+            {
+                bindingContextAsyc.DisposeAsync();
+
+            }
+            isDisposed = true;
+
+            return base.DisposeAsyncCore();
+        }
+
 
         /// <inheritdoc />
         protected override bool ShouldRender()
