@@ -48,7 +48,7 @@ Current time: @Bind(ClockViewModel, x => x.DateTime)
 
 Bindings also handle background updating automatically. No need to invoke the main thread.
 
-#### Collection Bininds
+#### Collection Bindings
 If you want to have a collection that automatically notifies the component when it has changed you should use one that implements `INotifyCollectionChanged`, e.g. `ObservableCollection<T>`.
 
 In List scenarios you often chain view models to achieve bindings for every list element on it's corresponding view model. Given this view models
