@@ -1,11 +1,8 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using MvvmBlazor.CodeGenerators.Extensions;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -14,19 +11,23 @@ namespace MvvmBlazor.CodeGenerators
     [Generator]
     public class MvvmComponentGenerator : ISourceGenerator
     {
-        private static readonly DiagnosticDescriptor ComponentNotPartialError = new DiagnosticDescriptor(id: "MVVMBLAZOR001",
-                                                                                              title: "Component needs to be partial",
-                                                                                              messageFormat: "Mvvm Component class '{0}' needs to be partial",
-                                                                                              category: "MvvmBlazorGenerator",
-                                                                                              DiagnosticSeverity.Error,
-                                                                                              isEnabledByDefault: true);
+        private static readonly DiagnosticDescriptor ComponentNotPartialError = new DiagnosticDescriptor(
+            id: "MVVMBLAZOR001",
+            title: "Component needs to be partial",
+            messageFormat: "Mvvm Component class '{0}' needs to be partial",
+            category: "MvvmBlazorGenerator",
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true
+        );
 
-        private static readonly DiagnosticDescriptor ComponentWrongBaseClassError = new DiagnosticDescriptor(id: "MVVMBLAZOR002",
-                                                                                              title: "Missing component base class",
-                                                                                              messageFormat: "Mvvm Component class '{0}' needs to be assignable to '{1}'",
-                                                                                              category: "MvvmBlazorGenerator",
-                                                                                              DiagnosticSeverity.Error,
-                                                                                              isEnabledByDefault: true);
+        private static readonly DiagnosticDescriptor ComponentWrongBaseClassError = new DiagnosticDescriptor(
+            id: "MVVMBLAZOR002",
+            title: "Missing component base class",
+            messageFormat: "Mvvm Component class '{0}' needs to be assignable to '{1}'",
+            category: "MvvmBlazorGenerator",
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true
+        );
 
         public void Execute(GeneratorExecutionContext context)
         {
@@ -36,45 +37,7 @@ namespace MvvmBlazor.CodeGenerators
 
             foreach (var componentClassContext in syntaxReceiver.ComponentClassContexts)
             {
-
-                var componentClass = componentClassContext.ComponentClass;
-                if (!componentClass.Modifiers.Any(SyntaxKind.PartialKeyword))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(ComponentNotPartialError,
-                        Location.Create(componentClass.SyntaxTree,
-                            TextSpan.FromBounds(componentClass.SpanStart, componentClass.SpanStart)),
-                        componentClass.Identifier));
-                    continue;
-                }
-
-                var componentBaseType =
-                    context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase")!;
-                if (!IsComponent(componentClassContext.ComponentSymbol, componentBaseType!))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(ComponentWrongBaseClassError,
-                        Location.Create(componentClass.SyntaxTree,
-                            TextSpan.FromBounds(componentClass.SpanStart, componentClass.SpanStart)),
-                        componentClass.Identifier, componentBaseType.GetMetadataName()));
-                    continue;
-                }
-
-                if (componentClass.TypeParameterList is null || componentClass.TypeParameterList.Parameters.Count == 0)
-                {
-                    var componentSourceText = SourceText.From(GenerateComponentCode(componentClassContext), Encoding.UTF8);
-                    context.AddSource(componentClass.Identifier + ".Generated.cs", componentSourceText);
-                    continue;
-                }
-
-                var genericComponentSourceText =
-                    SourceText.From(GenerateGenericComponentCode(componentClassContext), Encoding.UTF8);
-
-                var genericPostFix = componentClass.TypeParameterList.Parameters.Count == 0
-                    ? "T"
-                    : string.Join(",",
-                        Enumerable.Range(0, componentClass.TypeParameterList.Parameters.Count)
-                            .Select(i => $"T{i}"));
-
-                context.AddSource(componentClass.Identifier + $"{{{genericPostFix}}}.Generated.cs", genericComponentSourceText);
+                ProcessComponent(context, componentClassContext);
             }
         }
 
@@ -83,19 +46,102 @@ namespace MvvmBlazor.CodeGenerators
             context.RegisterForSyntaxNotifications(() => new MvvmSyntaxReceiver());
         }
 
-        private bool IsComponent(INamedTypeSymbol componentToCheck, INamedTypeSymbol componentBaseType)
+        private void ProcessComponent(
+            GeneratorExecutionContext context,
+            MvvmComponentClassContext componentClassContext)
         {
-            if (componentToCheck.BaseType is null)
-                return false;
+            var componentClass = componentClassContext.ComponentClass;
+            var isPartial = componentClass.Modifiers.Any(SyntaxKind.PartialKeyword);
+            if (!isPartial)
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        ComponentNotPartialError,
+                        Location.Create(
+                            componentClass.SyntaxTree,
+                            TextSpan.FromBounds(componentClass.SpanStart, componentClass.SpanStart)
+                        ),
+                        componentClass.Identifier
+                    )
+                );
+                return;
+            }
 
-            if (componentToCheck.BaseType.GetMetadataName() == componentBaseType.GetMetadataName())
-                return true;
+            var componentBaseType =
+                context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase")!;
+            if (!IsComponent(componentClassContext.ComponentSymbol, componentBaseType))
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        ComponentWrongBaseClassError,
+                        Location.Create(
+                            componentClass.SyntaxTree,
+                            TextSpan.FromBounds(componentClass.SpanStart, componentClass.SpanStart)
+                        ),
+                        componentClass.Identifier,
+                        componentBaseType.GetMetadataName()
+                    )
+                );
+                return;
+            }
+
+            if (componentClass.TypeParameterList is null || componentClass.TypeParameterList.Parameters.Count == 0)
+            {
+                AddComponent(context, componentClassContext, componentClass);
+                return;
+            }
+
+            AddGenericComponent(context, componentClassContext, componentClass);
+        }
+
+        private static void AddComponent(
+            GeneratorExecutionContext context,
+            MvvmComponentClassContext componentClassContext,
+            BaseTypeDeclarationSyntax componentClass)
+        {
+            var componentSourceText = SourceText.From(GenerateComponentCode(componentClassContext), Encoding.UTF8);
+            context.AddSource(componentClass.Identifier + ".Generated.cs", componentSourceText);
+        }
+
+        private static void AddGenericComponent(
+            GeneratorExecutionContext context,
+            MvvmComponentClassContext componentClassContext,
+            TypeDeclarationSyntax componentClass)
+        {
+            var genericComponentSourceText = SourceText.From(
+                GenerateGenericComponentCode(componentClassContext),
+                Encoding.UTF8
+            );
+
+            var genericPostFix =
+                componentClass.TypeParameterList is null || componentClass.TypeParameterList.Parameters.Count == 0
+                    ? "T"
+                    : string.Join(
+                        ",",
+                        Enumerable.Range(0, componentClass.TypeParameterList.Parameters.Count).Select(i => $"T{i}")
+                    );
+
+            context.AddSource(
+                componentClass.Identifier + $"{{{genericPostFix}}}.Generated.cs",
+                genericComponentSourceText
+            );
+        }
+
+        private static bool IsComponent(ITypeSymbol componentToCheck, ISymbol componentBaseType)
+        {
+            if (componentToCheck.BaseType is null) return false;
+
+            if (componentToCheck.BaseType.GetMetadataName() == componentBaseType.GetMetadataName()) return true;
 
             return IsComponent(componentToCheck.BaseType, componentBaseType);
         }
 
-        private string GenerateComponentCode(MvvmComponentClassContext componentClassContext)
+        private static string GenerateComponentCode(MvvmComponentClassContext componentClassContext)
         {
+            var componentNamespace = componentClassContext.ComponentSymbol.ContainingNamespace;
+            var componentClassName = componentClassContext.ComponentClass.Identifier;
+            var baseType = componentClassContext.ComponentSymbol.BaseType!.GetMetadataName();
+
             return $@"
                 using System;
                 using System.Linq.Expressions;
@@ -104,20 +150,20 @@ namespace MvvmBlazor.CodeGenerators
                 using MvvmBlazor.Components;
                 using MvvmBlazor.ViewModel;
 
-                namespace {componentClassContext.ComponentSymbol!.ContainingNamespace}
+                namespace {componentNamespace}
                 {{
-                    public partial class {componentClassContext.ComponentClass!.Identifier}:
-                        {componentClassContext.ComponentSymbol!.BaseType!.GetMetadataName()}
+                    public partial class {componentClassName}:
+                        {baseType}
                     {{
                         public IBinder Binder {{ get; private set; }} = null!;
 
-                        protected internal {componentClassContext.ComponentClass!.Identifier}(IServiceProvider serviceProvider)
+                        protected internal {componentClassName}(IServiceProvider serviceProvider)
                         {{
                             ServiceProvider = serviceProvider;
                             InitializeDependencies();
                         }}
 
-                        protected {componentClassContext.ComponentClass!.Identifier}() {{}}
+                        protected {componentClassName}() {{}}
 
                         [Inject] protected IServiceProvider ServiceProvider {{ get; set; }} = null!;
 
@@ -136,7 +182,7 @@ namespace MvvmBlazor.CodeGenerators
 
                         public virtual TValue AddBinding<TViewModel, TValue>(TViewModel viewModel,
                             Expression<Func<TViewModel, TValue>> propertyExpression) where TViewModel : ViewModelBase
-                        {{ 
+                        {{
                             return Binder.Bind(viewModel, propertyExpression);
                         }}
 
@@ -155,7 +201,7 @@ namespace MvvmBlazor.CodeGenerators
             ";
         }
 
-        private string GenerateGenericComponentCode(MvvmComponentClassContext componentClassContext)
+        private static string GenerateGenericComponentCode(MvvmComponentClassContext componentClassContext)
         {
             return $@"
                 using System;
@@ -173,7 +219,7 @@ namespace MvvmBlazor.CodeGenerators
                         where T : ViewModelBase
                     {{
                         private IViewModelParameterSetter? _viewModelParameterSetter;
-    
+
                         protected internal {componentClassContext.ComponentClass!.Identifier}(IServiceProvider serviceProvider) : base(serviceProvider)
                         {{
                             SetBindingContext();

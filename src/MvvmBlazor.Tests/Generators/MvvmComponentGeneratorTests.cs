@@ -30,14 +30,32 @@ namespace MvvmBlazor.Tests.Generators
             driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out var outputCompilation, out var diagnostics);
             diagnostics.ShouldNotBeEmpty();
             diagnostics.First().Id.ShouldBe("MVVMBLAZOR001");
+        }
 
-            outputCompilation.SyntaxTrees.Any().ShouldBeFalse();
+        [Fact]
+        public void GeneratesError_WhenComponentIsNotInheritingFromComponentBase()
+        {
+            var inputCompilation = CreateCompilation(@$"
+                [{nameof(MvvmComponentAttribute)}]
+                public partial class TestComponent {{}}
+            ");
+
+            var generator = new MvvmComponentGenerator();
+            GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+
+            driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out var outputCompilation, out var diagnostics);
+            diagnostics.ShouldNotBeEmpty();
+            diagnostics.First().Id.ShouldBe("MVVMBLAZOR002");
         }
 
         private static Compilation CreateCompilation(string source)
             => CSharpCompilation.Create("compilation",
                 new[] { CSharpSyntaxTree.ParseText(source) },
-                new[] { MetadataReference.CreateFromFile(typeof(System.Reflection.Binder).GetTypeInfo().Assembly.Location) },
+                new[]
+                {
+                    MetadataReference.CreateFromFile(typeof(System.Reflection.Binder).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(Microsoft.AspNetCore.Components.ComponentBase).GetTypeInfo().Assembly.Location),
+                },
                 new CSharpCompilationOptions(OutputKind.ConsoleApplication));
     }
 }

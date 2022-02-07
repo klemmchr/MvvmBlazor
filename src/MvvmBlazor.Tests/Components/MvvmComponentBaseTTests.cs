@@ -22,12 +22,9 @@ namespace MvvmBlazor.Tests.Components
         {
             var viewModel = new Mock<ViewModelBase>();
             var serviceProvider = new Mock<IServiceProvider>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
             var bindingFactory = new Mock<IBindingFactory>();
             var viewModelParameterSetter = new Mock<IViewModelParameterSetter>();
             serviceProvider.Setup(x => x.GetService(typeof(ViewModelBase))).Returns(viewModel.Object);
-            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
-            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IViewModelParameterSetter)))
                 .Returns(viewModelParameterSetter.Object);
@@ -70,13 +67,10 @@ namespace MvvmBlazor.Tests.Components
         {
             var viewModel = new TestViewModel();
             var serviceProvider = new Mock<IServiceProvider>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
             var wem = new Mock<IWeakEventManager>();
             var bindingFactory = new Mock<IBindingFactory>();
             var binding = new Mock<IBinding>();
-            wemf.Setup(x => x.Create()).Returns(wem.Object);
             serviceProvider.Setup(x => x.GetService(typeof(TestViewModel))).Returns(viewModel);
-            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object);
@@ -93,13 +87,10 @@ namespace MvvmBlazor.Tests.Components
         {
             var viewModel = new TestViewModel();
             var serviceProvider = new Mock<IServiceProvider>();
-            var wemf = new Mock<IWeakEventManagerFactory>();
             var wem = new Mock<IWeakEventManager>();
             var bindingFactory = new Mock<IBindingFactory>();
             var binding = new Mock<IBinding>();
-            wemf.Setup(x => x.Create()).Returns(wem.Object);
             serviceProvider.Setup(x => x.GetService(typeof(TestViewModel))).Returns(viewModel);
-            serviceProvider.Setup(x => x.GetService(typeof(IWeakEventManagerFactory))).Returns(wemf.Object);
             serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
             bindingFactory.Setup(x => x.Create(It.IsAny<INotifyPropertyChanged>(), It.IsAny<PropertyInfo>(),
                 It.IsAny<IWeakEventManager>())).Returns(binding.Object);

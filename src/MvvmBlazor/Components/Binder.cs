@@ -36,7 +36,7 @@ namespace MvvmBlazor.Components
         public TValue Bind<TViewModel, TValue>(TViewModel viewModel,
             Expression<Func<TViewModel, TValue>> propertyExpression)
             where TViewModel: ViewModelBase
-        { 
+        {
             if (ValueChangedCallback is null)
                 throw new BindingException($"{nameof(ValueChangedCallback)} is null");
 
@@ -85,7 +85,7 @@ namespace MvvmBlazor.Components
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-                if (_bindings is not null!)
+                if (_bindings is not null)
                 {
                     DisposeBindings();
                     _bindings = null!;
