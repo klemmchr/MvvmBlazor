@@ -2,46 +2,47 @@
 using System.Timers;
 using MvvmBlazor.ViewModel;
 
-namespace BlazorSample.ViewModels
+namespace BlazorSample.ViewModels;
+
+public class ClockViewModel : ViewModelBase, IDisposable
 {
-    public class ClockViewModel : ViewModelBase, IDisposable
+    private readonly Timer _timer;
+    private DateTime _dateTime = DateTime.Now;
+
+    public DateTime DateTime
     {
-        private readonly Timer _timer;
-        private DateTime _dateTime = DateTime.Now;
+        get => _dateTime;
+        set => Set(ref _dateTime, value);
+    }
 
-        public ClockViewModel()
-        {
-            _timer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
-            _timer.Elapsed += TimerOnElapsed;
-            _timer.Start();
-        }
+    public ClockViewModel()
+    {
+        _timer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
+        _timer.Elapsed += TimerOnElapsed;
+        _timer.Start();
+    }
 
-        public DateTime DateTime
-        {
-            get => _dateTime;
-            set => Set(ref _dateTime, value);
-        }
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        Dispose(true);
+    }
 
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Dispose(true);
-        }
+    private void TimerOnElapsed(object? sender, ElapsedEventArgs e)
+    {
+        DateTime = DateTime.Now;
+    }
 
-        private void TimerOnElapsed(object? sender, ElapsedEventArgs e)
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
         {
-            DateTime = DateTime.Now;
+            _timer.Dispose();
         }
+    }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-                _timer.Dispose();
-        }
-
-        ~ClockViewModel()
-        {
-            Dispose(false);
-        }
+    ~ClockViewModel()
+    {
+        Dispose(false);
     }
 }

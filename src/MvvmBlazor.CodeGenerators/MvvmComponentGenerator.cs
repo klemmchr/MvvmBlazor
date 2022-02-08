@@ -1,44 +1,44 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Linq;
+using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using MvvmBlazor.CodeGenerators.Extensions;
-using System.Linq;
-using System.Text;
 
 namespace MvvmBlazor.CodeGenerators
 {
     [Generator]
     public class MvvmComponentGenerator : ISourceGenerator
     {
-        private static readonly DiagnosticDescriptor ComponentNotPartialError = new DiagnosticDescriptor(
-            id: "MVVMBLAZOR001",
-            title: "Component needs to be partial",
-            messageFormat: "Mvvm Component class '{0}' needs to be partial",
-            category: "MvvmBlazorGenerator",
+        private static readonly DiagnosticDescriptor ComponentNotPartialError = new(
+            "MVVMBLAZOR001",
+            "Component needs to be partial",
+            "Mvvm Component class '{0}' needs to be partial",
+            "MvvmBlazorGenerator",
             DiagnosticSeverity.Error,
-            isEnabledByDefault: true
+            true
         );
 
-        private static readonly DiagnosticDescriptor ComponentWrongBaseClassError = new DiagnosticDescriptor(
-            id: "MVVMBLAZOR002",
-            title: "Missing component base class",
-            messageFormat: "Mvvm Component class '{0}' needs to be assignable to '{1}'",
-            category: "MvvmBlazorGenerator",
+        private static readonly DiagnosticDescriptor ComponentWrongBaseClassError = new(
+            "MVVMBLAZOR002",
+            "Missing component base class",
+            "Mvvm Component class '{0}' needs to be assignable to '{1}'",
+            "MvvmBlazorGenerator",
             DiagnosticSeverity.Error,
-            isEnabledByDefault: true
+            true
         );
 
         public void Execute(GeneratorExecutionContext context)
         {
             if (context.SyntaxContextReceiver is not MvvmSyntaxReceiver syntaxReceiver ||
                 syntaxReceiver.ComponentClassContexts.Count == 0)
+            {
                 return;
+            }
 
             foreach (var componentClassContext in syntaxReceiver.ComponentClassContexts)
-            {
                 ProcessComponent(context, componentClassContext);
-            }
         }
 
         public void Initialize(GeneratorInitializationContext context)
@@ -129,9 +129,15 @@ namespace MvvmBlazor.CodeGenerators
 
         private static bool IsComponent(ITypeSymbol componentToCheck, ISymbol componentBaseType)
         {
-            if (componentToCheck.BaseType is null) return false;
+            if (componentToCheck.BaseType is null)
+            {
+                return false;
+            }
 
-            if (componentToCheck.BaseType.GetMetadataName() == componentBaseType.GetMetadataName()) return true;
+            if (componentToCheck.BaseType.GetMetadataName() == componentBaseType.GetMetadataName())
+            {
+                return true;
+            }
 
             return IsComponent(componentToCheck.BaseType, componentBaseType);
         }

@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj" />
-    <ProjectReference Include="..\BlazorSample.Components\BlazorSample.Components.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj"/>
+        <ProjectReference Include="..\BlazorSample.Components\BlazorSample.Components.csproj"/>
+    </ItemGroup>
 
 </Project>

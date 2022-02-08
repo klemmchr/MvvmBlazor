@@ -1,33 +1,33 @@
 on:
-  release:
-    types: [published]
+    release:
+        types: [ published ]
 
 name: Release
 
 jobs:
 
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    steps:
+    release:
+        name: Release
+        runs-on: ubuntu-latest
+        steps:
 
-    - uses: actions/checkout@master
+            -   uses: actions/checkout@master
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@master
-      with:
-        dotnet-version: '5.0.x'
+            -   name: Setup .NET Core
+                uses: actions/setup-dotnet@master
+                with:
+                    dotnet-version: '5.0.x'
 
-    - name: Build
-      run: dotnet build --configuration Release src
+            -   name: Build
+                run: dotnet build --configuration Release src
 
-    - name: Test
-      run: dotnet test --configuration Release src
+            -   name: Test
+                run: dotnet test --configuration Release src
 
-    - name: Publish
-      run: >
-        export VERSION=$(git describe --long --tags --match 'v*' | sed 's/v//' | sed -E 's/[-].+//g');
-        echo $VERSION;
-        dotnet pack --configuration Release --include-source -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true -p:Version=$VERSION -o out src/MvvmBlazor;
-        cd out;
-        dotnet nuget push MvvmBlazor.$VERSION.nupkg --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json;
+            -   name: Publish
+                run: >
+                    export VERSION=$(git describe --long --tags --match 'v*' | sed 's/v//' | sed -E 's/[-].+//g');
+                    echo $VERSION;
+                    dotnet pack --configuration Release --include-source -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true -p:Version=$VERSION -o out src/MvvmBlazor;
+                    cd out;
+                    dotnet nuget push MvvmBlazor.$VERSION.nupkg --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json;

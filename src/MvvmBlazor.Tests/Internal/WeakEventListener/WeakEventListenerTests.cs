@@ -1,25 +1,24 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using Moq;
-using MvvmBlazor.Internal.WeakEventListener;
+
 using Shouldly;
 using Xunit;
 
-namespace MvvmBlazor.Tests.Internal.WeakEventListener
+namespace MvvmBlazor.Tests.Internal.WeakEventListener;
+
+public class WeakEventManagerTests
 {
-    public class WeakEventManagerTests
+    [Fact]
+    public void WeakEventManager_AddWeakEventListener_Collection_FiresEvent()
     {
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_Collection_FiresEvent()
-        {
-            var collectionAddObject = new object();
-            var source = new Mock<INotifyCollectionChanged>();
+        var collectionAddObject = new object();
+        var source = new Mock<INotifyCollectionChanged>();
 
-            var invocations = 0;
+        var invocations = 0;
 
-            var wem = new WeakEventManager();
-            wem.AddWeakEventListener(source.Object, (s, a) =>
+        var wem = new WeakEventManager();
+        wem.AddWeakEventListener(
+            source.Object,
+            (s, a) =>
             {
                 s.ShouldBe(source.Object);
                 a.Action.ShouldBe(NotifyCollectionChangedAction.Add);
@@ -27,125 +26,142 @@ namespace MvvmBlazor.Tests.Internal.WeakEventListener
                 a.NewItems[0].ShouldBe(collectionAddObject);
 
                 invocations++;
-            });
+            }
+        );
 
-            source.Raise(x => x.CollectionChanged += null,
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, collectionAddObject));
+        source.Raise(
+            x => x.CollectionChanged += null,
+            new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, collectionAddObject)
+        );
 
-            invocations.ShouldBe(1);
-        }
+        invocations.ShouldBe(1);
+    }
 
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_Custom_FiresEvent()
-        {
-            var source = new Mock<INotifyPropertyChanged>();
+    [Fact]
+    public void WeakEventManager_AddWeakEventListener_Custom_FiresEvent()
+    {
+        var source = new Mock<INotifyPropertyChanged>();
 
-            var invocations = 0;
+        var invocations = 0;
 
-            var wem = new WeakEventManager();
-            wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(source.Object,
-                nameof(INotifyPropertyChanged.PropertyChanged), (s, a) =>
-                {
-                    s.ShouldBe(source.Object);
+        var wem = new WeakEventManager();
+        wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(
+            source.Object,
+            nameof(INotifyPropertyChanged.PropertyChanged),
+            (s, a) =>
+            {
+                s.ShouldBe(source.Object);
 
-                    invocations++;
-                });
+                invocations++;
+            }
+        );
 
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
+        source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
 
-            invocations.ShouldBe(1);
-        }
+        invocations.ShouldBe(1);
+    }
 
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_FiresEventAfterGC()
-        {
-            var source = new Mock<INotifyPropertyChanged>();
+    [Fact]
+    public void WeakEventManager_AddWeakEventListener_FiresEventAfterGC()
+    {
+        var source = new Mock<INotifyPropertyChanged>();
 
-            var invocations = 0;
+        var invocations = 0;
 
-            var wem = new WeakEventManager();
-            wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(source.Object,
-                nameof(INotifyPropertyChanged.PropertyChanged), (s, a) =>
-                {
-                    s.ShouldBe(source.Object);
+        var wem = new WeakEventManager();
+        wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(
+            source.Object,
+            nameof(INotifyPropertyChanged.PropertyChanged),
+            (s, a) =>
+            {
+                s.ShouldBe(source.Object);
 
-                    invocations++;
-                });
+                invocations++;
+            }
+        );
 
-            GC.Collect();
+        GC.Collect();
 
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
+        source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
 
-            invocations.ShouldBe(1);
-        }
+        invocations.ShouldBe(1);
+    }
 
-        [Fact]
-        public void WeakEventManager_AddWeakEventListener_Property_FiresEvent()
-        {
-            const string propertyName = "TestProperty";
+    [Fact]
+    public void WeakEventManager_AddWeakEventListener_Property_FiresEvent()
+    {
+        const string propertyName = "TestProperty";
 
-            var source = new Mock<INotifyPropertyChanged>();
+        var source = new Mock<INotifyPropertyChanged>();
 
-            var invocations = 0;
+        var invocations = 0;
 
-            var wem = new WeakEventManager();
-            wem.AddWeakEventListener(source.Object, (s, a) =>
+        var wem = new WeakEventManager();
+        wem.AddWeakEventListener(
+            source.Object,
+            (s, a) =>
             {
                 s.ShouldBe(source.Object);
                 a.PropertyName.ShouldBe(propertyName);
 
                 invocations++;
-            });
+            }
+        );
 
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
+        source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
 
-            invocations.ShouldBe(1);
-        }
+        invocations.ShouldBe(1);
+    }
 
-        [Fact]
-        public void WeakEventManager_ClearWeakEventListeners_EventNoLongerFires()
-        {
-            var source = new Mock<INotifyPropertyChanged>();
+    [Fact]
+    public void WeakEventManager_ClearWeakEventListeners_EventNoLongerFires()
+    {
+        var source = new Mock<INotifyPropertyChanged>();
 
-            var invocations = 0;
+        var invocations = 0;
 
-            var wem = new WeakEventManager();
-            wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(source.Object,
-                nameof(INotifyPropertyChanged.PropertyChanged), (s, a) =>
-                {
-                    s.ShouldBe(source.Object);
+        var wem = new WeakEventManager();
+        wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(
+            source.Object,
+            nameof(INotifyPropertyChanged.PropertyChanged),
+            (s, a) =>
+            {
+                s.ShouldBe(source.Object);
 
-                    invocations++;
-                });
+                invocations++;
+            }
+        );
 
-            wem.ClearWeakEventListeners();
+        wem.ClearWeakEventListeners();
 
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
+        source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
 
-            invocations.ShouldBe(0);
-        }
+        invocations.ShouldBe(0);
+    }
 
-        [Fact]
-        public void WeakEventManager_RemoveWeakEventListener_EventNoLongerFires()
-        {
-            var source = new Mock<INotifyPropertyChanged>();
+    [Fact]
+    public void WeakEventManager_RemoveWeakEventListener_EventNoLongerFires()
+    {
+        var source = new Mock<INotifyPropertyChanged>();
 
-            var invocations = 0;
+        var invocations = 0;
 
-            var wem = new WeakEventManager();
-            wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(source.Object,
-                nameof(INotifyPropertyChanged.PropertyChanged), (s, a) =>
-                {
-                    s.ShouldBe(source.Object);
+        var wem = new WeakEventManager();
+        wem.AddWeakEventListener<INotifyPropertyChanged, PropertyChangedEventArgs>(
+            source.Object,
+            nameof(INotifyPropertyChanged.PropertyChanged),
+            (s, a) =>
+            {
+                s.ShouldBe(source.Object);
 
-                    invocations++;
-                });
+                invocations++;
+            }
+        );
 
-            wem.RemoveWeakEventListener(source.Object);
+        wem.RemoveWeakEventListener(source.Object);
 
-            source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
+        source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs("Foo"));
 
-            invocations.ShouldBe(0);
-        }
+        invocations.ShouldBe(0);
     }
 }

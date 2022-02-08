@@ -1,14 +1,10 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
+﻿// ReSharper disable once CheckNamespace
+namespace Microsoft.Extensions.DependencyInjection;
 
-namespace MvvmBlazor.Tests.Extensions
+internal static class ServiceProviderExtensions
 {
-    internal static class ServiceProviderExtensions
+    public static Mock<T> GetMock<T>(this IServiceProvider provider) where T : class
     {
-        public static Mock<T> GetMock<T>(this IServiceProvider provider) where T : class
-        {
-            return provider.GetRequiredService<Mock<T>>();
-        }
+        return provider.GetRequiredService<Mock<T>>();
     }
 }

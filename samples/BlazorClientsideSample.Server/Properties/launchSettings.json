@@ -1,12 +1,12 @@
 {
-  "profiles": {
-    "BlazorClientsideSample.Server": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:52345/"
+    "profiles": {
+        "BlazorClientsideSample.Server": {
+            "commandName": "Project",
+            "launchBrowser": true,
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "applicationUrl": "http://localhost:52345/"
+        }
     }
-  }
 }

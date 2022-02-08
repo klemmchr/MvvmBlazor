@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿namespace MvvmBlazor.Internal.Parameters;
 
-namespace MvvmBlazor.Internal.Parameters
+internal class ParameterInfo
 {
-    internal class ParameterInfo
+    private readonly Dictionary<PropertyInfo, PropertyInfo> _parameters = new();
+
+    public IReadOnlyDictionary<PropertyInfo, PropertyInfo> Parameters => _parameters;
+
+    public ParameterInfo(IEnumerable<PropertyInfo> componentProperties, IEnumerable<PropertyInfo> viewModelProperties)
     {
-        private readonly Dictionary<PropertyInfo, PropertyInfo> _parameters =
-            new();
-
-        public ParameterInfo(IEnumerable<PropertyInfo> componentProperties,
-            IEnumerable<PropertyInfo> viewModelProperties)
+        if (componentProperties == null)
         {
-            if (componentProperties == null) throw new ArgumentNullException(nameof(componentProperties));
-            if (viewModelProperties == null) throw new ArgumentNullException(nameof(viewModelProperties));
-
-            var viewModelPropDict = viewModelProperties.ToDictionary(x => x.Name);
-
-            foreach (var componentProperty in componentProperties)
-            {
-                if (!viewModelPropDict.TryGetValue(componentProperty.Name, out var viewModelProperty))
-                    continue;
-
-                _parameters.Add(componentProperty, viewModelProperty);
-            }
+            throw new ArgumentNullException(nameof(componentProperties));
         }
 
-        public IReadOnlyDictionary<PropertyInfo, PropertyInfo> Parameters => _parameters;
+        if (viewModelProperties == null)
+        {
+            throw new ArgumentNullException(nameof(viewModelProperties));
+        }
+
+        var viewModelPropDict = viewModelProperties.ToDictionary(x => x.Name);
+
+        foreach (var componentProperty in componentProperties)
+        {
+            if (!viewModelPropDict.TryGetValue(componentProperty.Name, out var viewModelProperty))
+            {
+                continue;
+            }
+
+            _parameters.Add(componentProperty, viewModelProperty);
+        }
     }
 }

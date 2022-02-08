@@ -5,20 +5,19 @@ using System.Threading.Tasks;
 using BlazorSample.Domain.Entities;
 using BlazorSample.Domain.Services;
 
-namespace BlazorClientsideSample.Client.Services
+namespace BlazorClientsideSample.Client.Services;
+
+public class WeatherForecastGetter : IWeatherForecastGetter
 {
-    public class WeatherForecastGetter : IWeatherForecastGetter
+    private readonly HttpClient _httpClient;
+
+    public WeatherForecastGetter(HttpClient httpClient)
     {
-        private readonly HttpClient _httpClient;
+        _httpClient = httpClient;
+    }
 
-        public WeatherForecastGetter(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
-        public Task<IEnumerable<WeatherForecastEntity>> GetForecasts()
-        {
-            return _httpClient.GetFromJsonAsync<IEnumerable<WeatherForecastEntity>>("WeatherForecast");
-        }
+    public Task<IEnumerable<WeatherForecastEntity>> GetForecasts()
+    {
+        return _httpClient.GetFromJsonAsync<IEnumerable<WeatherForecastEntity>>("WeatherForecast");
     }
 }
