@@ -143,170 +143,189 @@ namespace MvvmBlazor.CodeGenerators
             var baseType = componentClassContext.ComponentSymbol.BaseType!.GetMetadataName();
 
             return $@"
-                using System;
-                using System.Linq.Expressions;
-                using Microsoft.AspNetCore.Components;
-                using Microsoft.Extensions.DependencyInjection;
-                using MvvmBlazor.Components;
-                using MvvmBlazor.ViewModel;
+#nullable enable
+using System;
+using System.Linq.Expressions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using MvvmBlazor.Components;
+using MvvmBlazor.ViewModel;
 
-                namespace {componentNamespace}
-                {{
-                    public partial class {componentClassName}:
-                        {baseType}
-                    {{
-                        public IBinder Binder {{ get; private set; }} = null!;
+namespace {componentNamespace}
+{{
+    public partial class {componentClassName}:
+        {baseType}
+    {{
+        public IBinder Binder {{ get; private set; }} = null!;
 
-                        protected internal {componentClassName}(IServiceProvider serviceProvider)
-                        {{
-                            ServiceProvider = serviceProvider;
-                            InitializeDependencies();
-                        }}
+#pragma warning disable CS8618
+        protected internal {componentClassName}(IServiceProvider serviceProvider)
+#pragma warning restore CS8618
+        {{
+            ServiceProvider = serviceProvider;
+            InitializeDependencies();
+        }}
 
-                        protected {componentClassName}() {{}}
+#pragma warning disable CS8618
+        protected {componentClassName}()
+#pragma warning restore CS8618
+        {{
+        }}
 
-                        [Inject] protected IServiceProvider ServiceProvider {{ get; set; }} = null!;
+        [Inject] protected IServiceProvider ServiceProvider {{ get; set; }} = null!;
 
-                        private void InitializeDependencies()
-                        {{
-                            Binder = ServiceProvider.GetRequiredService<IBinder>();
-                            Binder.ValueChangedCallback = BindingOnBindingValueChanged;
-                        }}
+        private void InitializeDependencies()
+        {{
+            Binder = ServiceProvider.GetRequiredService<IBinder>();
+            Binder.ValueChangedCallback = BindingOnBindingValueChanged;
+        }}
 
-                        protected internal TValue Bind<TViewModel, TValue>(TViewModel viewModel,
-                            Expression<Func<TViewModel, TValue>> property)
-                            where TViewModel : ViewModelBase
-                        {{
-                            return AddBinding(viewModel, property);
-                        }}
+        protected internal TValue Bind<TViewModel, TValue>(TViewModel viewModel,
+            Expression<Func<TViewModel, TValue>> property)
+            where TViewModel : ViewModelBase
+        {{
+            return AddBinding(viewModel, property);
+        }}
 
-                        public virtual TValue AddBinding<TViewModel, TValue>(TViewModel viewModel,
-                            Expression<Func<TViewModel, TValue>> propertyExpression) where TViewModel : ViewModelBase
-                        {{
-                            return Binder.Bind(viewModel, propertyExpression);
-                        }}
+        public virtual TValue AddBinding<TViewModel, TValue>(TViewModel viewModel,
+            Expression<Func<TViewModel, TValue>> propertyExpression) where TViewModel : ViewModelBase
+        {{
+            return Binder.Bind(viewModel, propertyExpression);
+        }}
 
-                        protected override void OnInitialized()
-                        {{
-                            base.OnInitialized();
-                            InitializeDependencies();
-                        }}
+        protected override void OnInitialized()
+        {{
+            base.OnInitialized();
+            InitializeDependencies();
+        }}
 
-                        internal virtual void BindingOnBindingValueChanged(object sender, EventArgs e)
-                        {{
-                            InvokeAsync(StateHasChanged);
-                        }}
-                    }}
-                }}
+        internal virtual void BindingOnBindingValueChanged(object sender, EventArgs e)
+        {{
+            InvokeAsync(StateHasChanged);
+        }}
+    }}
+}}
             ";
         }
 
         private static string GenerateGenericComponentCode(MvvmComponentClassContext componentClassContext)
         {
+            var componentNamespace = componentClassContext.ComponentSymbol.ContainingNamespace;
+            var componentClassName = componentClassContext.ComponentClass.Identifier;
+            var baseType = componentClassContext.ComponentSymbol.BaseType!.GetMetadataName();
+
             return $@"
-                using System;
-                using System.Linq.Expressions;
-                using System.Threading.Tasks;
-                using Microsoft.AspNetCore.Components;
-                using Microsoft.Extensions.DependencyInjection;
-                using MvvmBlazor.Internal.Parameters;
-                using MvvmBlazor.ViewModel;
+#nullable enable
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using MvvmBlazor.Internal.Parameters;
+using MvvmBlazor.ViewModel;
 
-                namespace {componentClassContext.ComponentSymbol!.ContainingNamespace}
-                {{
-                    public abstract partial class {componentClassContext.ComponentClass!.Identifier}<T> :
-                        {componentClassContext.ComponentSymbol!.BaseType!.GetMetadataName()}
-                        where T : ViewModelBase
-                    {{
-                        private IViewModelParameterSetter? _viewModelParameterSetter;
+namespace {componentNamespace}
+{{
+    public abstract partial class {componentClassName}<T> :
+        {baseType}
+        where T : ViewModelBase
+    {{
+        private IViewModelParameterSetter? _viewModelParameterSetter;
 
-                        protected internal {componentClassContext.ComponentClass!.Identifier}(IServiceProvider serviceProvider) : base(serviceProvider)
-                        {{
-                            SetBindingContext();
-                        }}
+#pragma warning disable CS8618
+        protected internal {componentClassName}(IServiceProvider serviceProvider) : base(serviceProvider)
+#pragma warning restore CS8618
+        {{
+            SetBindingContext();
+        }}
 
-                        protected {componentClassContext.ComponentClass!.Identifier}() {{}}
+#pragma warning disable CS8618
+        protected {componentClassName}()
+#pragma warning restore CS8618
+        {{
+        }}
 
-                        protected T? BindingContext {{ get; set; }}
+        protected T BindingContext {{ get; set; }}
 
-                        private void SetBindingContext()
-                        {{
-                            BindingContext ??= ServiceProvider.GetRequiredService<T>();
-                        }}
+        private void SetBindingContext()
+        {{
+            BindingContext ??= ServiceProvider.GetRequiredService<T>();
+        }}
 
-                        private void SetParameters()
-                        {{
-                            if (BindingContext is null)
-                                throw new InvalidOperationException($""{{nameof(BindingContext)}} is not set"");
+        private void SetParameters()
+        {{
+            if (BindingContext is null)
+                throw new InvalidOperationException($""{{nameof(BindingContext)}} is not set"");
 
-                            _viewModelParameterSetter ??= ServiceProvider.GetRequiredService<IViewModelParameterSetter>();
-                            _viewModelParameterSetter.ResolveAndSet(this, BindingContext);
-                        }}
+            _viewModelParameterSetter ??= ServiceProvider.GetRequiredService<IViewModelParameterSetter>();
+            _viewModelParameterSetter.ResolveAndSet(this, BindingContext);
+        }}
 
-                        protected internal TValue Bind<TValue>(Expression<Func<T, TValue>> property)
-                        {{
-                            if (BindingContext is null)
-                                throw new InvalidOperationException($""{{nameof(BindingContext)}} is not set"");
+        protected internal TValue Bind<TValue>(Expression<Func<T, TValue>> property)
+        {{
+            if (BindingContext is null)
+                throw new InvalidOperationException($""{{nameof(BindingContext)}} is not set"");
 
-                            return AddBinding(BindingContext, property);
-                        }}
+            return AddBinding(BindingContext, property);
+        }}
 
-                        /// <inheritdoc />
-                        protected override void OnInitialized()
-                        {{
-                            base.OnInitialized();
-                            SetBindingContext();
-                            SetParameters();
-                            BindingContext?.OnInitialized();
-                        }}
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {{
+            base.OnInitialized();
+            SetBindingContext();
+            BindingContext?.OnInitialized();
+        }}
 
-                        /// <inheritdoc />
-                        protected override Task OnInitializedAsync()
-                        {{
-                            return BindingContext?.OnInitializedAsync() ?? Task.CompletedTask;
-                        }}
+        /// <inheritdoc />
+        protected override Task OnInitializedAsync()
+        {{
+            return BindingContext?.OnInitializedAsync() ?? Task.CompletedTask;
+        }}
 
-                        /// <inheritdoc />
-                        protected override void OnParametersSet()
-                        {{
-                            SetParameters();
-                            BindingContext?.OnParametersSet();
-                        }}
+        /// <inheritdoc />
+        protected override void OnParametersSet()
+        {{
+            SetParameters();
+            BindingContext?.OnParametersSet();
+        }}
 
-                        /// <inheritdoc />
-                        protected override Task OnParametersSetAsync()
-                        {{
-                            return BindingContext?.OnParametersSetAsync() ?? Task.CompletedTask;
-                        }}
+        /// <inheritdoc />
+        protected override Task OnParametersSetAsync()
+        {{
+            return BindingContext?.OnParametersSetAsync() ?? Task.CompletedTask;
+        }}
 
-                        /// <inheritdoc />
-                        protected override bool ShouldRender()
-                        {{
-                            return BindingContext?.ShouldRender() ?? true;
-                        }}
+        /// <inheritdoc />
+        protected override bool ShouldRender()
+        {{
+            return BindingContext?.ShouldRender() ?? true;
+        }}
 
-                        /// <inheritdoc />
-                        protected override void OnAfterRender(bool firstRender)
-                        {{
-                            BindingContext?.OnAfterRender(firstRender);
-                        }}
+        /// <inheritdoc />
+        protected override void OnAfterRender(bool firstRender)
+        {{
+            BindingContext?.OnAfterRender(firstRender);
+        }}
 
-                        /// <inheritdoc />
-                        protected override Task OnAfterRenderAsync(bool firstRender)
-                        {{
-                            return BindingContext?.OnAfterRenderAsync(firstRender) ?? Task.CompletedTask;
-                        }}
+        /// <inheritdoc />
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {{
+            return BindingContext?.OnAfterRenderAsync(firstRender) ?? Task.CompletedTask;
+        }}
 
-                        /// <inheritdoc />
-                        public override async Task SetParametersAsync(ParameterView parameters)
-                        {{
-                            await base.SetParametersAsync(parameters).ConfigureAwait(false);
+        /// <inheritdoc />
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {{
+            await base.SetParametersAsync(parameters).ConfigureAwait(false);
 
-                            if (BindingContext != null)
-                                await BindingContext.SetParametersAsync(parameters).ConfigureAwait(false);
-                        }}
-                    }}
-                }}
+            if (BindingContext != null)
+            {{
+                await BindingContext.SetParametersAsync(parameters).ConfigureAwait(false);
+            }}
+        }}
+    }}
+}}
             ";
         }
     }

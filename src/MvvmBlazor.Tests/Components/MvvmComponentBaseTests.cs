@@ -1,49 +1,48 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Reflection;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using MvvmBlazor.Components;
 using MvvmBlazor.Internal.Bindings;
-using MvvmBlazor.Internal.WeakEventListener;
+using MvvmBlazor.Tests.Abstractions;
+using MvvmBlazor.Tests.Extensions;
 using Shouldly;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace MvvmBlazor.Tests.Components
 {
-    public class MvvmComponentBaseTests
+    public class MvvmComponentBaseTests : UnitTest
     {
+        public MvvmComponentBaseTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+
+        protected override void RegisterServices(IServiceCollection services)
+        {
+            var binder = services.StrictMock<IBinder>();
+            services.AddSingleton<TestComponent>();
+
+            binder.SetupSet(x => x.ValueChangedCallback = It.IsAny<Action<IBinding, EventArgs>>()).Verifiable();
+        }
+
         [Fact]
         public void AddBinding_AddsBinding()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new Mock<IServiceProvider>();
-            var binder = new Mock<IBinder>();
-            serviceProvider.Setup(x => x.GetService(typeof(IBinder))).Returns(binder.Object)
-                .Verifiable();
+            var binder = Services.GetMock<IBinder>();
             binder.Setup(x => x.Bind(viewModel, y => y.TestProperty)).Returns("Test").Verifiable();
-            binder.SetupSet(x => x.ValueChangedCallback = It.IsAny<Action<IBinding, EventArgs>>()).Verifiable();
 
-            var component = new TestComponent(serviceProvider.Object);
+            var component = Services.GetRequiredService<TestComponent>();
             var res = component.AddBinding(viewModel, x => x.TestProperty);
             res.ShouldBe("Test");
 
-            serviceProvider.Verify();
             binder.Verify();
-
-            serviceProvider.VerifyNoOtherCalls();
         }
 
         [Fact]
         public void Bind_AddsBinding()
         {
             var viewModel = new TestViewModel();
-            var serviceProvider = new Mock<IServiceProvider>();
-            var binder = new Mock<IBinder>();
-            serviceProvider.Setup(x => x.GetService(typeof(IBinder))).Returns(binder.Object)
-                .Verifiable();
 
-            var component = new Mock<MvvmComponentBase>(serviceProvider.Object);
+            var component = new Mock<MvvmComponentBase>(Services);
             component.Setup(x => x.AddBinding(viewModel, y => y.TestProperty)).Returns("Test").Verifiable();
 
             var res = component.Object.Bind(viewModel, x => x.TestProperty);
@@ -54,7 +53,7 @@ namespace MvvmBlazor.Tests.Components
 
         internal class TestComponent : MvvmComponentBase
         {
-            internal TestComponent(IServiceProvider serviceProvider) : base(serviceProvider) { }
+            public TestComponent(IServiceProvider serviceProvider) : base(serviceProvider) { }
             public Action BindingChangedAction { get; set; }
 
             internal override void BindingOnBindingValueChanged(object sender, EventArgs e)
