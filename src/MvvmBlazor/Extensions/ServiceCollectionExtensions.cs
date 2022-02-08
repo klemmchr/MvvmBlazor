@@ -16,7 +16,6 @@ namespace MvvmBlazor.Extensions
             serviceCollection.AddSingleton<IViewModelParameterSetter, ViewModelParameterSetter>();
             serviceCollection.AddTransient<IWeakEventManager, WeakEventManager>();
             serviceCollection.AddTransient<IBinder, Binder>();
-            serviceCollection.AddHttpContextAccessor();
 
             return serviceCollection;
         }

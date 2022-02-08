@@ -28,7 +28,7 @@ namespace BlazorSample.ViewModels
             Dispose(true);
         }
 
-        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+        private void TimerOnElapsed(object? sender, ElapsedEventArgs e)
         {
             DateTime = DateTime.Now;
         }
