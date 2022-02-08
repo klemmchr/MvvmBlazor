@@ -1,10 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using MvvmBlazor.Components;
-using MvvmBlazor.Internal.Bindings;
-using MvvmBlazor.Internal.Parameters;
-using MvvmBlazor.Internal.WeakEventListener;
+﻿using Binder = MvvmBlazor.Components.Binder;
 
-namespace MvvmBlazor.Extensions
+// ReSharper disable once CheckNamespace
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {

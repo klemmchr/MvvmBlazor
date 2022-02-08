@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using MvvmBlazor.Internal.Bindings;
-
-namespace MvvmBlazor.ViewModel
+﻿namespace MvvmBlazor.ViewModel
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
