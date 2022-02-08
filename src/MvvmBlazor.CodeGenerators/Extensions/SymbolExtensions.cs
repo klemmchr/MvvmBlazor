@@ -1,12 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
+﻿namespace MvvmBlazor.CodeGenerators.Extensions;
 
-namespace MvvmBlazor.CodeGenerators.Extensions
+internal static class SymbolExtensions
 {
-    internal static class SymbolExtensions
+    public static string GetMetadataName(this ISymbol symbol)
     {
-        public static string GetMetadataName(this ISymbol symbol)
-        {
-            return string.Join(".", symbol.ContainingNamespace, symbol.MetadataName);
-        }
+        return string.Join(".", symbol.ContainingNamespace, symbol.MetadataName);
     }
 }
