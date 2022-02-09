@@ -1,6 +1,6 @@
 ﻿namespace MvvmBlazor.Internal.WeakEventListener;
 
-public interface IWeakEventManager
+internal interface IWeakEventManager
 {
     /// <summary>
     ///     Registers the given delegate as a handler for the event specified by `eventName` on the given source.

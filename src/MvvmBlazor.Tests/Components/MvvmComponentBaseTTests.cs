@@ -1,10 +1,4 @@
-﻿using System;
-
-using Shouldly;
-using Xunit;
-using Xunit.Abstractions;
-
-namespace MvvmBlazor.Tests.Components;
+﻿namespace MvvmBlazor.Tests.Components;
 
 public class MvvmComponentBaseTTests : UnitTest
 {

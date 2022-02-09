@@ -1,6 +1,6 @@
-﻿namespace MvvmBlazor.Components;
+﻿namespace MvvmBlazor.Internal.Bindings;
 
-public interface IBinder : IDisposable
+public interface IBinder
 {
     Action<IBinding, EventArgs>? ValueChangedCallback { get; set; }
 
@@ -8,11 +8,12 @@ public interface IBinder : IDisposable
         where TViewModel : ViewModelBase;
 }
 
-internal class Binder : IBinder
+internal class Binder : IBinder, IDisposable
 {
     private readonly IBindingFactory _bindingFactory;
+    private readonly HashSet<IBinding> _bindings = new();
     private readonly IWeakEventManager _weakEventManager;
-    private HashSet<IBinding> _bindings = new();
+    private bool _isDisposed;
 
     public Binder(IBindingFactory bindingFactory, IWeakEventManager weakEventManager)
     {
@@ -26,6 +27,8 @@ internal class Binder : IBinder
         TViewModel viewModel,
         Expression<Func<TViewModel, TValue>> propertyExpression) where TViewModel : ViewModelBase
     {
+        ThrowIfDisposed();
+
         if (ValueChangedCallback is null)
         {
             throw new BindingException($"{nameof(ValueChangedCallback)} is null");
@@ -47,12 +50,6 @@ internal class Binder : IBinder
         return (TValue)binding.GetValue();
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
     protected static PropertyInfo ValidateAndResolveBindingContext<TViewModel, TValue>(
         TViewModel viewModel,
         Expression<Func<TViewModel, TValue>> property) where TViewModel : ViewModelBase
@@ -67,12 +64,7 @@ internal class Binder : IBinder
             throw new BindingException("Property expression is null");
         }
 
-        if (!(property.Body is MemberExpression m))
-        {
-            throw new BindingException("Binding member needs to be a property");
-        }
-
-        if (!(m.Member is PropertyInfo p))
+        if (property.Body is not MemberExpression { Member: PropertyInfo p })
         {
             throw new BindingException("Binding member needs to be a property");
         }
@@ -85,15 +77,22 @@ internal class Binder : IBinder
         return p;
     }
 
+    #region IDisposable
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)
         {
-            if (_bindings is not null)
-            {
-                DisposeBindings();
-                _bindings = null!;
-            }
+            ThrowIfDisposed();
+
+            _isDisposed = true;
+            DisposeBindings();
         }
     }
 
@@ -106,8 +105,18 @@ internal class Binder : IBinder
         }
     }
 
+    private void ThrowIfDisposed()
+    {
+        if (_isDisposed)
+        {
+            throw new ObjectDisposedException(nameof(Binder));
+        }
+    }
+
     ~Binder()
     {
         Dispose(false);
     }
+
+    #endregion
 }

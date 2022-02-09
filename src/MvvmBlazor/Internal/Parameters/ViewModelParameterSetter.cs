@@ -39,7 +39,7 @@ internal class ViewModelParameterSetter : IViewModelParameterSetter
             _parameterCache.Set(componentType, parameterInfo);
         }
 
-        foreach ((var componentProperty, var viewModelProperty) in parameterInfo.Parameters)
+        foreach (var (componentProperty, viewModelProperty) in parameterInfo.Parameters)
         {
             var value = componentProperty.GetValue(component);
             viewModelProperty.SetValue(viewModel, value);

@@ -1,4 +1,5 @@
 ﻿// ReSharper disable once CheckNamespace
+
 namespace Microsoft.Extensions.DependencyInjection;
 
 internal static class ServiceCollectionExtensions
@@ -17,5 +18,10 @@ internal static class ServiceCollectionExtensions
         services.AddSingleton<Mock<T>>(mock);
         services.AddSingleton(mock.Object);
         return mock;
+    }
+
+    public static IServiceCollection Provide<T>(this IServiceCollection services) where T : class
+    {
+        return services.AddSingleton<T>();
     }
 }

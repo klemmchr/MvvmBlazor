@@ -1,8 +1,4 @@
-﻿using System;
-
-using Moq;
-
-namespace MvvmBlazor.Tests.Abstractions;
+﻿namespace MvvmBlazor.Tests.Abstractions;
 
 internal class StrictMock<T> : Mock<T> where T : class
 {

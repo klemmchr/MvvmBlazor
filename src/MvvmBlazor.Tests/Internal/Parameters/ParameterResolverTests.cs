@@ -1,11 +1,4 @@
-﻿using System;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
-using MvvmBlazor.Internal.Parameters;
-using Shouldly;
-using Xunit;
-
-namespace MvvmBlazor.Tests.Internal.Parameters;
+﻿namespace MvvmBlazor.Tests.Internal.Parameters;
 
 public class ParameterResolverTests
 {

@@ -41,7 +41,7 @@ internal class Binding : IBinding
 
     private void AddCollectionBindings()
     {
-        if (!_isCollection || !(GetValue() is INotifyCollectionChanged collection))
+        if (!_isCollection || GetValue() is not INotifyCollectionChanged collection)
         {
             return;
         }

@@ -1,9 +1,4 @@
-﻿using System;
-
-using Shouldly;
-using Xunit;
-
-namespace MvvmBlazor.Tests.Internal.WeakEventListener;
+﻿namespace MvvmBlazor.Tests.Internal.WeakEventListener;
 
 public class WeakEventManagerTests
 {

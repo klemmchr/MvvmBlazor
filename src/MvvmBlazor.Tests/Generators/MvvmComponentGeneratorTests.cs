@@ -1,13 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
-using Microsoft.AspNetCore.Components;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using MvvmBlazor.CodeGenerators;
-using MvvmBlazor.Components;
-using Shouldly;
-using Xunit;
-using Binder = System.Reflection.Binder;
+﻿using Binder = System.Reflection.Binder;
 
 namespace MvvmBlazor.Tests.Generators;
 
@@ -19,14 +10,14 @@ public class MvvmComponentGeneratorTests
         var inputCompilation = CreateCompilation(
             @$"
                 [{nameof(MvvmComponentAttribute)}]
-                public class TestComponent {{}}
+                public class TestComponent : Microsoft.AspNetCore.Components.ComponentBase {{}}
             "
         );
 
         var generator = new MvvmComponentGenerator();
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
 
-        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out var outputCompilation, out var diagnostics);
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
         diagnostics.ShouldNotBeEmpty();
         diagnostics.First().Id.ShouldBe("MVVMBLAZOR001");
     }
@@ -44,9 +35,43 @@ public class MvvmComponentGeneratorTests
         var generator = new MvvmComponentGenerator();
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
 
-        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out var outputCompilation, out var diagnostics);
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
         diagnostics.ShouldNotBeEmpty();
         diagnostics.First().Id.ShouldBe("MVVMBLAZOR002");
+    }
+
+    [Fact]
+    public void GeneratesComponent()
+    {
+        var inputCompilation = CreateCompilation(
+            @$"
+                [{nameof(MvvmComponentAttribute)}]
+                public partial class TestComponent : Microsoft.AspNetCore.Components.ComponentBase {{}}
+            "
+        );
+
+        var generator = new MvvmComponentGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
+        diagnostics.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void GeneratesGenericComponent()
+    {
+        var inputCompilation = CreateCompilation(
+            @$"
+                [{nameof(MvvmComponentAttribute)}]
+                public partial class TestComponent<T> : Microsoft.AspNetCore.Components.ComponentBase {{}}
+            "
+        );
+
+        var generator = new MvvmComponentGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
+        diagnostics.ShouldBeEmpty();
     }
 
     private static Compilation CreateCompilation(string source)

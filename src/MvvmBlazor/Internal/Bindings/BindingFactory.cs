@@ -1,6 +1,6 @@
 ﻿namespace MvvmBlazor.Internal.Bindings;
 
-public interface IBindingFactory
+internal interface IBindingFactory
 {
     IBinding Create(INotifyPropertyChanged source, PropertyInfo propertyInfo, IWeakEventManager weakEventManager);
 }

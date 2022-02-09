@@ -1,9 +1,4 @@
-﻿using System;
-using MvvmBlazor.ViewModel;
-using Shouldly;
-using Xunit;
-
-namespace MvvmBlazor.Tests.ViewModel;
+﻿namespace MvvmBlazor.Tests.ViewModel;
 
 public class ViewModelBaseTests
 {

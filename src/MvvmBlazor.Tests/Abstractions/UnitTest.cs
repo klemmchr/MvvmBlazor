@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit.Abstractions;
-
-namespace MvvmBlazor.Tests.Abstractions;
+﻿namespace MvvmBlazor.Tests.Abstractions;
 
 public abstract class UnitTest
 {

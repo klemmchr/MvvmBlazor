@@ -1,4 +1,4 @@
-﻿using Binder = MvvmBlazor.Components.Binder;
+﻿using Binder = MvvmBlazor.Internal.Bindings.Binder;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;

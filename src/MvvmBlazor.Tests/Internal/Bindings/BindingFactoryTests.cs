@@ -1,12 +1,4 @@
-﻿using System.ComponentModel;
-using System.Reflection;
-using Moq;
-using MvvmBlazor.Internal.Bindings;
-using MvvmBlazor.Internal.WeakEventListener;
-using Shouldly;
-using Xunit;
-
-namespace MvvmBlazor.Tests.Internal.Bindings;
+﻿namespace MvvmBlazor.Tests.Internal.Bindings;
 
 public class BindingFactoryTests
 {
