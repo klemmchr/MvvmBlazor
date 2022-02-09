@@ -1,27 +1,28 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MvvmBlazor.ViewModel;
 
-namespace BlazorSample.ViewModels
+namespace BlazorSample.ViewModels;
+
+public class ParametersViewModel : ViewModelBase
 {
-    public class ParametersViewModel : ViewModelBase
+    private readonly NavigationManager _navigationManager;
+
+    [Parameter] public string? Name { get; set; }
+
+    public string? NewName { get; set; }
+
+    public ParametersViewModel(NavigationManager navigationManager)
     {
-        private readonly NavigationManager _navigationManager;
+        _navigationManager = navigationManager;
+    }
 
-        public ParametersViewModel(NavigationManager navigationManager)
+    public void NavigateToNewName()
+    {
+        if (string.IsNullOrEmpty(NewName))
         {
-            _navigationManager = navigationManager;
+            return;
         }
 
-        [Parameter] public string? Name { get; set; }
-
-        public string? NewName { get; set; }
-
-        public void NavigateToNewName()
-        {
-            if (string.IsNullOrEmpty(NewName))
-                return;
-
-            _navigationManager.NavigateTo($"/parameters/{NewName}");
-        }
+        _navigationManager.NavigateTo($"/parameters/{NewName}");
     }
 }

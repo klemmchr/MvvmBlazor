@@ -1,102 +1,96 @@
-﻿using System;
-using MvvmBlazor.ViewModel;
-using Shouldly;
-using Xunit;
+﻿namespace MvvmBlazor.Tests.ViewModel;
 
-namespace MvvmBlazor.Tests.ViewModel
+public class ViewModelBaseTests
 {
-    public class ViewModelBaseTests
+    [Fact]
+    public void Set_ReturnsFalse_OnReferenceEqual()
     {
-        [Fact]
-        public void Set_ReturnsFalse_OnReferenceEqual()
+        var obj = new object();
+        var invoked = false;
+
+        var vm = new TestViewModel();
+        vm.PropertyChanged += (_, __) => invoked = true;
+
+        var res = vm.SetProperty(ref obj, obj, "Foo");
+        res.ShouldBeFalse();
+
+        invoked.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Set_ReturnsFalse_OnValueEqual()
+    {
+        void TestField<T>(ref T field, T value)
         {
-            var obj = new object();
             var invoked = false;
 
             var vm = new TestViewModel();
             vm.PropertyChanged += (_, __) => invoked = true;
 
-            var res = vm.SetProperty(ref obj, obj, "Foo");
+            var res = vm.SetProperty(ref field, value, "Foo");
             res.ShouldBeFalse();
 
             invoked.ShouldBeFalse();
         }
 
-        [Fact]
-        public void Set_ReturnsFalse_OnValueEqual()
+        var int1 = 1;
+        TestField(ref int1, 1);
+
+        var string1 = "test";
+        TestField(ref string1, "test");
+
+        var double1 = 23.3;
+        TestField(ref double1, 23.3);
+    }
+
+    [Fact]
+    public void Set_ReturnsTrue_OnValueNotEqual()
+    {
+        void TestField<T>(ref T field, T value)
         {
-            void TestField<T>(ref T field, T value)
+            var invoked = 0;
+
+            var vm = new TestViewModel();
+            vm.PropertyChanged += (s, a) =>
             {
-                var invoked = false;
+                s.ShouldBe(vm);
+                a.PropertyName.ShouldBe("Foo");
 
-                var vm = new TestViewModel();
-                vm.PropertyChanged += (_, __) => invoked = true;
+                invoked++;
+            };
 
-                var res = vm.SetProperty(ref field, value, "Foo");
-                res.ShouldBeFalse();
+            var res = vm.SetProperty(ref field, value, "Foo");
+            res.ShouldBeTrue();
 
-                invoked.ShouldBeFalse();
-            }
-
-            var int1 = 1;
-            TestField(ref int1, 1);
-
-            var string1 = "test";
-            TestField(ref string1, "test");
-
-            var double1 = 23.3;
-            TestField(ref double1, 23.3);
+            invoked.ShouldBe(1);
+            field.ShouldBe(value);
         }
 
-        [Fact]
-        public void Set_ReturnsTrue_OnValueNotEqual()
+        var int1 = 1;
+        TestField(ref int1, 2);
+
+        var string1 = "test";
+        TestField(ref string1, "test1");
+
+        var double1 = 23.3;
+        TestField(ref double1, 2.3);
+    }
+
+    private class TestViewModel : ViewModelBase
+    {
+        private readonly IDisposable _disposable;
+
+        public TestViewModel() { }
+
+        public TestViewModel(IDisposable disposable)
         {
-            void TestField<T>(ref T field, T value)
-            {
-                var invoked = 0;
-
-                var vm = new TestViewModel();
-                vm.PropertyChanged += (s, a) =>
-                {
-                    s.ShouldBe(vm);
-                    a.PropertyName.ShouldBe("Foo");
-
-                    invoked++;
-                };
-
-                var res = vm.SetProperty(ref field, value, "Foo");
-                res.ShouldBeTrue();
-
-                invoked.ShouldBe(1);
-                field.ShouldBe(value);
-            }
-
-            var int1 = 1;
-            TestField(ref int1, 2);
-
-            var string1 = "test";
-            TestField(ref string1, "test1");
-
-            var double1 = 23.3;
-            TestField(ref double1, 2.3);
+            _disposable = disposable;
         }
 
-        private class TestViewModel : ViewModelBase
+
+        public bool SetProperty<T>(ref T field, T value, string propertyName = null)
         {
-            private readonly IDisposable _disposable;
-
-            public TestViewModel() { }
-
-            public TestViewModel(IDisposable disposable)
-            {
-                _disposable = disposable;
-            }
-
-
-            public bool SetProperty<T>(ref T field, T value, string propertyName = null)
-            {
-                return Set(ref field, value, propertyName);
-            }
+            return Set(ref field, value, propertyName);
         }
     }
 }

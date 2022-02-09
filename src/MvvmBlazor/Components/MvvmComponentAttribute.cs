@@ -1,9 +1,4 @@
-﻿using System;
+﻿namespace MvvmBlazor.Components;
 
-namespace MvvmBlazor.Components
-{
-    [AttributeUsage(AttributeTargets.Class)]
-    public class MvvmComponentAttribute : Attribute
-    {
-    }
-}
+[AttributeUsage(AttributeTargets.Class)]
+public class MvvmComponentAttribute : Attribute { }

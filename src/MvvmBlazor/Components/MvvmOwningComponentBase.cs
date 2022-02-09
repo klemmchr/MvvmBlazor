@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿namespace MvvmBlazor.Components;
 
-namespace MvvmBlazor.Components
-{
-    [MvvmComponent]
-    public partial class MvvmOwningComponentBase: OwningComponentBase
-    {
-    }
-}
+[MvvmComponent]
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class MvvmOwningComponentBase : OwningComponentBase { }

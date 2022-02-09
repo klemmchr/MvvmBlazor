@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj" />
-    <ProjectReference Include="..\BlazorSample.Domain\BlazorSample.Domain.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj"/>
+        <ProjectReference Include="..\BlazorSample.Domain\BlazorSample.Domain.csproj"/>
+    </ItemGroup>
 
 </Project>

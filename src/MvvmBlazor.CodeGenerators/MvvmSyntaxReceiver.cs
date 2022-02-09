@@ -1,33 +1,27 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
+﻿namespace MvvmBlazor.CodeGenerators;
 
-namespace MvvmBlazor.CodeGenerators
+internal class MvvmSyntaxReceiver : ISyntaxContextReceiver
 {
-    class MvvmSyntaxReceiver : ISyntaxContextReceiver
+    public List<MvvmComponentClassContext> ComponentClassContexts { get; } = new();
+
+    public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
     {
-        public List<MvvmComponentClassContext> ComponentClassContexts { get; } = new();
-
-        public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
+        if (context.Node is not ClassDeclarationSyntax cds || cds.AttributeLists.Count == 0)
         {
-            if (context.Node is not ClassDeclarationSyntax cds || cds.AttributeLists.Count == 0) return;
+            return;
+        }
 
-            var symbol = context.SemanticModel.GetDeclaredSymbol(context.Node);
-            if (symbol is not INamedTypeSymbol typeSymbol)
-            {
-                return;
-            }
+        var symbol = context.SemanticModel.GetDeclaredSymbol(context.Node);
+        if (symbol is not INamedTypeSymbol typeSymbol)
+        {
+            return;
+        }
 
-            var isDecoratedWithAttribute = typeSymbol.GetAttributes()
-                .Any(
-                    ad => ad.AttributeClass != null &&
-                          ad.AttributeClass.Name == "MvvmComponentAttribute"
-                );
-            if (isDecoratedWithAttribute)
-            {
-                ComponentClassContexts.Add(new MvvmComponentClassContext(cds, typeSymbol));
-            }
+        var isDecoratedWithAttribute = typeSymbol.GetAttributes()
+            .Any(ad => ad.AttributeClass != null && ad.AttributeClass.Name == "MvvmComponentAttribute");
+        if (isDecoratedWithAttribute)
+        {
+            ComponentClassContexts.Add(new MvvmComponentClassContext(cds, typeSymbol));
         }
     }
 }

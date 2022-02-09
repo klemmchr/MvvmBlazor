@@ -76,3 +76,7 @@ indent_size = 4
 indent_style = space
 indent_size = 4
 tab_width = 4
+
+[*.{yaml,yml}]
+tab_width = 2
+indent_size = 2

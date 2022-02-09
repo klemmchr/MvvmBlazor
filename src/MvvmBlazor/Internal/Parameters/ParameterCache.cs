@@ -1,28 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace MvvmBlazor.Internal.Parameters;
 
-namespace MvvmBlazor.Internal.Parameters
+internal interface IParameterCache
 {
-    internal interface IParameterCache
+    ParameterInfo? Get(Type type);
+    void Set(Type type, ParameterInfo info);
+}
+
+internal class ParameterCache : IParameterCache
+{
+    private readonly Dictionary<Type, ParameterInfo> _cache = new();
+
+    public ParameterInfo? Get(Type type)
     {
-        ParameterInfo? Get(Type type);
-        void Set(Type type, ParameterInfo info);
+        if (type == null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
+
+        return _cache.TryGetValue(type, out var info) ? info : null;
     }
 
-    internal class ParameterCache : IParameterCache
+    public void Set(Type type, ParameterInfo info)
     {
-        private readonly Dictionary<Type, ParameterInfo> _cache = new();
-
-        public ParameterInfo? Get(Type type)
+        if (type == null)
         {
-            if (type == null) throw new ArgumentNullException(nameof(type));
-            return _cache.TryGetValue(type, out var info) ? info : null;
+            throw new ArgumentNullException(nameof(type));
         }
 
-        public void Set(Type type, ParameterInfo info)
-        {
-            if (type == null) throw new ArgumentNullException(nameof(type));
-            _cache[type] = info ?? throw new ArgumentNullException(nameof(info));
-        }
+        _cache[type] = info ?? throw new ArgumentNullException(nameof(info));
     }
 }

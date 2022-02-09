@@ -1,6 +1,6 @@
 on:
   push:
-    branches:    
+    branches:
       - master
   pull_request:
     branches:
@@ -15,15 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@master
+      - uses: actions/checkout@master
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@master
-      with:
-        dotnet-version: '5.0.x'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@master
+        with:
+          dotnet-version: '6.0.x'
 
-    - name: Build
-      run: dotnet build --configuration Release src
+      - name: Build
+        run: dotnet build --configuration Release src
 
-    - name: Test
-      run: dotnet test --configuration Release src
+      - name: Test
+        run: dotnet test --configuration Release src

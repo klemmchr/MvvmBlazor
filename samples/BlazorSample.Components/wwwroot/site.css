@@ -27,17 +27,27 @@ time, mark, audio, video {
 /* HTML5 display-role reset for older browsers */
 
 article, aside, details, figcaption, figure,
-footer, header, hgroup, main, menu, nav, section { display: block; }
+footer, header, hgroup, main, menu, nav, section {
+    display: block;
+}
 
 /* HTML5 hidden-attribute fix for newer browsers */
 
-*[hidden] { display: none; }
+*[hidden] {
+    display: none;
+}
 
-body { line-height: 1; }
+body {
+    line-height: 1;
+}
 
-ol, ul { list-style: none; }
+ol, ul {
+    list-style: none;
+}
 
-blockquote, q { quotes: none; }
+blockquote, q {
+    quotes: none;
+}
 
 blockquote:before, blockquote:after,
 q:before, q:after {
@@ -50,23 +60,39 @@ table {
     border-spacing: 0;
 }
 
-html, body, app { height: 100%; }
+html, body, app {
+    height: 100%;
+}
 
-.mdc-text-field { width: 100% !important; }
+.mdc-text-field {
+    width: 100% !important;
+}
 
-.mdc-card__primary-action { padding: 0.5rem; }
+.mdc-card__primary-action {
+    padding: 0.5rem;
+}
 
 .navbar {
     height: 100vh;
     width: 100vw;
 }
 
-.navbar .left-sidebar { user-select: none; }
+.navbar .left-sidebar {
+    user-select: none;
+}
 
-.navbar .icon { margin-right: 0.5rem; }
+.navbar .icon {
+    margin-right: 0.5rem;
+}
 
-.navbar .content-container { margin: 1rem; }
+.navbar .content-container {
+    margin: 1rem;
+}
 
-.navbar aside:focus { outline: none; }
+.navbar aside:focus {
+    outline: none;
+}
 
-.navbar .mdc-drawer__content:focus { outline: none; }
+.navbar .mdc-drawer__content:focus {
+    outline: none;
+}
