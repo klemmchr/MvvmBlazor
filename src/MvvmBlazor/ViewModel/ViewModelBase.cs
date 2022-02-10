@@ -4,6 +4,8 @@ public abstract class ViewModelBase : INotifyPropertyChanged
 {
     private readonly Dictionary<string, List<Func<object, Task>>> _subscriptions = new();
 
+    public IServiceProvider RootServiceProvider { get; set; } = null!;
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

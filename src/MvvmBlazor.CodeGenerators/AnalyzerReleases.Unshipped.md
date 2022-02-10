@@ -3,7 +3,7 @@
 
 ### New Rules
 
-Rule ID       | Category            | Severity | Notes
---------------|---------------------|----------|---------------------------
-MVVMBLAZOR001 | MvvmBlazorGenerator | Error    | MVVMBLAZOR001_AnalyzerName
-MVVMBLAZOR002 | MvvmBlazorGenerator | Error    | MVVMBLAZOR002_AnalyzerName
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+MVVMBLAZOR001 | MvvmBlazorGenerator | Error | MVVMBLAZOR001_AnalyzerName
+MVVMBLAZOR002 | MvvmBlazorGenerator | Error | MVVMBLAZOR002_AnalyzerName

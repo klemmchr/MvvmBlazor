@@ -1,15 +1,15 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using BlazorSample.Domain.Services.Navbar;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using MvvmBlazor.ViewModel;
 
 namespace BlazorSample.ViewModels.Navbar;
 
 public class NavbarViewModel : ViewModelBase
 {
-    private readonly NavigationManager _navigationManager;
-
     private bool _isMenuOpen = true;
 
     public ObservableCollection<NavbarItemViewModel> NavbarItems { get; }
@@ -20,14 +20,11 @@ public class NavbarViewModel : ViewModelBase
         set => Set(ref _isMenuOpen, value, nameof(IsMenuOpen));
     }
 
-    public NavbarViewModel(INavbarService navbarService, NavigationManager navigationManager)
+    public NavbarViewModel(INavbarService navbarService)
     {
-        _navigationManager = navigationManager;
-        navigationManager.LocationChanged += (_, __) => UpdateActiveItem();
         NavbarItems = new ObservableCollection<NavbarItemViewModel>(
             navbarService.NavbarItems.Select(x => new NavbarItemViewModel(x.DisplayName, x.Template!, x.Icon))
         );
-        UpdateActiveItem();
     }
 
     public void ToggleMenu()
@@ -35,9 +32,9 @@ public class NavbarViewModel : ViewModelBase
         IsMenuOpen = !IsMenuOpen;
     }
 
-    private void UpdateActiveItem()
+    private void UpdateActiveItem(NavigationManager navigationManager)
     {
-        var relativePath = _navigationManager.ToBaseRelativePath(_navigationManager.Uri);
+        var relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
 
         foreach (var navbarItem in NavbarItems)
             if (string.IsNullOrEmpty(relativePath))
@@ -48,5 +45,13 @@ public class NavbarViewModel : ViewModelBase
             {
                 navbarItem.IsActive = navbarItem.Template.StartsWith("/" + relativePath);
             }
+    }
+
+    public override void OnInitialized()
+    {
+        var navigationManager = RootServiceProvider.GetRequiredService<NavigationManager>();
+        navigationManager.LocationChanged += (_, _) => UpdateActiveItem(navigationManager);
+
+        UpdateActiveItem(navigationManager);
     }
 }

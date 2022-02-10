@@ -2,4 +2,4 @@
 
 [MvvmComponent]
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class MvvmComponentBase : ComponentBase { }
+public abstract partial class MvvmComponentBase : OwningComponentBase { }
