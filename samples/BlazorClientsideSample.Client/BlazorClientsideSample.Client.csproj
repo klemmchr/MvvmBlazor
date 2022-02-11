@@ -5,6 +5,7 @@
         <BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
         <Nullable>enable</Nullable>
         <ImplicitUsings>true</ImplicitUsings>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
