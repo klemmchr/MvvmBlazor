@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <RazorLangVersion>3.0</RazorLangVersion>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>true</ImplicitUsings>
     </PropertyGroup>
 
 

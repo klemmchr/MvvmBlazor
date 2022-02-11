@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using BlazorSample.Domain.Services.Navbar;
 using Microsoft.AspNetCore.Components;
