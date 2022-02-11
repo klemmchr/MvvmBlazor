@@ -67,7 +67,7 @@ public class MvvmComponentBaseTTests : UnitTest
 
         binder.Setup(x => x.Bind(viewModel, x => x.TestProperty));
 
-        var component = new Mock<MvvmComponentBase<TestViewModel>>(Services);
+        var component = new Mock<MvvmComponentBase<TestViewModel>>(Services.GetRequiredService<IServiceScopeFactory>());
 
         component.Setup(x => x.AddBinding(viewModel, x => x.TestProperty)).Verifiable();
         component.Object.Bind(x => x.TestProperty);
@@ -164,7 +164,7 @@ public class MvvmComponentBaseTTests : UnitTest
     private class MockMvvmComponentBase : MvvmComponentBase<ViewModelBase>
     {
         public ViewModelBase Context => BindingContext;
-        public MockMvvmComponentBase(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        public MockMvvmComponentBase(IServiceProvider services) : base(services) { }
 
         public void Initialized()
         {

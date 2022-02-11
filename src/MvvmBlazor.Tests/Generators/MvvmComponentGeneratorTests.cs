@@ -10,7 +10,7 @@ public class MvvmComponentGeneratorTests
         var inputCompilation = CreateCompilation(
             @$"
                 [{nameof(MvvmComponentAttribute)}]
-                public class TestComponent : Microsoft.AspNetCore.Components.ComponentBase {{}}
+                public class TestComponent : Microsoft.AspNetCore.Components.OwningComponentBase {{}}
             "
         );
 
@@ -23,7 +23,7 @@ public class MvvmComponentGeneratorTests
     }
 
     [Fact]
-    public void GeneratesError_WhenComponentIsNotInheritingFromComponentBase()
+    public void GeneratesError_WhenComponentIsNotInheriting()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -41,12 +41,30 @@ public class MvvmComponentGeneratorTests
     }
 
     [Fact]
-    public void GeneratesComponent()
+    public void GeneratesError_WhenComponentIsNotInheritingFromOwningComponentBase()
     {
         var inputCompilation = CreateCompilation(
             @$"
                 [{nameof(MvvmComponentAttribute)}]
                 public partial class TestComponent : Microsoft.AspNetCore.Components.ComponentBase {{}}
+            "
+        );
+
+        var generator = new MvvmComponentGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
+        diagnostics.ShouldNotBeEmpty();
+        diagnostics.First().Id.ShouldBe("MVVMBLAZOR002");
+    }
+
+    [Fact]
+    public void GeneratesComponent()
+    {
+        var inputCompilation = CreateCompilation(
+            @$"
+                [{nameof(MvvmComponentAttribute)}]
+                public partial class TestComponent : Microsoft.AspNetCore.Components.OwningComponentBase {{}}
             "
         );
 
@@ -63,7 +81,7 @@ public class MvvmComponentGeneratorTests
         var inputCompilation = CreateCompilation(
             @$"
                 [{nameof(MvvmComponentAttribute)}]
-                public partial class TestComponent<T> : Microsoft.AspNetCore.Components.ComponentBase {{}}
+                public partial class TestComponent<T> : Microsoft.AspNetCore.Components.OwningComponentBase {{}}
             "
         );
 

@@ -6,7 +6,7 @@ MvvmBlazor
 BlazorMVVM is a small framework for building Blazor and BlazorServerside apps. With its simple to use MVVM pattern you
 can boost up your development speed while minimizing the hazzle to just make it work.
 
-## Get started
+## Getting started
 
 MvvmBlazor is available on [NuGet](https://www.nuget.org/packages/MvvmBlazor). You will need **.NET 5** to use this
 library. The library needs to be added to the DI container in order to use it. This is done in your `Startup` class.
@@ -169,7 +169,7 @@ either.
 
 #### Dispose
 
-Since ViewModels are being injected through depencency injection the
+Since ViewModels are being injected through dependency injection in the scope of the component the
 DI [takes care](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-5.0#disposal-of-services)
 of disposing ViewModels.
 
@@ -201,6 +201,5 @@ for the client and the server. It also displays the advantages of the MVVM patte
 for your frontend even when the business logic differs.
 
 As an example the weather forecast view model just references the interface of the service that is responsible to gather
-data. For Blazor serverside, it directly populates it, for Blazor serverside it gathers them from an api. The advantages
-of such patterns will especially get interesting when Blazor Native and Blazor Embedded will be available.
+data. For Blazor serverside, it directly populates it, for Blazor serverside it gathers them from an api.
 

@@ -19,7 +19,7 @@ jobs:
           dotnet-version: '6.0.x'
 
       - name: Build
-        run: dotnet build --configuration Release src
+        run: dotnet build -p:ContinuousIntegrationBuild=true --configuration Release src
 
       - name: Test
         run: dotnet test --configuration Release src
@@ -28,6 +28,6 @@ jobs:
         run: >
           export VERSION=$(git describe --long --tags --match 'v*' | sed 's/v//' | sed -E 's/[-].+//g');
           echo $VERSION;
-          dotnet pack --configuration Release --include-source -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true -p:Version=$VERSION -o out src/MvvmBlazor;
+          dotnet pack --configuration Release --include-source -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true -p:Version=$VERSION -o out src;
           cd out;
-          dotnet nuget push MvvmBlazor.$VERSION.nupkg --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json;
+          dotnet nuget push *.nupkg --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json;

@@ -31,7 +31,7 @@ public class MvvmComponentBaseTests : UnitTest
     {
         var viewModel = new TestViewModel();
 
-        var component = new Mock<MvvmComponentBase>(Services);
+        var component = new Mock<MvvmComponentBase>(Services.GetRequiredService<IServiceScopeFactory>());
         component.Setup(x => x.AddBinding(viewModel, y => y.TestProperty)).Returns("Test").Verifiable();
 
         var res = component.Object.Bind(viewModel, x => x.TestProperty);
@@ -43,7 +43,9 @@ public class MvvmComponentBaseTests : UnitTest
     internal class TestComponent : MvvmComponentBase
     {
         public Action BindingChangedAction { get; set; }
-        public TestComponent(IServiceProvider serviceProvider) : base(serviceProvider) { }
+
+
+        public TestComponent(IServiceProvider services) : base(services) { }
 
         internal override void BindingOnBindingValueChanged(object sender, EventArgs e)
         {

@@ -3,6 +3,9 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>true</ImplicitUsings>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>

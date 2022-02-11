@@ -58,7 +58,7 @@ public class MvvmComponentGenerator : ISourceGenerator
         }
 
         var componentBaseType =
-            context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase")!;
+            context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.OwningComponentBase")!;
         if (!IsComponent(componentClassContext.ComponentSymbol, componentBaseType))
         {
             context.ReportDiagnostic(
@@ -103,15 +103,12 @@ public class MvvmComponentGenerator : ISourceGenerator
             Encoding.UTF8
         );
 
-        var genericPostFix =
-            componentClass.TypeParameterList is null || componentClass.TypeParameterList.Parameters.Count == 0
-                ? "T"
-                : string.Join(
-                    ",",
-                    Enumerable.Range(0, componentClass.TypeParameterList.Parameters.Count).Select(i => $"T{i}")
-                );
+        if (componentClass.TypeParameterList is null || componentClass.TypeParameterList.Parameters.Count != 1)
+        {
+            throw new InvalidOperationException("Expected exactly one type parameter");
+        }
 
-        context.AddSource(componentClass.Identifier + $"{{{genericPostFix}}}.Generated.cs", genericComponentSourceText);
+        context.AddSource(componentClass.Identifier + "T.Generated.cs", genericComponentSourceText);
     }
 
     private static bool IsComponent(ITypeSymbol componentToCheck, ISymbol componentBaseType)
@@ -133,7 +130,6 @@ public class MvvmComponentGenerator : ISourceGenerator
     {
         var componentNamespace = componentClassContext.ComponentSymbol.ContainingNamespace;
         var componentClassName = componentClassContext.ComponentClass.Identifier;
-        var baseType = componentClassContext.ComponentSymbol.BaseType!.GetMetadataName();
 
         return $@"
 #nullable enable
@@ -146,16 +142,39 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    public partial class {componentClassName}:
-        {baseType}
+    public partial class {componentClassName}
     {{
+        private AsyncServiceScope? _scope;
+
+        [Inject] IServiceScopeFactory ScopeFactory {{ get; set; }} = default!;
+        [Inject] protected IServiceProvider RootServiceProvider {{ get; set; }} = default!;
         public IBinder Binder {{ get; private set; }} = null!;
 
+        protected new IServiceProvider ScopedServices
+        {{
+            get
+            {{
+                if (ScopeFactory == null)
+                {{
+                    throw new InvalidOperationException(""Services cannot be accessed before the component is initialized."");
+                }}
+
+                if (IsDisposed)
+                {{
+                    throw new ObjectDisposedException(GetType().Name);
+                }}
+
+                _scope ??= ScopeFactory.CreateAsyncScope();
+                return _scope.Value.ServiceProvider;
+            }}
+        }}
+
 #pragma warning disable CS8618
-        protected internal {componentClassName}(IServiceProvider serviceProvider)
+        protected internal {componentClassName}(IServiceProvider services)
 #pragma warning restore CS8618
         {{
-            ServiceProvider = serviceProvider;
+            RootServiceProvider = services;
+            ScopeFactory = services.GetRequiredService<IServiceScopeFactory>();
             InitializeDependencies();
         }}
 
@@ -165,11 +184,9 @@ namespace {componentNamespace}
         {{
         }}
 
-        [Inject] protected IServiceProvider ServiceProvider {{ get; set; }} = null!;
-
         private void InitializeDependencies()
         {{
-            Binder = ServiceProvider.GetRequiredService<IBinder>();
+            Binder = ScopedServices.GetRequiredService<IBinder>();
             Binder.ValueChangedCallback = BindingOnBindingValueChanged;
         }}
 
@@ -196,6 +213,12 @@ namespace {componentNamespace}
         {{
             InvokeAsync(StateHasChanged);
         }}
+
+        protected override void Dispose(bool disposing)
+        {{
+            base.Dispose(disposing);
+            _scope?.Dispose();
+        }}
     }}
 }}
             ";
@@ -205,7 +228,6 @@ namespace {componentNamespace}
     {
         var componentNamespace = componentClassContext.ComponentSymbol.ContainingNamespace;
         var componentClassName = componentClassContext.ComponentClass.Identifier;
-        var baseType = componentClassContext.ComponentSymbol.BaseType!.GetMetadataName();
 
         return $@"
 #nullable enable
@@ -219,8 +241,7 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    public abstract partial class {componentClassName}<T> :
-        {baseType}
+    public abstract partial class {componentClassName}<T>
         where T : ViewModelBase
     {{
         private IViewModelParameterSetter? _viewModelParameterSetter;
@@ -242,15 +263,19 @@ namespace {componentNamespace}
 
         private void SetBindingContext()
         {{
-            BindingContext ??= ServiceProvider.GetRequiredService<T>();
+            BindingContext ??= ScopedServices.GetRequiredService<T>();
+            BindingContext.RootServiceProvider = RootServiceProvider;
         }}
 
         private void SetParameters()
         {{
+            if (IsDisposed)
+                return;
+
             if (BindingContext is null)
                 throw new InvalidOperationException($""{{nameof(BindingContext)}} is not set"");
 
-            _viewModelParameterSetter ??= ServiceProvider.GetRequiredService<IViewModelParameterSetter>();
+            _viewModelParameterSetter ??= ScopedServices.GetRequiredService<IViewModelParameterSetter>();
             _viewModelParameterSetter.ResolveAndSet(this, BindingContext);
         }}
 

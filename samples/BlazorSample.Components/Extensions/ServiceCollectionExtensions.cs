@@ -2,6 +2,7 @@
 using BlazorSample.Domain.Extensions;
 using MatBlazor;
 using Microsoft.Extensions.DependencyInjection;
+using Index = BlazorSample.Components.Pages.Index;
 
 namespace BlazorSample.Components.Extensions;
 
