@@ -18,6 +18,6 @@ public class WeatherForecastGetter : IWeatherForecastGetter
 
     public Task<IEnumerable<WeatherForecastEntity>> GetForecasts()
     {
-        return _httpClient.GetFromJsonAsync<IEnumerable<WeatherForecastEntity>>("WeatherForecast");
+        return _httpClient.GetFromJsonAsync<IEnumerable<WeatherForecastEntity>>("WeatherForecast")!;
     }
 }

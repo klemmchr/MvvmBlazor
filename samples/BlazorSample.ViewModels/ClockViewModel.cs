@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Timers;
 using MvvmBlazor.ViewModel;
+using Timer = System.Timers.Timer;
 
 namespace BlazorSample.ViewModels;
 
