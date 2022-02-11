@@ -6,6 +6,7 @@
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
     <Nullable>enable</Nullable>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <PropertyGroup>
