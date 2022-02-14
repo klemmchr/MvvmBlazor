@@ -58,7 +58,7 @@ public class MvvmComponentGenerator : ISourceGenerator
         }
 
         var componentBaseType =
-            context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.OwningComponentBase")!;
+            context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase")!;
         if (!IsComponent(componentClassContext.ComponentSymbol, componentBaseType))
         {
             context.ReportDiagnostic(
@@ -142,12 +142,14 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    public partial class {componentClassName}
+    public partial class {componentClassName} : IDisposable
     {{
         private AsyncServiceScope? _scope;
 
         [Inject] IServiceScopeFactory ScopeFactory {{ get; set; }} = default!;
         [Inject] protected IServiceProvider RootServiceProvider {{ get; set; }} = default!;
+        protected bool IsDisposed {{ get; private set; }}
+
         public IBinder Binder {{ get; private set; }} = null!;
 
         protected new IServiceProvider ScopedServices
@@ -214,10 +216,19 @@ namespace {componentNamespace}
             InvokeAsync(StateHasChanged);
         }}
 
-        protected override void Dispose(bool disposing)
+        public void Dispose()
         {{
-            base.Dispose(disposing);
-            _scope?.Dispose();
+            if (!IsDisposed)
+            {{
+                _scope?.Dispose();
+                _scope = null;
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }}
+        }}
+
+        protected virtual void Dispose(bool disposing)
+        {{
         }}
     }}
 }}
