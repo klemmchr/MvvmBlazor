@@ -1,6 +1,6 @@
-﻿namespace MvvmBlazor.CodeGenerators;
+﻿namespace MvvmBlazor.CodeGenerators.Components;
 
-internal class MvvmSyntaxReceiver : ISyntaxContextReceiver
+internal class MvvmComponentSyntaxReceiver : ISyntaxContextReceiver
 {
     public List<MvvmComponentClassContext> ComponentClassContexts { get; } = new();
 
@@ -18,10 +18,12 @@ internal class MvvmSyntaxReceiver : ISyntaxContextReceiver
         }
 
         var isDecoratedWithAttribute = typeSymbol.GetAttributes()
-            .Any(ad => ad.AttributeClass != null && ad.AttributeClass.Name == "MvvmComponentAttribute");
-        if (isDecoratedWithAttribute)
+            .Any(ad => ad.AttributeClass is { Name: "MvvmComponentAttribute" });
+        if (!isDecoratedWithAttribute)
         {
-            ComponentClassContexts.Add(new MvvmComponentClassContext(cds, typeSymbol));
+            return;
         }
+
+        ComponentClassContexts.Add(new MvvmComponentClassContext(cds, typeSymbol));
     }
 }
