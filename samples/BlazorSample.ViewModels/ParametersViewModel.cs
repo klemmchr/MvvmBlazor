@@ -1,20 +1,16 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using MvvmBlazor.ViewModel;
 
 namespace BlazorSample.ViewModels;
 
 public class ParametersViewModel : ViewModelBase
 {
-    private readonly NavigationManager _navigationManager;
+    private NavigationManager _navigationManager = null!;
 
     [Parameter] public string? Name { get; set; }
 
     public string? NewName { get; set; }
-
-    public ParametersViewModel(NavigationManager navigationManager)
-    {
-        _navigationManager = navigationManager;
-    }
 
     public void NavigateToNewName()
     {
@@ -24,5 +20,10 @@ public class ParametersViewModel : ViewModelBase
         }
 
         _navigationManager.NavigateTo($"/parameters/{NewName}");
+    }
+
+    public override void OnInitialized()
+    {
+        _navigationManager = RootServiceProvider.GetRequiredService<NavigationManager>();
     }
 }

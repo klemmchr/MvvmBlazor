@@ -41,7 +41,7 @@ public class MvvmComponentGeneratorTests
     }
 
     [Fact]
-    public void GeneratesError_WhenComponentIsNotInheritingFromOwningComponentBase()
+    public void GeneratesComponent_WithComponentBaseClass()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -54,12 +54,11 @@ public class MvvmComponentGeneratorTests
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
 
         driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
-        diagnostics.ShouldNotBeEmpty();
-        diagnostics.First().Id.ShouldBe("MVVMBLAZOR002");
+        diagnostics.ShouldBeEmpty();
     }
 
     [Fact]
-    public void GeneratesComponent()
+    public void GeneratesComponent_WithOwningComponentBaseClass()
     {
         var inputCompilation = CreateCompilation(
             @$"
