@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using MvvmBlazor.ViewModel;
-
-namespace BlazorSample.ViewModels;
+﻿namespace BlazorSample.ViewModels;
 
 public class ParametersViewModel : ViewModelBase
 {

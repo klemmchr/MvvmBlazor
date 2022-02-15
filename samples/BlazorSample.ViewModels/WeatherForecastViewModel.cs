@@ -1,8 +1,4 @@
-﻿using System;
-using BlazorSample.Domain.Entities;
-using MvvmBlazor.ViewModel;
-
-namespace BlazorSample.ViewModels;
+﻿namespace BlazorSample.ViewModels;
 
 public class WeatherForecastViewModel : ViewModelBase
 {

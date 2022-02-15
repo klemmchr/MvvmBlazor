@@ -127,7 +127,7 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    public partial class {componentClassName} : IDisposable
+    partial class {componentClassName} : IDisposable
     {{
         private AsyncServiceScope? _scope;
 
@@ -137,7 +137,9 @@ namespace {componentNamespace}
 
         public IBinder Binder {{ get; private set; }} = null!;
 
+#pragma warning disable CS0109
         protected new IServiceProvider ScopedServices
+#pragma warning restore CS0109
         {{
             get
             {{
@@ -237,7 +239,7 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    public abstract partial class {componentClassName}<T>
+    partial class {componentClassName}<T>
         where T : ViewModelBase
     {{
         private IViewModelParameterSetter? _viewModelParameterSetter;

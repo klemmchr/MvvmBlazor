@@ -1,5 +1,6 @@
 ﻿namespace MvvmBlazor.CodeGenerators.NotifyPropertyChanged;
 
+[Generator]
 public class NotifyPropertyChangedGenerator : ISourceGenerator
 {
     private static readonly DiagnosticDescriptor ViewModelNotPartialError = new(
@@ -77,6 +78,59 @@ public class NotifyPropertyChangedGenerator : ISourceGenerator
             );
             return;
         }
+
+        AddViewModel(context, fieldContexts, viewModelType, viewModelClass);
     }
 
+    private static void AddViewModel(
+        GeneratorExecutionContext context,
+        IReadOnlyCollection<NotifyPropertyChangedContext> fieldContexts,
+        INamedTypeSymbol viewModelType,
+        ClassDeclarationSyntax viewModelClass)
+    {
+        var viewModelSourceText = SourceText.From(GenerateViewModelCode(fieldContexts, viewModelType, viewModelClass), Encoding.UTF8);
+        context.AddSource(viewModelClass.Identifier + ".Generated.cs", viewModelSourceText);
+    }
+
+    private static string GenerateViewModelCode(IReadOnlyCollection<NotifyPropertyChangedContext> fieldContexts, INamedTypeSymbol viewModelType, ClassDeclarationSyntax viewModelClass)
+    {
+        var viewModelNamespace = viewModelType.ContainingNamespace;
+        var viewModelClassName = viewModelClass.Identifier;
+
+        var sb = new StringBuilder();
+
+        sb.AppendLine("#nullable enable");
+        sb.AppendLine();
+        sb.AppendLineFormat("namespace {0}", viewModelNamespace);
+        sb.AppendLine("{");
+        sb.AppendLineFormat("    partial class {0}", viewModelClassName);
+        sb.AppendLine("    {");
+
+        foreach (var fieldContext in fieldContexts)
+        {
+            var propertyType = fieldContext.FieldSymbol.Type;
+            var fieldName = fieldContext.FieldSymbol.Name;
+            var propertyName = GetPropertyName(fieldName);
+            sb.AppendLineFormat("        public {0} {1}", propertyType, propertyName);
+            sb.AppendLine("        {");
+            sb.AppendLineFormat("            get => {0};", fieldName);
+            sb.AppendLineFormat("            set => Set(ref {0}, value, \"{1}\");", fieldName, propertyName);
+            sb.AppendLine("        }");
+        }
+
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+
+        return sb.ToString();
+    }
+
+    private static string GetPropertyName(string fieldName)
+    {
+        var fieldNameWithoutUnderscore = fieldName.TrimStart('_');
+        var firstChar = fieldNameWithoutUnderscore.Substring(0, 1);
+
+        return firstChar.ToUpperInvariant() + fieldNameWithoutUnderscore.Substring(1);
+    }
 }
+
+

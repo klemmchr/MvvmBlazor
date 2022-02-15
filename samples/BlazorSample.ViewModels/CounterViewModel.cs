@@ -1,16 +1,9 @@
-﻿using MvvmBlazor.ViewModel;
+﻿namespace BlazorSample.ViewModels;
 
-namespace BlazorSample.ViewModels;
-
-public class CounterViewModel : ViewModelBase
+public partial class CounterViewModel : ViewModelBase
 {
+    [Notify]
     private int _currentCount;
-
-    public int CurrentCount
-    {
-        get => _currentCount;
-        set => Set(ref _currentCount, value, nameof(CurrentCount));
-    }
 
     public void IncrementCount()
     {

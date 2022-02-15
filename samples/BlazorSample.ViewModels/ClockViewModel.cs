@@ -1,20 +1,21 @@
-﻿using System;
-using System.Timers;
-using MvvmBlazor.ViewModel;
-using Timer = System.Timers.Timer;
+﻿using Timer = System.Timers.Timer;
 
 namespace BlazorSample.ViewModels;
 
-public class ClockViewModel : ViewModelBase, IDisposable
+public partial class ClockViewModel : ViewModelBase, IDisposable
 {
     private readonly Timer _timer;
+
+    [Notify]
     private DateTime _dateTime = DateTime.Now;
 
+    /*
     public DateTime DateTime
     {
         get => _dateTime;
         set => Set(ref _dateTime, value);
     }
+    */
 
     public ClockViewModel()
     {

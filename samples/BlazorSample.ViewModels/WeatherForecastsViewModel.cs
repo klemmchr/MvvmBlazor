@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using BlazorSample.Domain.Services;
-using MvvmBlazor.ViewModel;
+﻿namespace BlazorSample.ViewModels;
 
-namespace BlazorSample.ViewModels;
-
-public class WeatherForecastsViewModel : ViewModelBase
+public partial class WeatherForecastsViewModel : ViewModelBase
 {
     private readonly IWeatherForecastGetter _weatherForecastGetter;
 
+    [Notify]
     private ObservableCollection<WeatherForecastViewModel>? _forecasts;
-
-    public ObservableCollection<WeatherForecastViewModel>? Forecasts
-    {
-        get => _forecasts;
-        set => Set(ref _forecasts, value, nameof(Forecasts));
-    }
 
     public WeatherForecastsViewModel(IWeatherForecastGetter weatherForecastGetter)
     {
@@ -30,7 +18,7 @@ public class WeatherForecastsViewModel : ViewModelBase
         await Task.Delay(1500);
 
         var forecastData = await _weatherForecastGetter.GetForecasts();
-        _forecasts =
+        Forecasts =
             new ObservableCollection<WeatherForecastViewModel>(
                 forecastData.Select(x => new WeatherForecastViewModel(x))
             );
