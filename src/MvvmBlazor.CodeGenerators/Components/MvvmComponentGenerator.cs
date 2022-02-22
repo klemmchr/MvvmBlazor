@@ -1,4 +1,4 @@
-﻿namespace MvvmBlazor.CodeGenerators;
+﻿namespace MvvmBlazor.CodeGenerators.Components;
 
 [Generator]
 public class MvvmComponentGenerator : ISourceGenerator
@@ -23,7 +23,7 @@ public class MvvmComponentGenerator : ISourceGenerator
 
     public void Execute(GeneratorExecutionContext context)
     {
-        if (context.SyntaxContextReceiver is not MvvmSyntaxReceiver syntaxReceiver ||
+        if (context.SyntaxContextReceiver is not MvvmComponentSyntaxReceiver syntaxReceiver ||
             syntaxReceiver.ComponentClassContexts.Count == 0)
         {
             return;
@@ -35,7 +35,7 @@ public class MvvmComponentGenerator : ISourceGenerator
 
     public void Initialize(GeneratorInitializationContext context)
     {
-        context.RegisterForSyntaxNotifications(() => new MvvmSyntaxReceiver());
+        context.RegisterForSyntaxNotifications(() => new MvvmComponentSyntaxReceiver());
     }
 
     private void ProcessComponent(GeneratorExecutionContext context, MvvmComponentClassContext componentClassContext)
@@ -59,7 +59,7 @@ public class MvvmComponentGenerator : ISourceGenerator
 
         var componentBaseType =
             context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ComponentBase")!;
-        if (!IsComponent(componentClassContext.ComponentSymbol, componentBaseType))
+        if (!componentClassContext.ComponentSymbol.InheritsFrom(componentBaseType))
         {
             context.ReportDiagnostic(
                 Diagnostic.Create(
@@ -111,21 +111,6 @@ public class MvvmComponentGenerator : ISourceGenerator
         context.AddSource(componentClass.Identifier + "T.Generated.cs", genericComponentSourceText);
     }
 
-    private static bool IsComponent(ITypeSymbol componentToCheck, ISymbol componentBaseType)
-    {
-        if (componentToCheck.BaseType is null)
-        {
-            return false;
-        }
-
-        if (componentToCheck.BaseType.GetMetadataName() == componentBaseType.GetMetadataName())
-        {
-            return true;
-        }
-
-        return IsComponent(componentToCheck.BaseType, componentBaseType);
-    }
-
     private static string GenerateComponentCode(MvvmComponentClassContext componentClassContext)
     {
         var componentNamespace = componentClassContext.ComponentSymbol.ContainingNamespace;
@@ -142,7 +127,7 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    public partial class {componentClassName} : IDisposable
+    partial class {componentClassName} : IDisposable
     {{
         private AsyncServiceScope? _scope;
 
@@ -152,7 +137,9 @@ namespace {componentNamespace}
 
         public IBinder Binder {{ get; private set; }} = null!;
 
+#pragma warning disable CS0109
         protected new IServiceProvider ScopedServices
+#pragma warning restore CS0109
         {{
             get
             {{
@@ -252,7 +239,7 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    public abstract partial class {componentClassName}<T>
+    partial class {componentClassName}<T>
         where T : ViewModelBase
     {{
         private IViewModelParameterSetter? _viewModelParameterSetter;

@@ -1,4 +1,4 @@
-﻿namespace MvvmBlazor.CodeGenerators;
+﻿namespace MvvmBlazor.CodeGenerators.Components;
 
 internal class MvvmComponentClassContext
 {

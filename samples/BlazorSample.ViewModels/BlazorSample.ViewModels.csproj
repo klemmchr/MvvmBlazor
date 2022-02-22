@@ -8,8 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj"/>
-        <ProjectReference Include="..\BlazorSample.Domain\BlazorSample.Domain.csproj"/>
+        <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj" />
+        <ProjectReference Include="..\BlazorSample.Domain\BlazorSample.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
 </Project>

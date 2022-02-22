@@ -1,4 +1,5 @@
-﻿using Binder = System.Reflection.Binder;
+﻿using MvvmBlazor.CodeGenerators.Components;
+using Binder = System.Reflection.Binder;
 
 namespace MvvmBlazor.Tests.Generators;
 
