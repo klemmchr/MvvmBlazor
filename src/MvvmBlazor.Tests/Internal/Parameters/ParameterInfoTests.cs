@@ -47,11 +47,4 @@ public class ParameterInfoTests
         info.Parameters.ElementAt(1).Key.ShouldBe(p2.Object);
         info.Parameters.ElementAt(1).Value.ShouldBe(vmp2.Object);
     }
-
-    [Fact]
-    public void ValidatesParameters()
-    {
-        Should.Throw<ArgumentNullException>(() => new ParameterInfo(null, new List<PropertyInfo>()));
-        Should.Throw<ArgumentNullException>(() => new ParameterInfo(new List<PropertyInfo>(), null));
-    }
 }

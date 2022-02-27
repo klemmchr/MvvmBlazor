@@ -1,58 +1,59 @@
 ﻿namespace MvvmBlazor.Tests.Internal.Parameters;
 
-public class ParameterResolverTests
+public class ParameterResolverTests : UnitTest
 {
+    public ParameterResolverTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+
+    protected override void RegisterServices(IServiceCollection services)
+    {
+        services.Mock<IParameterCache>();
+        services.Provide<ParameterResolver>();
+    }
+
     [Fact]
     public void ResolveParameters_IgnoresPropertiesWithoutAttribute()
     {
-        var resolver = new ParameterResolver();
+        var resolver = Services.GetRequiredService<ParameterResolver>();
 
-        var res = resolver.ResolveParameters(typeof(S3));
-        res.Count().ShouldBe(1);
-        res.ElementAt(0).Name.ShouldBe("Test");
-        res.ElementAt(0).PropertyType.ShouldBe(typeof(string));
+        var res = resolver.ResolveParameters(typeof(S3), typeof(S3));
+        res.Parameters.Count().ShouldBe(1);
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
+        res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
     [Fact]
     public void ResolveParameters_IgnoresPropertiesWithoutPublicSetter()
     {
-        var resolver = new ParameterResolver();
+        var resolver = Services.GetRequiredService<ParameterResolver>();
 
-        var res = resolver.ResolveParameters(typeof(S4));
-        res.Count().ShouldBe(1);
-        res.ElementAt(0).Name.ShouldBe("Test");
-        res.ElementAt(0).PropertyType.ShouldBe(typeof(string));
+        var res = resolver.ResolveParameters(typeof(S4), typeof(S4));
+        res.Parameters.Count().ShouldBe(1);
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
+        res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
     [Fact]
     public void ResolveParameters_ResolvesMultipleParameters()
     {
-        var resolver = new ParameterResolver();
+        var resolver = Services.GetRequiredService<ParameterResolver>();
 
-        var res = resolver.ResolveParameters(typeof(S2));
-        res.Count().ShouldBe(2);
-        res.ElementAt(0).Name.ShouldBe("Test");
-        res.ElementAt(0).PropertyType.ShouldBe(typeof(string));
-        res.ElementAt(1).Name.ShouldBe("Foo");
-        res.ElementAt(1).PropertyType.ShouldBe(typeof(int));
+        var res = resolver.ResolveParameters(typeof(S2), typeof(S2));
+        res.Parameters.Count().ShouldBe(2);
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
+        res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
+        res.Parameters.ElementAt(1).Key.Name.ShouldBe("Foo");
+        res.Parameters.ElementAt(1).Key.PropertyType.ShouldBe(typeof(int));
     }
 
     [Fact]
     public void ResolveParameters_ResolvesSingleParameter()
     {
-        var resolver = new ParameterResolver();
+        var resolver = Services.GetRequiredService<ParameterResolver>();
 
-        var res = resolver.ResolveParameters(typeof(S1));
-        res.Count().ShouldBe(1);
-        res.ElementAt(0).Name.ShouldBe("Test");
-        res.ElementAt(0).PropertyType.ShouldBe(typeof(string));
-    }
-
-    [Fact]
-    public void ResolveParameters_ValidatesParameters()
-    {
-        var resolver = new ParameterResolver();
-        Should.Throw<ArgumentNullException>(() => resolver.ResolveParameters(null));
+        var res = resolver.ResolveParameters(typeof(S1), typeof(S1));
+        res.Parameters.Count().ShouldBe(1);
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
+        res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
     private class S1

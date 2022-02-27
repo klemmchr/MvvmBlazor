@@ -1,85 +1,124 @@
-﻿using ParameterInfo = MvvmBlazor.Internal.Parameters.ParameterInfo;
+﻿using System.Globalization;
+using ParameterInfo = MvvmBlazor.Internal.Parameters.ParameterInfo;
 
 namespace MvvmBlazor.Tests.Internal.Parameters;
 
-public class ViewModelParameterSetterTests
+public class ViewModelParameterSetterTests : UnitTest
 {
-    private Mock<PropertyInfo> GenerateProperty(string propertyName)
+    private static readonly StronglyTypedParameter TestParameter = new();
+
+    [TypeConverter(typeof(StronglyTypedParameterConverter))]
+    private class StronglyTypedParameter
+    {
+
+    }
+
+    private class StronglyTypedParameterConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
+        {
+            return sourceType == typeof(int);
+        }
+
+        public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
+        {
+            return TestParameter;
+        }
+    }
+
+    public ViewModelParameterSetterTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
+
+    protected override void RegisterServices(IServiceCollection services)
+    {
+        services.StrictMock<IParameterResolver>();
+        services.StrictMock<ComponentBase>();
+        services.StrictMock<ViewModelBase>();
+        services.Provide<ViewModelParameterSetter>();
+    }
+
+    private Mock<PropertyInfo> GenerateProperty(string propertyName, Type propertyType)
     {
         var property = new Mock<PropertyInfo>();
         property.Setup(x => x.Name).Returns(propertyName).Verifiable();
-        property.Setup(x => x.GetCustomAttributes(typeof(ParameterAttribute), false))
-            .Returns(new object[] { new ParameterAttribute() });
-        property.Setup(x => x.GetHashCode()).CallBase();
+        property.SetupGet(x => x.PropertyType).Returns(propertyType).Verifiable();
         return property;
     }
 
     [Fact]
-    public void ResolveAndSet_ResolvesParametersAndCachesResult()
+    public void ResolveAndSet_ResolvesParametersOfSameType()
     {
-        var cp1 = GenerateProperty("p1");
+        const string propName = "p1";
+        const string componentValue = "foo";
+        var cp1 = GenerateProperty(propName, componentValue.GetType());
         var componentProperties = new List<PropertyInfo> { cp1.Object };
 
-        var vmp1 = GenerateProperty("p1");
+        var vmp1 = GenerateProperty(propName, componentValue.GetType());
         var viewModelProperties = new List<PropertyInfo> { vmp1.Object };
+        var parameterInfo = new ParameterInfo(componentProperties, viewModelProperties);
 
-        var resolver = new Mock<IParameterResolver>();
-        var cache = new Mock<IParameterCache>();
-        var component = new Mock<ComponentBase>();
-        var viewModel = new Mock<ViewModelBase>();
-        cache.Setup(x => x.Get(It.Is<Type>(y => y.BaseType == typeof(ComponentBase))))
-            .Returns((ParameterInfo)null)
+        var resolver = Services.GetMock<IParameterResolver>();
+        var component = Services.GetMock<ComponentBase>();
+        var viewModel = Services.GetMock<ViewModelBase>();
+        resolver.Setup(x => x.ResolveParameters(component.Object.GetType(), viewModel.Object.GetType()))
+            .Returns(parameterInfo)
             .Verifiable();
-        cache.Setup(x => x.Set(It.Is<Type>(y => y.BaseType == typeof(ComponentBase)), It.IsAny<ParameterInfo>()))
-            .Verifiable();
-        resolver.Setup(x => x.ResolveParameters(It.Is<Type>(y => y.BaseType == typeof(ComponentBase))))
-            .Returns(componentProperties)
-            .Verifiable();
-        resolver.Setup(x => x.ResolveParameters(It.Is<Type>(y => y.BaseType == typeof(ViewModelBase))))
-            .Returns(viewModelProperties)
-            .Verifiable();
-        cp1.Setup(x => x.GetValue(component.Object, null)).Returns("foo").Verifiable();
+        cp1.Setup(x => x.GetValue(component.Object, null)).Returns(componentValue).Verifiable();
+        vmp1.Setup(x => x.SetValue(viewModel.Object, componentValue, null)).Verifiable();
 
-
-        var setter = new ViewModelParameterSetter(resolver.Object, cache.Object);
+        var setter = Services.GetRequiredService<ViewModelParameterSetter>();
 
         setter.ResolveAndSet(component.Object, viewModel.Object);
 
         cp1.Verify();
-        cp1.Verify(x => x.GetHashCode());
-        vmp1.Verify(x => x.SetValue(viewModel.Object, "foo", null));
         vmp1.Verify();
-        cache.Verify();
         resolver.Verify();
-        component.VerifyNoOtherCalls();
-        viewModel.VerifyNoOtherCalls();
-        cp1.VerifyNoOtherCalls();
-        vmp1.VerifyNoOtherCalls();
-        resolver.VerifyNoOtherCalls();
-        cache.VerifyNoOtherCalls();
-        component.VerifyNoOtherCalls();
-        viewModel.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void ResolveAndSet_ResolvesParametersOfConvertibleTypes()
+    {
+        const string propName = "p1";
+        const int componentValue = 42;
+        var cp1 = GenerateProperty(propName, componentValue.GetType());
+        var componentProperties = new List<PropertyInfo> { cp1.Object };
+
+        var vmp1 = GenerateProperty(propName, typeof(StronglyTypedParameter));
+        var viewModelProperties = new List<PropertyInfo> { vmp1.Object };
+        var parameterInfo = new ParameterInfo(componentProperties, viewModelProperties);
+
+        var resolver = Services.GetMock<IParameterResolver>();
+        var component = Services.GetMock<ComponentBase>();
+        var viewModel = Services.GetMock<ViewModelBase>();
+        resolver.Setup(x => x.ResolveParameters(component.Object.GetType(), viewModel.Object.GetType()))
+            .Returns(parameterInfo)
+            .Verifiable();
+        cp1.Setup(x => x.GetValue(component.Object, null)).Returns(componentValue).Verifiable();
+        vmp1.Setup(x => x.SetValue(viewModel.Object, TestParameter, null)).Verifiable();
+
+        var setter = Services.GetRequiredService<ViewModelParameterSetter>();
+
+        setter.ResolveAndSet(component.Object, viewModel.Object);
+
+        cp1.Verify();
+        vmp1.Verify();
+        resolver.Verify();
     }
 
     [Fact]
     public void ResolveAndSet_ValidatesParameters()
     {
         var resolver = new Mock<IParameterResolver>();
-        var cache = new Mock<IParameterCache>();
-        var setter = new ViewModelParameterSetter(resolver.Object, cache.Object);
+        var setter = new ViewModelParameterSetter(resolver.Object);
 
-        Should.Throw<ArgumentNullException>(() => setter.ResolveAndSet(null, new Mock<ViewModelBase>().Object));
-        Should.Throw<ArgumentNullException>(() => setter.ResolveAndSet(new Mock<ComponentBase>().Object, null));
+        Should.Throw<ArgumentNullException>(() => setter.ResolveAndSet(null!, new Mock<ViewModelBase>().Object));
+        Should.Throw<ArgumentNullException>(() => setter.ResolveAndSet(new Mock<ComponentBase>().Object, null!));
     }
 
     [Fact]
     public void ValidatesParameters()
     {
         Should.Throw<ArgumentNullException>(
-            () => new ViewModelParameterSetter(null, new Mock<IParameterCache>().Object)
-        );
-        Should.Throw<ArgumentNullException>(
-            () => new ViewModelParameterSetter(new Mock<IParameterResolver>().Object, null)
+            () => new ViewModelParameterSetter(null)
         );
     }
 }

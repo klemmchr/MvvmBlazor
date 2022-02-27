@@ -7,13 +7,11 @@ internal interface IViewModelParameterSetter
 
 internal class ViewModelParameterSetter : IViewModelParameterSetter
 {
-    private readonly IParameterCache _parameterCache;
     private readonly IParameterResolver _parameterResolver;
 
-    public ViewModelParameterSetter(IParameterResolver parameterResolver, IParameterCache parameterCache)
+    public ViewModelParameterSetter(IParameterResolver parameterResolver)
     {
         _parameterResolver = parameterResolver ?? throw new ArgumentNullException(nameof(parameterResolver));
-        _parameterCache = parameterCache ?? throw new ArgumentNullException(nameof(parameterCache));
     }
 
     public void ResolveAndSet(ComponentBase component, ViewModelBase viewModel)
@@ -29,19 +27,20 @@ internal class ViewModelParameterSetter : IViewModelParameterSetter
         }
 
         var componentType = component.GetType();
+        var viewModelType = viewModel.GetType();
 
-        var parameterInfo = _parameterCache.Get(componentType);
-        if (parameterInfo == null)
-        {
-            var componentParameters = _parameterResolver.ResolveParameters(componentType);
-            var viewModelParameters = _parameterResolver.ResolveParameters(viewModel.GetType());
-            parameterInfo = new ParameterInfo(componentParameters, viewModelParameters);
-            _parameterCache.Set(componentType, parameterInfo);
-        }
-
+        var parameterInfo = _parameterResolver.ResolveParameters(componentType, viewModelType);
         foreach (var (componentProperty, viewModelProperty) in parameterInfo.Parameters)
         {
             var value = componentProperty.GetValue(component);
+            if (value != null && componentProperty.PropertyType != viewModelProperty.PropertyType)
+            {
+                var converter = TypeDescriptor.GetConverter(viewModelProperty.PropertyType);
+                if (converter.CanConvertFrom(componentProperty.PropertyType))
+                {
+                    value = converter.ConvertTo(value, viewModelProperty.PropertyType);
+                }
+            }
             viewModelProperty.SetValue(viewModel, value);
         }
     }
