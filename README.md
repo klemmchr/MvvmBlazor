@@ -155,7 +155,7 @@ Parameters are automatically populated to the view model. Declare a parameter in
 
 and declare the same parameter in your view model
 
-```csharp
+```csharp~~~~
 class ViewModel: ViewModelBase
 {
     [Parameter]
@@ -163,9 +163,17 @@ class ViewModel: ViewModelBase
 }
 ```
 
-The parameter will be passed before `OnInitialized` and `OnInitializedAsync` are invoked. Therefore, the parameters are
-available from any lifecycle method. You can't access them in your constructor and you're not supposed to do that
+The parameter will be passed when parameters are set on the component. More information regarding the lifecycle can be found in the [Microsoft Documentation](https://docs.microsoft.com/en-us/aspnet/core/blazor/components/lifecycle?view=aspnetcore-6.0#lifecycle-events).
 either.
+
+##### Type conversion
+When binding parameters in a component Blazor restricts you to a finite list of primitive types you can use.
+In some scenarios you might want to bind to a strong type and perform automatic conversions to it.
+A typical use case for this would be a strongly typed identifier that you use in your application.
+
+View model parameters support type conversion using [`TypeConverter`](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.typeconverter?view=net-6.0).
+Your component parameters still needs to be a supported primitive type, however your view model parameter can be strongly typed and will get auto converted.
+An example for this can be found in the TypedParameter sample.
 
 #### Dispose
 

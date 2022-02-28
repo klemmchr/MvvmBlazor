@@ -11,21 +11,11 @@ internal class ViewModelParameterSetter : IViewModelParameterSetter
 
     public ViewModelParameterSetter(IParameterResolver parameterResolver)
     {
-        _parameterResolver = parameterResolver ?? throw new ArgumentNullException(nameof(parameterResolver));
+        _parameterResolver = parameterResolver;
     }
 
     public void ResolveAndSet(ComponentBase component, ViewModelBase viewModel)
     {
-        if (component == null)
-        {
-            throw new ArgumentNullException(nameof(component));
-        }
-
-        if (viewModel == null)
-        {
-            throw new ArgumentNullException(nameof(viewModel));
-        }
-
         var componentType = component.GetType();
         var viewModelType = viewModel.GetType();
 
@@ -33,15 +23,19 @@ internal class ViewModelParameterSetter : IViewModelParameterSetter
         foreach (var (componentProperty, viewModelProperty) in parameterInfo.Parameters)
         {
             var value = componentProperty.GetValue(component);
-            if (value != null && componentProperty.PropertyType != viewModelProperty.PropertyType)
+            var parameterTypeDiffers = componentProperty.PropertyType != viewModelProperty.PropertyType;
+            if (value != null && parameterTypeDiffers)
             {
-                var converter = TypeDescriptor.GetConverter(viewModelProperty.PropertyType);
-                if (converter.CanConvertFrom(componentProperty.PropertyType))
-                {
-                    value = converter.ConvertTo(value, viewModelProperty.PropertyType);
-                }
+                value = ConvertValue(componentProperty.PropertyType, viewModelProperty.PropertyType, value);
             }
+
             viewModelProperty.SetValue(viewModel, value);
         }
+    }
+
+    private static object? ConvertValue(Type componentType, Type viewModelType, object value)
+    {
+        var converter = TypeDescriptor.GetConverter(viewModelType);
+        return converter.CanConvertFrom(componentType) ? converter.ConvertTo(value, viewModelType) : value;
     }
 }

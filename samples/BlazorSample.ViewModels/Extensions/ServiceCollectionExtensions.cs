@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddTransient<ClockViewModel>();
         serviceCollection.AddTransient<ParametersViewModel>();
         serviceCollection.AddScoped<NavbarViewModel>();
+        serviceCollection.AddScoped<TypedParametersViewModel>();
 
         return serviceCollection;
     }

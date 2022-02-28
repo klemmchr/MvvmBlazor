@@ -103,22 +103,4 @@ public class ViewModelParameterSetterTests : UnitTest
         vmp1.Verify();
         resolver.Verify();
     }
-
-    [Fact]
-    public void ResolveAndSet_ValidatesParameters()
-    {
-        var resolver = new Mock<IParameterResolver>();
-        var setter = new ViewModelParameterSetter(resolver.Object);
-
-        Should.Throw<ArgumentNullException>(() => setter.ResolveAndSet(null!, new Mock<ViewModelBase>().Object));
-        Should.Throw<ArgumentNullException>(() => setter.ResolveAndSet(new Mock<ComponentBase>().Object, null!));
-    }
-
-    [Fact]
-    public void ValidatesParameters()
-    {
-        Should.Throw<ArgumentNullException>(
-            () => new ViewModelParameterSetter(null)
-        );
-    }
 }

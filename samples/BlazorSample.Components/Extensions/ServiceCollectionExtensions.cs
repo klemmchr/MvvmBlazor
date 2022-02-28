@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddNavigationItem<WeatherForecasts>("Weather forecasts", MatIconNames.Cloud);
         serviceCollection.AddNavigationItem<Clock>("Clock", MatIconNames.Alarm);
         serviceCollection.AddNavigationItem<Parameters>("Parameters", MatIconNames.List);
+        serviceCollection.AddNavigationItem<TypedParameters>("Typed Parameters", MatIconNames.List);
 
         return serviceCollection;
     }
