@@ -7,42 +7,35 @@ internal interface IViewModelParameterSetter
 
 internal class ViewModelParameterSetter : IViewModelParameterSetter
 {
-    private readonly IParameterCache _parameterCache;
     private readonly IParameterResolver _parameterResolver;
 
-    public ViewModelParameterSetter(IParameterResolver parameterResolver, IParameterCache parameterCache)
+    public ViewModelParameterSetter(IParameterResolver parameterResolver)
     {
-        _parameterResolver = parameterResolver ?? throw new ArgumentNullException(nameof(parameterResolver));
-        _parameterCache = parameterCache ?? throw new ArgumentNullException(nameof(parameterCache));
+        _parameterResolver = parameterResolver;
     }
 
     public void ResolveAndSet(ComponentBase component, ViewModelBase viewModel)
     {
-        if (component == null)
-        {
-            throw new ArgumentNullException(nameof(component));
-        }
-
-        if (viewModel == null)
-        {
-            throw new ArgumentNullException(nameof(viewModel));
-        }
-
         var componentType = component.GetType();
+        var viewModelType = viewModel.GetType();
 
-        var parameterInfo = _parameterCache.Get(componentType);
-        if (parameterInfo == null)
-        {
-            var componentParameters = _parameterResolver.ResolveParameters(componentType);
-            var viewModelParameters = _parameterResolver.ResolveParameters(viewModel.GetType());
-            parameterInfo = new ParameterInfo(componentParameters, viewModelParameters);
-            _parameterCache.Set(componentType, parameterInfo);
-        }
-
+        var parameterInfo = _parameterResolver.ResolveParameters(componentType, viewModelType);
         foreach (var (componentProperty, viewModelProperty) in parameterInfo.Parameters)
         {
             var value = componentProperty.GetValue(component);
+            var parameterTypeDiffers = componentProperty.PropertyType != viewModelProperty.PropertyType;
+            if (value != null && parameterTypeDiffers)
+            {
+                value = ConvertValue(componentProperty.PropertyType, viewModelProperty.PropertyType, value);
+            }
+
             viewModelProperty.SetValue(viewModel, value);
         }
+    }
+
+    private static object? ConvertValue(Type componentType, Type viewModelType, object value)
+    {
+        var converter = TypeDescriptor.GetConverter(viewModelType);
+        return converter.CanConvertFrom(componentType) ? converter.ConvertTo(value, viewModelType) : value;
     }
 }

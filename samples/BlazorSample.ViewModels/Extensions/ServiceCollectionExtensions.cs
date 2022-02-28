@@ -1,5 +1,4 @@
 ﻿using BlazorSample.ViewModels.Navbar;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorSample.ViewModels.Extensions;
 
@@ -12,6 +11,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddTransient<ClockViewModel>();
         serviceCollection.AddTransient<ParametersViewModel>();
         serviceCollection.AddScoped<NavbarViewModel>();
+        serviceCollection.AddScoped<TypedParametersViewModel>();
 
         return serviceCollection;
     }

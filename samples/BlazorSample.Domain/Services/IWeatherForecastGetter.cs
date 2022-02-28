@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using BlazorSample.Domain.Entities;
+﻿using BlazorSample.Domain.Entities;
 
 namespace BlazorSample.Domain.Services;
 

@@ -1,0 +1,24 @@
+﻿@page "/typed-parameters/{Id}"
+@inherits MvvmComponentBase<TypedParametersViewModel>
+
+<MatCard>
+    <MatCardContent>
+        <MatSubtitle1>
+            Converting parameter types is supported out of the box.
+            Visit the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.typeconverter?view=net-6.0" target="_blank">Microsoft Documentation</a> to find out more about TypeConverter.
+        </MatSubtitle1>
+    </MatCardContent>
+</MatCard>
+<br/>
+
+<MatBody2>Id value @Bind(x => x.Id)</MatBody2>
+<br/>
+
+<MatButton OnClick="@BindingContext.NavigateToRandomId" Raised="true">Navigate to random id</MatButton>
+
+@code {
+
+    [Parameter]
+    public string? Id { get; set; }
+
+}

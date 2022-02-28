@@ -1,4 +1,6 @@
-﻿namespace MvvmBlazor.Internal.Parameters;
+﻿using System.Collections.Concurrent;
+
+namespace MvvmBlazor.Internal.Parameters;
 
 internal interface IParameterCache
 {
@@ -8,7 +10,7 @@ internal interface IParameterCache
 
 internal class ParameterCache : IParameterCache
 {
-    private readonly Dictionary<Type, ParameterInfo> _cache = new();
+    private readonly ConcurrentDictionary<Type, ParameterInfo> _cache = new();
 
     public ParameterInfo? Get(Type type)
     {

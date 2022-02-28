@@ -3,11 +3,6 @@ using BlazorSample.Domain.Extensions;
 using BlazorSample.Domain.Services;
 using BlazorSample.ViewModels.Extensions;
 using BlazorServersideSample.Services;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace BlazorServersideSample;
 

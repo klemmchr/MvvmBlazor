@@ -2,18 +2,37 @@
 
 internal interface IParameterResolver
 {
-    IEnumerable<PropertyInfo> ResolveParameters(Type memberType);
+    ParameterInfo ResolveParameters(Type componentType, Type viewModelType);
 }
 
 internal class ParameterResolver : IParameterResolver
 {
-    public IEnumerable<PropertyInfo> ResolveParameters(Type memberType)
+    private readonly IParameterCache _parameterCache;
+
+    public ParameterResolver(IParameterCache parameterCache)
     {
-        if (memberType == null)
+        _parameterCache = parameterCache;
+    }
+
+    public ParameterInfo ResolveParameters(Type componentType, Type viewModelType)
+    {
+        var parameterInfo = _parameterCache.Get(componentType);
+        if (parameterInfo is not null)
         {
-            throw new ArgumentNullException(nameof(memberType));
+            return parameterInfo;
         }
 
+        var componentParameters = ResolveTypeParameters(componentType);
+        var viewModelParameters = ResolveTypeParameters(viewModelType);
+
+        parameterInfo = new ParameterInfo(componentParameters, viewModelParameters);
+        _parameterCache.Set(componentType, parameterInfo);
+
+        return parameterInfo;
+    }
+
+    private IEnumerable<PropertyInfo> ResolveTypeParameters(Type memberType)
+    {
         var componentProperties = memberType.GetProperties();
 
         var resolvedComponentProperties = new List<PropertyInfo>();
