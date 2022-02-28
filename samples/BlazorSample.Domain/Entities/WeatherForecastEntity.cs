@@ -1,5 +1,3 @@
-using System;
-
 namespace BlazorSample.Domain.Entities;
 
 public class WeatherForecastEntity

@@ -7,25 +7,6 @@ public class ViewModelParameterSetterTests : UnitTest
 {
     private static readonly StronglyTypedParameter TestParameter = new();
 
-    [TypeConverter(typeof(StronglyTypedParameterConverter))]
-    private class StronglyTypedParameter
-    {
-
-    }
-
-    private class StronglyTypedParameterConverter : TypeConverter
-    {
-        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        {
-            return sourceType == typeof(int);
-        }
-
-        public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
-        {
-            return TestParameter;
-        }
-    }
-
     public ViewModelParameterSetterTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
     protected override void RegisterServices(IServiceCollection services)
@@ -102,5 +83,25 @@ public class ViewModelParameterSetterTests : UnitTest
         cp1.Verify();
         vmp1.Verify();
         resolver.Verify();
+    }
+
+    [TypeConverter(typeof(StronglyTypedParameterConverter))]
+    private class StronglyTypedParameter { }
+
+    private class StronglyTypedParameterConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
+        {
+            return sourceType == typeof(int);
+        }
+
+        public override object ConvertTo(
+            ITypeDescriptorContext? context,
+            CultureInfo? culture,
+            object? value,
+            Type destinationType)
+        {
+            return TestParameter;
+        }
     }
 }

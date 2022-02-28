@@ -4,8 +4,7 @@ public partial class WeatherForecastsViewModel : ViewModelBase
 {
     private readonly IWeatherForecastGetter _weatherForecastGetter;
 
-    [Notify]
-    private ObservableCollection<WeatherForecastViewModel>? _forecasts;
+    [Notify] private ObservableCollection<WeatherForecastViewModel>? _forecasts;
 
     public WeatherForecastsViewModel(IWeatherForecastGetter weatherForecastGetter)
     {
@@ -18,10 +17,9 @@ public partial class WeatherForecastsViewModel : ViewModelBase
         await Task.Delay(1500);
 
         var forecastData = await _weatherForecastGetter.GetForecasts();
-        Forecasts =
-            new ObservableCollection<WeatherForecastViewModel>(
-                forecastData.Select(x => new WeatherForecastViewModel(x))
-            );
+        Forecasts = new ObservableCollection<WeatherForecastViewModel>(
+            forecastData.Select(x => new WeatherForecastViewModel(x))
+        );
     }
 
     public void RandomizeData()

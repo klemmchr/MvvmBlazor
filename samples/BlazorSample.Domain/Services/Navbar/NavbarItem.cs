@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BlazorSample.Domain.Services.Navbar;
+﻿namespace BlazorSample.Domain.Services.Navbar;
 
 public class NavbarItem
 {

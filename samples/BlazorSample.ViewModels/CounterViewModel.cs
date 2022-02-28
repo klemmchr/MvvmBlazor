@@ -2,8 +2,7 @@
 
 public partial class CounterViewModel : ViewModelBase
 {
-    [Notify]
-    private int _currentCount;
+    [Notify] private int _currentCount;
 
     public void IncrementCount()
     {

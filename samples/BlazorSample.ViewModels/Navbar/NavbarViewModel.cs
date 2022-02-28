@@ -1,9 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using BlazorSample.Domain.Services.Navbar;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using MvvmBlazor.ViewModel;
+﻿using BlazorSample.Domain.Services.Navbar;
 
 namespace BlazorSample.ViewModels.Navbar;
 

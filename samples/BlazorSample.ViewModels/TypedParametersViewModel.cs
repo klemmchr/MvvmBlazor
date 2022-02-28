@@ -1,6 +1,4 @@
-﻿using BlazorSample.Domain.Converters;
-
-namespace BlazorSample.ViewModels;
+﻿namespace BlazorSample.ViewModels;
 
 public class TypedParametersViewModel : ViewModelBase
 {

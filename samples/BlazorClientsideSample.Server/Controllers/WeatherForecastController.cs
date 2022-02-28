@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BlazorSample.Domain.Entities;
+﻿using BlazorSample.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorClientsideSample.Server.Controllers;

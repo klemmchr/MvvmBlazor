@@ -1,6 +1,4 @@
-﻿using MvvmBlazor.ViewModel;
-
-namespace BlazorSample.ViewModels.Navbar;
+﻿namespace BlazorSample.ViewModels.Navbar;
 
 public class NavbarItemViewModel : ViewModelBase
 {

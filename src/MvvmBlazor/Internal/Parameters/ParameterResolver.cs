@@ -8,6 +8,7 @@ internal interface IParameterResolver
 internal class ParameterResolver : IParameterResolver
 {
     private readonly IParameterCache _parameterCache;
+
     public ParameterResolver(IParameterCache parameterCache)
     {
         _parameterCache = parameterCache;

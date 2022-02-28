@@ -34,10 +34,7 @@ public class NotifyPropertyChangedGenerator : ISourceGenerator
             return;
         }
 
-        foreach (var fieldContexts in syntaxReceiver.Contexts)
-        {
-            ProcessViewModel(context, fieldContexts.Value);
-        }
+        foreach (var fieldContexts in syntaxReceiver.Contexts) ProcessViewModel(context, fieldContexts.Value);
     }
 
     private void ProcessViewModel(
@@ -62,8 +59,7 @@ public class NotifyPropertyChangedGenerator : ISourceGenerator
         }
 
         var viewModelType = fieldContexts.First().FieldSymbol.ContainingType;
-        var viewModelBaseType =
-            context.Compilation.GetTypeByMetadataName("MvvmBlazor.ViewModel.ViewModelBase")!;
+        var viewModelBaseType = context.Compilation.GetTypeByMetadataName("MvvmBlazor.ViewModel.ViewModelBase")!;
         if (!viewModelType.InheritsFrom(viewModelBaseType))
         {
             context.ReportDiagnostic(
@@ -88,11 +84,17 @@ public class NotifyPropertyChangedGenerator : ISourceGenerator
         INamedTypeSymbol viewModelType,
         ClassDeclarationSyntax viewModelClass)
     {
-        var viewModelSourceText = SourceText.From(GenerateViewModelCode(fieldContexts, viewModelType, viewModelClass), Encoding.UTF8);
+        var viewModelSourceText = SourceText.From(
+            GenerateViewModelCode(fieldContexts, viewModelType, viewModelClass),
+            Encoding.UTF8
+        );
         context.AddSource(viewModelClass.Identifier + ".Generated.cs", viewModelSourceText);
     }
 
-    private static string GenerateViewModelCode(IReadOnlyCollection<NotifyPropertyChangedContext> fieldContexts, INamedTypeSymbol viewModelType, ClassDeclarationSyntax viewModelClass)
+    private static string GenerateViewModelCode(
+        IReadOnlyCollection<NotifyPropertyChangedContext> fieldContexts,
+        INamedTypeSymbol viewModelType,
+        ClassDeclarationSyntax viewModelClass)
     {
         var viewModelNamespace = viewModelType.ContainingNamespace;
         var viewModelClassName = viewModelClass.Identifier;
@@ -132,5 +134,3 @@ public class NotifyPropertyChangedGenerator : ISourceGenerator
         return firstChar.ToUpperInvariant() + fieldNameWithoutUnderscore.Substring(1);
     }
 }
-
-

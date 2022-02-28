@@ -6,8 +6,7 @@ public partial class ClockViewModel : ViewModelBase, IDisposable
 {
     private readonly Timer _timer;
 
-    [Notify]
-    private DateTime _dateTime = DateTime.Now;
+    [Notify] private DateTime _dateTime = DateTime.Now;
 
     /*
     public DateTime DateTime

@@ -1,5 +1,4 @@
 ﻿using BlazorSample.ViewModels.Navbar;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorSample.ViewModels.Extensions;
 
