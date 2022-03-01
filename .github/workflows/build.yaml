@@ -27,3 +27,12 @@ jobs:
 
       - name: Test
         run: dotnet test --configuration Release src
+
+      - name: Pack
+        run: dotnet pack --configuration Release -p:SymbolPackageFormat=snupkg src -o out
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: out/*
