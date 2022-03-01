@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AnalysisMode>All</AnalysisMode>
     <Deterministic>true</Deterministic>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
@@ -25,8 +26,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj"/>
-    <ProjectReference Include="..\MvvmBlazor.Core\MvvmBlazor.Core.csproj"/>
+    <ProjectReference Include="..\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj" />
+    <ProjectReference Include="..\MvvmBlazor.Core\MvvmBlazor.Core.csproj" />
   </ItemGroup>
 
 </Project>

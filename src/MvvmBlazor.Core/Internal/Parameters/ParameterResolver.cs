@@ -31,7 +31,7 @@ internal class ParameterResolver : IParameterResolver
         return parameterInfo;
     }
 
-    private IEnumerable<PropertyInfo> ResolveTypeParameters(Type memberType)
+    private static IEnumerable<PropertyInfo> ResolveTypeParameters(Type memberType)
     {
         var componentProperties = memberType.GetProperties();
 

@@ -3,4 +3,4 @@
 namespace MvvmBlazor;
 
 [AttributeUsage(AttributeTargets.Field)]
-public class NotifyAttribute : Attribute { }
+public sealed class NotifyAttribute : Attribute { }

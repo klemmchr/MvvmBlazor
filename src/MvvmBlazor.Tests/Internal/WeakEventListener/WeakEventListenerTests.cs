@@ -3,7 +3,7 @@
 public class WeakEventManagerTests
 {
     [Fact]
-    public void WeakEventManager_AddWeakEventListener_Collection_FiresEvent()
+    public void AddWeakEventListener_collection_fires_event()
     {
         var collectionAddObject = new object();
         var source = new Mock<INotifyCollectionChanged>();
@@ -17,6 +17,7 @@ public class WeakEventManagerTests
             {
                 s.ShouldBe(source.Object);
                 a.Action.ShouldBe(NotifyCollectionChangedAction.Add);
+                a.NewItems.ShouldNotBeNull();
                 a.NewItems.Count.ShouldBe(1);
                 a.NewItems[0].ShouldBe(collectionAddObject);
 
@@ -33,7 +34,7 @@ public class WeakEventManagerTests
     }
 
     [Fact]
-    public void WeakEventManager_AddWeakEventListener_Custom_FiresEvent()
+    public void AddWeakEventListener_custom_fires_event()
     {
         var source = new Mock<INotifyPropertyChanged>();
 
@@ -57,7 +58,7 @@ public class WeakEventManagerTests
     }
 
     [Fact]
-    public void WeakEventManager_AddWeakEventListener_FiresEventAfterGC()
+    public void AddWeakEventListener_fires_event_after_GC()
     {
         var source = new Mock<INotifyPropertyChanged>();
 
@@ -83,7 +84,7 @@ public class WeakEventManagerTests
     }
 
     [Fact]
-    public void WeakEventManager_AddWeakEventListener_Property_FiresEvent()
+    public void AddWeakEventListener_property_fires_event()
     {
         const string propertyName = "TestProperty";
 
@@ -109,7 +110,7 @@ public class WeakEventManagerTests
     }
 
     [Fact]
-    public void WeakEventManager_ClearWeakEventListeners_EventNoLongerFires()
+    public void ClearWeakEventListeners_event_no_longer_fires()
     {
         var source = new Mock<INotifyPropertyChanged>();
 
@@ -135,7 +136,7 @@ public class WeakEventManagerTests
     }
 
     [Fact]
-    public void WeakEventManager_RemoveWeakEventListener_EventNoLongerFires()
+    public void RemoveWeakEventListener_event_no_longer_fires()
     {
         var source = new Mock<INotifyPropertyChanged>();
 

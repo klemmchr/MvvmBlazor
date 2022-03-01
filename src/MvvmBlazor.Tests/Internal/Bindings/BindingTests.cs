@@ -5,7 +5,7 @@ namespace MvvmBlazor.Tests.Internal.Bindings;
 public class BindingTests
 {
     [Fact]
-    public void AddsCollectionEventListener_WhenInitializing()
+    public void Adds_collection_event_listener_when_initializing()
     {
         const string propertyName = "propertyName";
 
@@ -18,7 +18,7 @@ public class BindingTests
         propertyInfo.SetupSequence(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
             .Returns(collection.Object);
 
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.Initialize();
 
         wem.Verify(
@@ -30,7 +30,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void AddsCollectionEventListener_WhenPropertyChangesToNotNull()
+    public void Adds_collection_event_listener_when_property_changes_to_not_null()
     {
         const string propertyName = "propertyName";
 
@@ -47,11 +47,11 @@ public class BindingTests
                 )
             )
             .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s, a)
+                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s!, a)
             );
         propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null)).Returns(collection.Object);
 
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.Initialize();
 
         source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
@@ -64,7 +64,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void Dispose_RemovesCollectionListener()
+    public void Dispose_removes_collection_listener()
     {
         const string propertyName = "propertyName";
 
@@ -81,11 +81,11 @@ public class BindingTests
                 )
             )
             .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s, a)
+                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s!, a)
             );
         propertyInfo.SetupSequence(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
             .Returns(collection.Object)
-            .Returns((object)null);
+            .Returns((object?)null);
 
         var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.Initialize();
@@ -95,7 +95,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void Dispose_RemovesEventListener()
+    public void Dispose_removes_event_listener()
     {
         const string propertyName = "propertyName";
 
@@ -112,7 +112,7 @@ public class BindingTests
                 )
             )
             .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s, a)
+                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s!, a)
             );
         propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null)).Returns(collection.Object);
 
@@ -124,7 +124,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void Equals_NotDifferentSourceAndProperty()
+    public void Equals_not_different_source_and_property()
     {
         const string propertyName = "propertyName";
 
@@ -137,15 +137,15 @@ public class BindingTests
         var propertyInfo2 = new Mock<PropertyInfo>();
         propertyInfo2.Setup(x => x.Name).Returns(propertyName + "Foo");
 
-        var binding1 = new Binding(source1.Object, propertyInfo1.Object, wem.Object);
-        var binding2 = new Binding(source2.Object, propertyInfo2.Object, wem.Object);
+        using var binding1 = new Binding(source1.Object, propertyInfo1.Object, wem.Object);
+        using var binding2 = new Binding(source2.Object, propertyInfo2.Object, wem.Object);
 
         binding1.GetHashCode().ShouldNotBe(binding2.GetHashCode());
         binding1.Equals(binding2).ShouldBeFalse();
     }
 
     [Fact]
-    public void Equals_SameSourceAndProperty()
+    public void Equals_same_source_and_property()
     {
         const string propertyName = "propertyName";
 
@@ -155,15 +155,15 @@ public class BindingTests
         var propertyInfo = new Mock<PropertyInfo>();
         propertyInfo.Setup(x => x.Name).Returns(propertyName);
 
-        var binding1 = new Binding(source.Object, propertyInfo.Object, wem.Object);
-        var binding2 = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding1 = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding2 = new Binding(source.Object, propertyInfo.Object, wem.Object);
 
         binding1.GetHashCode().ShouldBe(binding2.GetHashCode());
         binding1.Equals(binding2).ShouldBeTrue();
     }
 
     [Fact]
-    public void IgnoresPropertyChangedEvent_WhenPropertyNameDoesNotMatch()
+    public void Ignores_PropertyChangedEvent_when_property_name_does_not_match()
     {
         const string propertyName = "propertyName";
 
@@ -180,12 +180,12 @@ public class BindingTests
                 )
             )
             .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s, a)
+                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s!, a)
             );
         propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null)).Returns(collection.Object);
 
         var bindingValueChangedRaised = false;
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.Initialize();
         binding.BindingValueChanged += (s, e) => bindingValueChangedRaised = true;
 
@@ -195,7 +195,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void NotRaises_BindingValueChanged_WhenUninitialized()
+    public void Does_not_raise_BindingValueChanged_when_uninitialized()
     {
         const string propertyName = "propertyName";
 
@@ -205,7 +205,7 @@ public class BindingTests
         propertyInfo.Setup(x => x.Name).Returns(propertyName);
 
         var hasChanged = false;
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.BindingValueChanged += (sender, args) => { hasChanged = true; };
 
         source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
@@ -213,7 +213,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void Raises_BindingValueChanged_WhenCollectionChanged()
+    public void Raises_BindingValueChanged_when_collection_changed()
     {
         const string propertyName = "propertyName";
 
@@ -232,11 +232,11 @@ public class BindingTests
                 )
             )
             .Callback<INotifyCollectionChanged, Action<INotifyCollectionChanged, NotifyCollectionChangedEventArgs>>(
-                (sender, action) => sender.CollectionChanged += (s, a) => action((INotifyCollectionChanged)s, a)
+                (sender, action) => sender.CollectionChanged += (s, a) => action((INotifyCollectionChanged)s!, a)
             );
 
         var hasChanged = false;
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.Initialize();
         binding.BindingValueChanged += (sender, args) =>
         {
@@ -254,7 +254,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void Raises_BindingValueChanged_WhenPropertyChanged()
+    public void Raises_BindingValueChanged_when_property_changed()
     {
         const string propertyName = "propertyName";
 
@@ -269,11 +269,11 @@ public class BindingTests
                 )
             )
             .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s, a)
+                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s!, a)
             );
 
         var hasChanged = false;
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.Initialize();
         binding.BindingValueChanged += (sender, args) =>
         {
@@ -288,7 +288,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void RemovesCollectionEventListener_WhenPropertyChangesToNull()
+    public void Removes_collection_event_listener_when_property_changes_to_null()
     {
         const string propertyName = "propertyName";
 
@@ -305,13 +305,13 @@ public class BindingTests
                 )
             )
             .Callback<INotifyPropertyChanged, Action<INotifyPropertyChanged, PropertyChangedEventArgs>>(
-                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s, a)
+                (sender, action) => sender.PropertyChanged += (s, a) => action((INotifyPropertyChanged)s!, a)
             );
         propertyInfo.SetupSequence(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null))
             .Returns(collection.Object)
-            .Returns((object)null);
+            .Returns((object?)null);
 
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.Initialize();
 
         source.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(propertyName));
@@ -319,7 +319,7 @@ public class BindingTests
     }
 
     [Fact]
-    public void ShouldNotRaiseBindingValueChangedOnCollectionWhenUninitialized()
+    public void Should_not_raise_BindingValueChanged_on_collection_when_uninitialized()
     {
         const string propertyName = "propertyName";
 
@@ -332,7 +332,7 @@ public class BindingTests
         propertyInfo.Setup(x => x.GetValue(It.IsAny<object>(), It.IsAny<object[]>())).Returns(collection.Object);
 
         var hasChanged = false;
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
+        using var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
         binding.BindingValueChanged += (_, __) => hasChanged = true;
 
         collection.Raise(
@@ -341,19 +341,5 @@ public class BindingTests
         );
 
         hasChanged.ShouldBeFalse();
-    }
-
-    [Fact]
-    public void ShouldValidateParameters()
-    {
-        Should.Throw<ArgumentNullException>(
-            () => new Binding(null, new Mock<PropertyInfo>().Object, new Mock<IWeakEventManager>().Object)
-        );
-        Should.Throw<ArgumentNullException>(
-            () => new Binding(new Mock<INotifyPropertyChanged>().Object, null, new Mock<IWeakEventManager>().Object)
-        );
-        Should.Throw<ArgumentNullException>(
-            () => new Binding(new Mock<INotifyPropertyChanged>().Object, new Mock<PropertyInfo>().Object, null)
-        );
     }
 }

@@ -15,7 +15,7 @@ public class BinderTests : UnitTest
     }
 
     [Fact]
-    public void Bind_ThrowsWhenCallbackIsNull()
+    public void Bind_throws_when_callback_is_null()
     {
         var viewModel = Services.GetRequiredService<TestViewModel>();
         var binder = Services.GetRequiredService<Binder>();
@@ -24,18 +24,18 @@ public class BinderTests : UnitTest
     }
 
     [Fact]
-    public void Bind_ThrowsWhenViewModelIsNull()
+    public void Bind_throws_when_view_model_is_null()
     {
         var binder = Services.GetRequiredService<Binder>();
 
         var callback = (IBinding b, EventArgs a) => { };
         binder.ValueChangedCallback = callback;
 
-        Should.Throw<BindingException>(() => binder.Bind<TestViewModel, string>(null!, x => x.Test));
+        Should.Throw<BindingException>(() => binder.Bind<TestViewModel, string>(null!, x => x.Test!));
     }
 
     [Fact]
-    public void Bind_ThrowsWhenPropertyExpressionIsNull()
+    public void Bind_throws_when_property_expression_is_null()
     {
         var viewModel = Services.GetRequiredService<TestViewModel>();
         var binder = Services.GetRequiredService<Binder>();
@@ -47,7 +47,7 @@ public class BinderTests : UnitTest
     }
 
     [Fact]
-    public void Bind_ThrowsWhenPropertyExpressionIsNotProperty()
+    public void Bind_throws_when_property_expression_is_not_property()
     {
         var viewModel = Services.GetRequiredService<TestViewModel>();
         var binder = Services.GetRequiredService<Binder>();
@@ -59,7 +59,7 @@ public class BinderTests : UnitTest
     }
 
     [Fact]
-    public void Bind_BindsProperty()
+    public void Bind_binds_property()
     {
         var bindingFactory = Services.GetMock<IBindingFactory>();
         var weakEventManager = Services.GetMock<IWeakEventManager>();
@@ -94,7 +94,7 @@ public class BinderTests : UnitTest
     }
 
     [Fact]
-    public void Bind_BindsPropertyExactlyOnce()
+    public void Bind_binds_property_exactly_once()
     {
         var bindingFactory = Services.GetMock<IBindingFactory>();
         var weakEventManager = Services.GetMock<IWeakEventManager>();
@@ -140,7 +140,7 @@ public class BinderTests : UnitTest
     }
 
     [Fact]
-    public void Bind_ThrowsWhenDisposed()
+    public void Bind_throws_when_disposed()
     {
         var viewModel = Services.GetRequiredService<TestViewModel>();
 
@@ -150,9 +150,13 @@ public class BinderTests : UnitTest
         Should.Throw<ObjectDisposedException>(() => binder.Bind(viewModel, x => x.Test));
     }
 
-    public class TestViewModel : ViewModelBase
+    private class TestViewModel : ViewModelBase
     {
-        public string PublicField;
-        public string Test { get; set; }
+#pragma warning disable CA1051
+#pragma warning disable CS0649
+        public string? PublicField;
+#pragma warning restore CS0649
+#pragma warning restore CA1051
+        public string? Test { get; set; }
     }
 }

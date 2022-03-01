@@ -17,9 +17,9 @@ internal class Binding : IBinding
 
     public Binding(INotifyPropertyChanged source, PropertyInfo propertyInfo, IWeakEventManager weakEventManager)
     {
-        _weakEventManager = weakEventManager ?? throw new ArgumentNullException(nameof(weakEventManager));
-        Source = source ?? throw new ArgumentNullException(nameof(source));
-        PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+        _weakEventManager = weakEventManager;
+        Source = source;
+        PropertyInfo = propertyInfo;
     }
 
     public INotifyPropertyChanged Source { get; }

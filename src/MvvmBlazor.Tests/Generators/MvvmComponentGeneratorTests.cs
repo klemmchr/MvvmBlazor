@@ -5,7 +5,7 @@ namespace MvvmBlazor.Tests.Generators;
 public class MvvmComponentGeneratorTests
 {
     [Fact]
-    public void GeneratesError_WhenComponentIsNotPartial()
+    public void Generates_error_when_component_is_not_partial()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -23,7 +23,7 @@ public class MvvmComponentGeneratorTests
     }
 
     [Fact]
-    public void GeneratesError_WhenComponentIsNotInheriting()
+    public void Generates_error_when_component_is_not_inheriting()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -41,7 +41,7 @@ public class MvvmComponentGeneratorTests
     }
 
     [Fact]
-    public void GeneratesComponent_WithComponentBaseClass()
+    public void Generates_component_with_component_base_class()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -58,7 +58,7 @@ public class MvvmComponentGeneratorTests
     }
 
     [Fact]
-    public void GeneratesComponent_WithOwningComponentBaseClass()
+    public void Generates_component_with_owning_component_base_class()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -75,7 +75,7 @@ public class MvvmComponentGeneratorTests
     }
 
     [Fact]
-    public void GeneratesGenericComponent()
+    public void Generates_generic_component()
     {
         var inputCompilation = CreateCompilation(
             @$"

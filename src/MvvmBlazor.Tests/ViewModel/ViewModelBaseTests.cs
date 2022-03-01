@@ -3,7 +3,7 @@
 public class ViewModelBaseTests
 {
     [Fact]
-    public void Set_ReturnsFalse_OnReferenceEqual()
+    public void Set_returns_false_on_reference_equal()
     {
         var obj = new object();
         var invoked = false;
@@ -18,7 +18,7 @@ public class ViewModelBaseTests
     }
 
     [Fact]
-    public void Set_ReturnsFalse_OnValueEqual()
+    public void Set_returns_false_on_value_equal()
     {
         void TestField<T>(ref T field, T value)
         {
@@ -44,7 +44,7 @@ public class ViewModelBaseTests
     }
 
     [Fact]
-    public void Set_ReturnsTrue_OnValueNotEqual()
+    public void Set_returns_true_on_value_not_equal()
     {
         void TestField<T>(ref T field, T value)
         {
@@ -78,17 +78,9 @@ public class ViewModelBaseTests
 
     private class TestViewModel : ViewModelBase
     {
-        private readonly IDisposable _disposable;
-
         public TestViewModel() { }
 
-        public TestViewModel(IDisposable disposable)
-        {
-            _disposable = disposable;
-        }
-
-
-        public bool SetProperty<T>(ref T field, T value, string propertyName = null)
+        public bool SetProperty<T>(ref T field, T value, string? propertyName = null)
         {
             return Set(ref field, value, propertyName);
         }

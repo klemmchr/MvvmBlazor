@@ -37,7 +37,7 @@ public class NotifyPropertyChangedGenerator : ISourceGenerator
         foreach (var fieldContexts in syntaxReceiver.Contexts) ProcessViewModel(context, fieldContexts.Value);
     }
 
-    private void ProcessViewModel(
+    private static void ProcessViewModel(
         GeneratorExecutionContext context,
         IReadOnlyCollection<NotifyPropertyChangedContext> fieldContexts)
     {
