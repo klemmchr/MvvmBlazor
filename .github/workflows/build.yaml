@@ -36,5 +36,5 @@ jobs:
         with:
           name: packages
           path: |
-            path/**/*.nupkg
-            path/**/*.snupkg
+            src/**/*.nupkg
+            src/**/*.snupkg
