@@ -78,8 +78,6 @@ public class ViewModelBaseTests
 
     private class TestViewModel : ViewModelBase
     {
-        public TestViewModel() { }
-
         public bool SetProperty<T>(ref T field, T value, string? propertyName = null)
         {
             return Set(ref field, value, propertyName);

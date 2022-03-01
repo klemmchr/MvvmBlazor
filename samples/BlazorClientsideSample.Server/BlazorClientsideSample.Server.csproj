@@ -9,13 +9,13 @@
 
     <ItemGroup>
 
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.2" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.2"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\MvvmBlazor.Core\MvvmBlazor.Core.csproj" />
-        <ProjectReference Include="..\BlazorClientsideSample.Client\BlazorClientsideSample.Client.csproj" />
+        <ProjectReference Include="..\..\src\MvvmBlazor.Core\MvvmBlazor.Core.csproj"/>
+        <ProjectReference Include="..\BlazorClientsideSample.Client\BlazorClientsideSample.Client.csproj"/>
     </ItemGroup>
 
 </Project>

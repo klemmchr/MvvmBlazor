@@ -26,8 +26,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj" />
-    <ProjectReference Include="..\MvvmBlazor.Core\MvvmBlazor.Core.csproj" />
+    <ProjectReference Include="..\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj"/>
+    <ProjectReference Include="..\MvvmBlazor.Core\MvvmBlazor.Core.csproj"/>
   </ItemGroup>
 
 </Project>

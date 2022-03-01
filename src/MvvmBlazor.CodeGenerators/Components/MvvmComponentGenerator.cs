@@ -38,7 +38,9 @@ public class MvvmComponentGenerator : ISourceGenerator
         context.RegisterForSyntaxNotifications(() => new MvvmComponentSyntaxReceiver());
     }
 
-    private static void ProcessComponent(GeneratorExecutionContext context, MvvmComponentClassContext componentClassContext)
+    private static void ProcessComponent(
+        GeneratorExecutionContext context,
+        MvvmComponentClassContext componentClassContext)
     {
         var componentClass = componentClassContext.ComponentClass;
         var isPartial = componentClass.Modifiers.Any(SyntaxKind.PartialKeyword);
