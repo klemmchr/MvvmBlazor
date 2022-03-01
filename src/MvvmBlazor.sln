@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmBlazor", "MvvmBlazor\MvvmBlazor.csproj", "{B4E1DEC6-44FF-434C-8AA9-79B3F2FE50DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvvmBlazor.Core", "MvvmBlazor.Core\MvvmBlazor.Core.csproj", "{B4E1DEC6-44FF-434C-8AA9-79B3F2FE50DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3454D681-0991-4626-A291-D4D9D26E91FF}"
 	ProjectSection(SolutionItems) = preProject
@@ -35,6 +35,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorClientsideSample.Server", "..\samples\BlazorClientsideSample.Server\BlazorClientsideSample.Server.csproj", "{33D6D643-2C45-4B4B-9691-7D0D67D0E304}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmBlazor.CodeGenerators", "MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj", "{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmBlazor", "MvvmBlazor\MvvmBlazor.csproj", "{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -154,6 +156,18 @@ Global
 		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|x64.Build.0 = Release|Any CPU
 		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|x86.ActiveCfg = Release|Any CPU
 		{42B24F4F-5B4E-4172-9EB2-8083DFEB1042}.Release|x86.Build.0 = Release|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Debug|x64.Build.0 = Debug|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Debug|x86.Build.0 = Debug|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Release|x64.ActiveCfg = Release|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Release|x64.Build.0 = Release|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Release|x86.ActiveCfg = Release|Any CPU
+		{8CE5C38E-9308-431C-BAFA-BAB3A0F1DC1C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,12 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <Deterministic>true</Deterministic>
+    <ImplicitUsings>true</ImplicitUsings>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+    <Nullable>enable</Nullable>
+    <Deterministic>true</Deterministic>
+    <RootNamespace>MvvmBlazor</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(CI)' == 'true'">
@@ -25,8 +26,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj"/>
-    <ProjectReference Include="..\MvvmBlazor.Core\MvvmBlazor.Core.csproj"/>
+    <PackageReference Include="IDisposableAnalyzers" Version="4.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
 </Project>
