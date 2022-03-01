@@ -15,25 +15,8 @@ public class MvvmComponentBaseTTests : UnitTest
         binder.SetupSet(x => x.ValueChangedCallback = It.IsAny<Action<IBinding, EventArgs>>()).Verifiable();
     }
 
-    private (Mock<ViewModelBase> viewModel, Mock<IServiceProvider> serviceProvider) GetServiceProvider()
-    {
-        var viewModel = new Mock<ViewModelBase>();
-        var serviceProvider = new Mock<IServiceProvider>();
-        var bindingFactory = new Mock<IBindingFactory>();
-        var viewModelParameterSetter = new Mock<IViewModelParameterSetter>();
-        serviceProvider.Setup(x => x.GetService(typeof(ViewModelBase))).Returns(viewModel.Object);
-        serviceProvider.Setup(x => x.GetService(typeof(IBindingFactory))).Returns(bindingFactory.Object);
-        serviceProvider.Setup(x => x.GetService(typeof(IViewModelParameterSetter)))
-            .Returns(viewModelParameterSetter.Object);
-        serviceProvider.Setup(x => x.GetService(typeof(Mock<IViewModelParameterSetter>)))
-            .Returns(viewModelParameterSetter);
-
-
-        return (viewModel, serviceProvider);
-    }
-
     [Fact]
-    public void AfterRender_CalledOnBindingContext()
+    public void AfterRender_called_On_binding_context()
     {
         var viewModel = Services.GetMock<ViewModelBase>();
         viewModel.Setup(x => x.OnAfterRender(true)).Verifiable();
@@ -45,7 +28,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void AfterRenderAsync_CalledOnBindingContext()
+    public void AfterRenderAsync_called_on_binding_context()
     {
         var task = new Task(() => { });
         var viewModel = Services.GetMock<ViewModelBase>();
@@ -60,7 +43,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void Bind_BindsBindingContext()
+    public void Bind_binds_binding_context()
     {
         var viewModel = Services.GetRequiredService<TestViewModel>();
         var binder = Services.GetMock<IBinder>();
@@ -77,7 +60,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void OnInitialized_CalledOnBindingContext()
+    public void OnInitialized_called_on_binding_context()
     {
         var viewModel = Services.GetMock<ViewModelBase>();
         var viewModelParameterSetter = Services.GetMock<IViewModelParameterSetter>();
@@ -92,7 +75,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void OnInitializedAsync_CalledOnBindingContext()
+    public void OnInitializedAsync_called_on_binding_context()
     {
         var task = new Task(() => { });
 
@@ -108,7 +91,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void OnParametersSet_SetsViewModelParameters()
+    public void OnParametersSet_sets_viewmodel_parameters()
     {
         var viewModel = Services.GetMock<ViewModelBase>();
         var viewModelParameterSetter = Services.GetMock<IViewModelParameterSetter>();
@@ -123,7 +106,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void OnParametersSetAsync_CalledOnBindingContext()
+    public void OnParametersSetAsync_called_on_binding_context()
     {
         var task = new Task(() => { });
 
@@ -139,7 +122,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void SetsBindingContext()
+    public void Sets_binding_context()
     {
         var viewModel = Services.GetMock<ViewModelBase>();
         var component = Services.GetRequiredService<MockMvvmComponentBase>();
@@ -148,7 +131,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void ShouldRender_CalledOnBindingContext()
+    public void ShouldRender_called_on_binding_context()
     {
         var viewModel = Services.GetMock<ViewModelBase>();
         var component = Services.GetRequiredService<MockMvvmComponentBase>();

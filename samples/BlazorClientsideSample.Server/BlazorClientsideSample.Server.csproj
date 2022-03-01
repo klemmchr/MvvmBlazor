@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\MvvmBlazor\MvvmBlazor.csproj"/>
+        <ProjectReference Include="..\..\src\MvvmBlazor.Core\MvvmBlazor.Core.csproj"/>
         <ProjectReference Include="..\BlazorClientsideSample.Client\BlazorClientsideSample.Client.csproj"/>
     </ItemGroup>
 

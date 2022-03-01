@@ -17,7 +17,7 @@ public class ViewModelParameterSetterTests : UnitTest
         services.Provide<ViewModelParameterSetter>();
     }
 
-    private Mock<PropertyInfo> GenerateProperty(string propertyName, Type propertyType)
+    private static Mock<PropertyInfo> GenerateProperty(string propertyName, Type propertyType)
     {
         var property = new Mock<PropertyInfo>();
         property.Setup(x => x.Name).Returns(propertyName).Verifiable();
@@ -26,7 +26,7 @@ public class ViewModelParameterSetterTests : UnitTest
     }
 
     [Fact]
-    public void ResolveAndSet_ResolvesParametersOfSameType()
+    public void ResolveAndSet_resolves_parameters_of_same_type()
     {
         const string propName = "p1";
         const string componentValue = "foo";
@@ -56,7 +56,7 @@ public class ViewModelParameterSetterTests : UnitTest
     }
 
     [Fact]
-    public void ResolveAndSet_ResolvesParametersOfConvertibleTypes()
+    public void ResolveAndSet_resolves_parameters_of_convertible_types()
     {
         const string propName = "p1";
         const int componentValue = 42;

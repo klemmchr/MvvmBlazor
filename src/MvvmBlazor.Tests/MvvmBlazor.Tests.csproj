@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
+    <AnalysisMode>All</AnalysisMode>
     <ImplicitUsings>true</ImplicitUsings>
   </PropertyGroup>
 
@@ -21,7 +22,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj"/>
-    <ProjectReference Include="..\MvvmBlazor\MvvmBlazor.csproj"/>
+    <ProjectReference Include="..\MvvmBlazor.Core\MvvmBlazor.Core.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

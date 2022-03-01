@@ -13,7 +13,7 @@ public class MvvmComponentBaseTests : UnitTest
     }
 
     [Fact]
-    public void AddBinding_AddsBinding()
+    public void AddBinding_adds_Binding()
     {
         var viewModel = new TestViewModel();
         var binder = Services.GetMock<IBinder>();
@@ -27,7 +27,7 @@ public class MvvmComponentBaseTests : UnitTest
     }
 
     [Fact]
-    public void Bind_AddsBinding()
+    public void Bind_adds_Binding()
     {
         var viewModel = new TestViewModel();
 
@@ -42,7 +42,7 @@ public class MvvmComponentBaseTests : UnitTest
 
     internal class TestComponent : MvvmComponentBase
     {
-        public Action BindingChangedAction { get; set; }
+        public Action? BindingChangedAction { get; set; }
 
 
         public TestComponent(IServiceProvider services) : base(services) { }

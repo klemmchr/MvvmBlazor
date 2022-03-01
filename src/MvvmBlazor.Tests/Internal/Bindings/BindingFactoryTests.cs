@@ -3,7 +3,7 @@
 public class BindingFactoryTests
 {
     [Fact]
-    public void Create_ReturnsBinding()
+    public void Create_returns_binding()
     {
         var source = new Mock<INotifyPropertyChanged>();
         var propertyInfo = new Mock<PropertyInfo>();

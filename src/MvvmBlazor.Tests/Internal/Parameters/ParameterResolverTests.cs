@@ -11,34 +11,34 @@ public class ParameterResolverTests : UnitTest
     }
 
     [Fact]
-    public void ResolveParameters_IgnoresPropertiesWithoutAttribute()
+    public void ResolveParameters_ignores_properties_without_attribute()
     {
         var resolver = Services.GetRequiredService<ParameterResolver>();
 
         var res = resolver.ResolveParameters(typeof(S3), typeof(S3));
-        res.Parameters.Count().ShouldBe(1);
+        res.Parameters.Count.ShouldBe(1);
         res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
         res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
     [Fact]
-    public void ResolveParameters_IgnoresPropertiesWithoutPublicSetter()
+    public void ResolveParameters_ignores_properties_without_public_setter()
     {
         var resolver = Services.GetRequiredService<ParameterResolver>();
 
         var res = resolver.ResolveParameters(typeof(S4), typeof(S4));
-        res.Parameters.Count().ShouldBe(1);
+        res.Parameters.Count.ShouldBe(1);
         res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
         res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
     [Fact]
-    public void ResolveParameters_ResolvesMultipleParameters()
+    public void ResolveParameters_resolves_multiple_parameters()
     {
         var resolver = Services.GetRequiredService<ParameterResolver>();
 
         var res = resolver.ResolveParameters(typeof(S2), typeof(S2));
-        res.Parameters.Count().ShouldBe(2);
+        res.Parameters.Count.ShouldBe(2);
         res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
         res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
         res.Parameters.ElementAt(1).Key.Name.ShouldBe("Foo");
@@ -46,38 +46,38 @@ public class ParameterResolverTests : UnitTest
     }
 
     [Fact]
-    public void ResolveParameters_ResolvesSingleParameter()
+    public void ResolveParameters_resolves_single_parameter()
     {
         var resolver = Services.GetRequiredService<ParameterResolver>();
 
         var res = resolver.ResolveParameters(typeof(S1), typeof(S1));
-        res.Parameters.Count().ShouldBe(1);
+        res.Parameters.Count.ShouldBe(1);
         res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
         res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
     private class S1
     {
-        [Parameter] public string Test { get; set; }
+        [Parameter] public string? Test { get; set; }
     }
 
     private class S2
     {
-        [Parameter] public string Test { get; set; }
+        [Parameter] public string? Test { get; set; }
 
         [Parameter] public int Foo { get; set; }
     }
 
     private class S3
     {
-        [Parameter] public string Test { get; set; }
+        [Parameter] public string? Test { get; set; }
 
         public int Foo { get; set; }
     }
 
     private class S4
     {
-        [Parameter] public string Test { get; set; }
+        [Parameter] public string? Test { get; set; }
 
         public int Foo { get; }
         public int Doo { get; private set; }

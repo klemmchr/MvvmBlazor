@@ -3,4 +3,4 @@
 namespace MvvmBlazor;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class MvvmComponentAttribute : Attribute { }
+public sealed class MvvmComponentAttribute : Attribute { }

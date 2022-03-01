@@ -4,7 +4,7 @@ namespace MvvmBlazor.Tests.Internal.Parameters;
 
 public class ParameterInfoTests
 {
-    private Mock<PropertyInfo> GenerateProperty(string propertyName)
+    private static Mock<PropertyInfo> GenerateProperty(string propertyName)
     {
         var property = new Mock<PropertyInfo>();
         property.SetupGet(x => x.Name).Returns(propertyName);
@@ -12,7 +12,7 @@ public class ParameterInfoTests
     }
 
     [Fact]
-    public void IgnoresMissingPropertyOnViewModel()
+    public void Ignores_missing_property_on_viewmodel()
     {
         var p1 = GenerateProperty("p1");
         var p2 = GenerateProperty("p2");
@@ -29,7 +29,7 @@ public class ParameterInfoTests
     }
 
     [Fact]
-    public void SortsProperties()
+    public void Sorts_properties()
     {
         var p1 = GenerateProperty("p1");
         var p2 = GenerateProperty("p2");
