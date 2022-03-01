@@ -31,5 +31,12 @@ jobs:
           echo $VERSION;
           dotnet pack --configuration Release --include-source -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true -p:Version=$VERSION -o out src;
           cd out;
-          dotnet nuget push *.nupkg --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json;
-          dotnet nuget push *.nupkg --force-english-output -s https://nuget.pkg.github.com/${{ github.repository.owner }}/index.json;
+          dotnet nuget push *.nupkg --skip-duplicate --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json;
+          dotnet nuget push *.nupkg --skip-duplicate --force-english-output -s https://nuget.pkg.github.com/${{ github.repository.owner }}/index.json;
+          
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: out/*
