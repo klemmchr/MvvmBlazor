@@ -99,13 +99,20 @@ public class NotifyPropertyChangedGenerator : ISourceGenerator
         var viewModelNamespace = viewModelType.ContainingNamespace;
         var viewModelClassName = viewModelClass.Identifier;
 
+        var genericArgumentString = string.Empty;
+        var genericArguments = viewModelType.TypeArguments.Select(x => x.Name).ToList();
+        if (genericArguments.Count > 0)
+        {
+            genericArgumentString = "<" + string.Join(", ", genericArguments) + ">";
+        }
+
         var sb = new StringBuilder();
 
         sb.AppendLine("#nullable enable");
         sb.AppendLine();
         sb.AppendLineFormat("namespace {0}", viewModelNamespace);
         sb.AppendLine("{");
-        sb.AppendLineFormat("    partial class {0}", viewModelClassName);
+        sb.AppendLineFormat("    partial class {0}{1}", viewModelClassName, genericArgumentString);
         sb.AppendLine("    {");
 
         foreach (var fieldContext in fieldContexts)
