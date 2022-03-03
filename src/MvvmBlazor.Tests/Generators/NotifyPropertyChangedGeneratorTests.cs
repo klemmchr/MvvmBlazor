@@ -3,7 +3,7 @@
 public class NotifyPropertyChangedGeneratorTests
 {
     [Fact]
-    public void GeneratesError_WhenViewModelIsNotPartial()
+    public void Generates_error_when_viewmodel_is_not_partial()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -24,7 +24,7 @@ public class NotifyPropertyChangedGeneratorTests
     }
 
     [Fact]
-    public void GeneratesError_WhenViewModelIsNotInheriting()
+    public void Generates_error_when_view_model_is_not_inheriting()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -45,7 +45,7 @@ public class NotifyPropertyChangedGeneratorTests
     }
 
     [Fact]
-    public void GeneratesViewModel()
+    public void Generates_viewmodel()
     {
         var inputCompilation = CreateCompilation(
             @$"
@@ -53,6 +53,119 @@ public class NotifyPropertyChangedGeneratorTests
                 {{
                     [{typeof(NotifyAttribute)}]
                     private bool _test;
+
+                    public TestViewModel()
+                    {{
+                        Test = true;
+                    }}
+                }}
+            "
+        );
+
+        var generator = new NotifyPropertyChangedGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
+        diagnostics.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Generates_viewmodel_for_abstract_class()
+    {
+        var inputCompilation = CreateCompilation(
+            @$"
+                public abstract partial class TestViewModel : MvvmBlazor.ViewModel.ViewModelBase
+                {{
+                    [{typeof(NotifyAttribute)}]
+                    private bool _test;
+                }}
+
+                public TestViewModel()
+                {{
+                    Test = true;
+                }}
+            "
+        );
+
+        var generator = new NotifyPropertyChangedGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
+        diagnostics.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Generates_viewmodel_for_abstract_class_with_inheritance()
+    {
+        var inputCompilation = CreateCompilation(
+            @$"
+                public abstract partial class BaseViewModel : MvvmBlazor.ViewModel.ViewModelBase
+                {{
+                    [{typeof(NotifyAttribute)}]
+                    private bool _foo;
+                }}
+
+                public abstract partial class TestViewModel : BaseViewModel
+                {{
+                    [{typeof(NotifyAttribute)}]
+                    private bool _test;
+                }}
+
+                public TestViewModel()
+                {{
+                    Test = true;
+                    Foo = true;
+                }}
+            "
+        );
+
+        var generator = new NotifyPropertyChangedGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
+        diagnostics.ShouldBeEmpty();
+    }
+
+
+    [Fact]
+    public void Generates_viewmodel_for_generic_class()
+    {
+        var inputCompilation = CreateCompilation(
+            @$"
+                public abstract partial class TestViewModel<T> : MvvmBlazor.ViewModel.ViewModelBase
+                {{
+                    [{typeof(NotifyAttribute)}]
+                    private bool _test;
+                }}
+
+                public TestViewModel()
+                {{
+                    Test = true;
+                }}
+            "
+        );
+
+        var generator = new NotifyPropertyChangedGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+
+        driver.RunGeneratorsAndUpdateCompilation(inputCompilation, out _, out var diagnostics);
+        diagnostics.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Generates_viewmodel_for_abstract_generic_class()
+    {
+        var inputCompilation = CreateCompilation(
+            @$"
+                public abstract partial class TestViewModel<T> : MvvmBlazor.ViewModel.ViewModelBase
+                {{
+                    [{typeof(NotifyAttribute)}]
+                    private bool _test;
+                }}
+
+                public TestViewModel()
+                {{
+                    Test = true;
                 }}
             "
         );
