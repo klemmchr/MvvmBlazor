@@ -31,9 +31,10 @@ jobs:
           echo $VERSION;
           dotnet pack --configuration Release --include-source -p:ContinuousIntegrationBuild=true -p:Version=$VERSION -o out src;
           cd out;
+          rm MvvmBlazor.CodeGenerators.*.symbols.nupkg;
           dotnet nuget push *.nupkg --skip-duplicate --force-english-output -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json;
           dotnet nuget push *.nupkg --skip-duplicate --force-english-output -s https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json;
-          
+
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v2
