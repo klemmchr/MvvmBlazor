@@ -28,7 +28,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void AfterRenderAsync_called_on_binding_context()
+    public async Task AfterRenderAsync_called_on_binding_context()
     {
         var task = new Task(() => { });
         var viewModel = Services.GetMock<ViewModelBase>();
@@ -36,8 +36,7 @@ public class MvvmComponentBaseTTests : UnitTest
 
         viewModel.Setup(x => x.OnAfterRenderAsync(It.IsAny<bool>())).Returns(task).Verifiable();
 
-        var res = component.AfterRenderAsync(true);
-        res.ShouldBe(task);
+        await component.AfterRenderAsync(true);
 
         viewModel.Verify();
     }
@@ -75,7 +74,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void OnInitializedAsync_called_on_binding_context()
+    public async Task OnInitializedAsync_called_on_binding_context()
     {
         var task = new Task(() => { });
 
@@ -84,8 +83,7 @@ public class MvvmComponentBaseTTests : UnitTest
 
         viewModel.Setup(x => x.OnInitializedAsync()).Returns(task).Verifiable();
 
-        var res = component.InitializedAsync();
-        res.ShouldBe(task);
+        await component.InitializedAsync();
 
         viewModel.Verify();
     }
@@ -106,7 +104,7 @@ public class MvvmComponentBaseTTests : UnitTest
     }
 
     [Fact]
-    public void OnParametersSetAsync_called_on_binding_context()
+    public async Task OnParametersSetAsync_called_on_binding_context()
     {
         var task = new Task(() => { });
 
@@ -115,8 +113,7 @@ public class MvvmComponentBaseTTests : UnitTest
 
         viewModel.Setup(x => x.OnParametersSetAsync()).Returns(task).Verifiable();
 
-        var res = component.ParametersSetAsync();
-        res.ShouldBe(task);
+        await component.ParametersSetAsync();
 
         viewModel.Verify();
     }
