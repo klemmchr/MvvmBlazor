@@ -318,50 +318,55 @@ namespace {componentNamespace}
         }}
 
         /// <inheritdoc />
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {{
-            return BindingContext?.OnInitializedAsync() ?? Task.CompletedTask;
+            await base.OnInitializedAsync();
+            await BindingContext!.OnInitializedAsync();
         }}
 
         /// <inheritdoc />
         protected override void OnParametersSet()
         {{
+            base.OnParametersSet();
             SetParameters();
             BindingContext?.OnParametersSet();
         }}
 
         /// <inheritdoc />
-        protected override Task OnParametersSetAsync()
+        protected override async Task OnParametersSetAsync()
         {{
-            return BindingContext?.OnParametersSetAsync() ?? Task.CompletedTask;
+            await base.OnParametersSetAsync();
+            await BindingContext.OnParametersSetAsync();
         }}
 
         /// <inheritdoc />
         protected override bool ShouldRender()
         {{
-            return BindingContext?.ShouldRender() ?? true;
+            return BindingContext!.ShouldRender();
         }}
 
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
         {{
-            BindingContext?.OnAfterRender(firstRender);
+            base.OnAfterRender(firstRender);
+            BindingContext!.OnAfterRender(firstRender);
         }}
 
         /// <inheritdoc />
-        protected override Task OnAfterRenderAsync(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {{
-            return BindingContext?.OnAfterRenderAsync(firstRender) ?? Task.CompletedTask;
+            await base.OnAfterRenderAsync(firstRender);
+            await BindingContext!.OnAfterRenderAsync(firstRender);
         }}
 
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {{
-            await base.SetParametersAsync(parameters).ConfigureAwait(false);
+            await base.SetParametersAsync(parameters);
 
             if (BindingContext != null)
             {{
-                await BindingContext.SetParametersAsync(parameters).ConfigureAwait(false);
+                await BindingContext.SetParametersAsync(parameters);
             }}
         }}
     }}
