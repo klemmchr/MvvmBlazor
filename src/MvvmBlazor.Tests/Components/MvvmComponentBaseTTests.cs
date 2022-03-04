@@ -30,7 +30,7 @@ public class MvvmComponentBaseTTests : UnitTest
     [Fact]
     public async Task AfterRenderAsync_called_on_binding_context()
     {
-        var task = new Task(() => { });
+        var task = Task.CompletedTask;
         var viewModel = Services.GetMock<ViewModelBase>();
         var component = Services.GetRequiredService<MockMvvmComponentBase>();
 
@@ -76,7 +76,7 @@ public class MvvmComponentBaseTTests : UnitTest
     [Fact]
     public async Task OnInitializedAsync_called_on_binding_context()
     {
-        var task = new Task(() => { });
+        var task = Task.CompletedTask;
 
         var viewModel = Services.GetMock<ViewModelBase>();
         var component = Services.GetRequiredService<MockMvvmComponentBase>();
@@ -106,7 +106,7 @@ public class MvvmComponentBaseTTests : UnitTest
     [Fact]
     public async Task OnParametersSetAsync_called_on_binding_context()
     {
-        var task = new Task(() => { });
+        var task = Task.CompletedTask;
 
         var viewModel = Services.GetMock<ViewModelBase>();
         var component = Services.GetRequiredService<MockMvvmComponentBase>();
