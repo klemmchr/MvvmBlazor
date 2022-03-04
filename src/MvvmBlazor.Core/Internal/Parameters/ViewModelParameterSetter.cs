@@ -1,6 +1,6 @@
 ﻿namespace MvvmBlazor.Internal.Parameters;
 
-internal interface IViewModelParameterSetter
+public interface IViewModelParameterSetter
 {
     void ResolveAndSet(ComponentBase component, ViewModelBase viewModel);
 }
