@@ -21,6 +21,16 @@ public class MvvmComponentGenerator : ISourceGenerator
         true
     );
 
+    private static readonly DiagnosticDescriptor ComponentWrongTypeParameterError = new(
+        "MVVMBLAZOR005",
+        "Wrong type parameter",
+        "Mvvm Component class '{0}' needs to have exactly one type parameter named '{1}'",
+        "MvvmBlazorGenerator",
+        DiagnosticSeverity.Error,
+        true
+    );
+
+
     public void Execute(GeneratorExecutionContext context)
     {
         if (context.SyntaxContextReceiver is not MvvmComponentSyntaxReceiver syntaxReceiver ||
@@ -100,14 +110,26 @@ public class MvvmComponentGenerator : ISourceGenerator
         MvvmComponentClassContext componentClassContext,
         TypeDeclarationSyntax componentClass)
     {
+        const string typeParameterName = "T";
         var genericComponentSourceText = SourceText.From(
-            GenerateGenericComponentCode(componentClassContext),
+            GenerateGenericComponentCode(componentClassContext, typeParameterName),
             Encoding.UTF8
         );
 
-        if (componentClass.TypeParameterList is null || componentClass.TypeParameterList.Parameters.Count != 1)
+        var typeParameterList = componentClass.TypeParameterList;
+        if (typeParameterList is null || typeParameterList.Parameters.Count != 1 || typeParameterList.Parameters[0].Identifier.ValueText != typeParameterName)
         {
-            throw new InvalidOperationException("Expected exactly one type parameter");
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    ComponentWrongTypeParameterError,
+                    Location.Create(
+                        componentClass.SyntaxTree,
+                        TextSpan.FromBounds(componentClass.SpanStart, componentClass.SpanStart)
+                    ),
+                    componentClass.Identifier,
+                    typeParameterName
+                )
+            );
         }
 
         context.AddSource(componentClass.Identifier + "T.Generated.cs", genericComponentSourceText);
@@ -224,7 +246,7 @@ namespace {componentNamespace}
             ";
     }
 
-    private static string GenerateGenericComponentCode(MvvmComponentClassContext componentClassContext)
+    private static string GenerateGenericComponentCode(MvvmComponentClassContext componentClassContext, string typeParameterName)
     {
         var componentNamespace = componentClassContext.ComponentSymbol.ContainingNamespace;
         var componentClassName = componentClassContext.ComponentClass.Identifier;
@@ -241,7 +263,7 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    partial class {componentClassName}<T>
+    partial class {componentClassName}<{typeParameterName}>
         where T : ViewModelBase
     {{
         private MvvmBlazor.Internal.Parameters.IViewModelParameterSetter? _viewModelParameterSetter;
