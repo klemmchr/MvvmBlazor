@@ -137,7 +137,7 @@ namespace {componentNamespace}
         [Inject] protected IServiceProvider RootServiceProvider {{ get; set; }} = default!;
         protected bool IsDisposed {{ get; private set; }}
 
-        public IBinder Binder {{ get; private set; }} = null!;
+        public MvvmBlazor.Internal.Bindings.IBinder Binder {{ get; private set; }} = null!;
 
 #pragma warning disable CS0109
         protected new IServiceProvider ScopedServices
@@ -177,7 +177,7 @@ namespace {componentNamespace}
 
         private void InitializeDependencies()
         {{
-            Binder = ScopedServices.GetRequiredService<IBinder>();
+            Binder = ScopedServices.GetRequiredService<MvvmBlazor.Internal.Bindings.IBinder>();
             Binder.ValueChangedCallback = BindingOnBindingValueChanged;
         }}
 
@@ -244,7 +244,7 @@ namespace {componentNamespace}
     partial class {componentClassName}<T>
         where T : ViewModelBase
     {{
-        private IViewModelParameterSetter? _viewModelParameterSetter;
+        private MvvmBlazor.Internal.Parameters.IViewModelParameterSetter? _viewModelParameterSetter;
 
 #pragma warning disable CS8618
         protected internal {componentClassName}(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -275,7 +275,7 @@ namespace {componentNamespace}
             if (BindingContext is null)
                 throw new InvalidOperationException($""{{nameof(BindingContext)}} is not set"");
 
-            _viewModelParameterSetter ??= ScopedServices.GetRequiredService<IViewModelParameterSetter>();
+            _viewModelParameterSetter ??= ScopedServices.GetRequiredService<MvvmBlazor.Internal.Parameters.IViewModelParameterSetter>();
             _viewModelParameterSetter.ResolveAndSet(this, BindingContext);
         }}
 
