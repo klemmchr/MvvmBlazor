@@ -312,8 +312,8 @@ namespace {componentNamespace}
         /// <inheritdoc />
         protected override void OnInitialized()
         {{
-            base.OnInitialized();
             SetBindingContext();
+            base.OnInitialized();
             BindingContext?.OnInitialized();
         }}
 
@@ -327,8 +327,8 @@ namespace {componentNamespace}
         /// <inheritdoc />
         protected override void OnParametersSet()
         {{
-            base.OnParametersSet();
             SetParameters();
+            base.OnParametersSet();
             BindingContext?.OnParametersSet();
         }}
 
