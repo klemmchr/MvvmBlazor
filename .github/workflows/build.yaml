@@ -27,10 +27,10 @@ jobs:
           dotnet-version: '6.0.x'
 
       - name: Build
-        run: dotnet build --configuration Release -p:ContinuousIntegrationBuild=true src
+        run: dotnet build --configuration Release -p:ContinuousIntegrationBuild=true -p:TreatWarningsAsErrors=true src
 
       - name: Test
-        run: dotnet test -p:ContinuousIntegrationBuild=true -p:CollectCoverage=true -p:UseSourceLink=true -p:DeterministicReport=true -p:CoverletOutputFormat=lcov -p:CoverletOutput=$GITHUB_WORKSPACE/coverage.lcov src
+        run: dotnet test -p:ContinuousIntegrationBuild=true -p:CollectCoverage=true -p:UseSourceLink=true -p:CoverletOutputFormat=lcov -p:CoverletOutput=$GITHUB_WORKSPACE/coverage.lcov src
 
       - name: Upload coverage
         uses: romeovs/lcov-reporter-action@master
