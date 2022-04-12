@@ -79,6 +79,7 @@ public class BinderTests : UnitTest
                 )
             )
             .Verifiable();
+        weakEventManager.Setup(x => x.RemoveWeakEventListener(binding.Object));
 
         var callback = (IBinding b, EventArgs a) => { };
 
@@ -114,6 +115,7 @@ public class BinderTests : UnitTest
                 )
             )
             .Verifiable();
+        weakEventManager.Setup(x => x.RemoveWeakEventListener(binding.Object));
 
         var callback = (IBinding b, EventArgs a) => { };
 
@@ -137,17 +139,6 @@ public class BinderTests : UnitTest
         binding.Verify();
         bindingFactory.Verify();
         weakEventManager.Verify();
-    }
-
-    [Fact]
-    public void Bind_throws_when_disposed()
-    {
-        var viewModel = Services.GetRequiredService<TestViewModel>();
-
-        var binder = Services.GetRequiredService<Binder>();
-        binder.Dispose();
-
-        Should.Throw<ObjectDisposedException>(() => binder.Bind(viewModel, x => x.Test));
     }
 
     private class TestViewModel : ViewModelBase

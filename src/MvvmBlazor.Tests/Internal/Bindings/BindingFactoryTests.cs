@@ -10,7 +10,7 @@ public class BindingFactoryTests
         var wem = new Mock<IWeakEventManager>();
 
         var factory = new BindingFactory();
-        var res = factory.Create(source.Object, propertyInfo.Object, wem.Object);
+        using var res = factory.Create(source.Object, propertyInfo.Object, wem.Object);
         res.ShouldNotBeNull();
         res.PropertyInfo.ShouldBe(propertyInfo.Object);
         res.Source.ShouldBe(source.Object);
