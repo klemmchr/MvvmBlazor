@@ -71,6 +71,7 @@ resharper_web_config_type_not_resolved_highlighting = warning
 resharper_web_config_wrong_module_highlighting = warning
 
 dotnet_diagnostic.CA2007.severity = none # Call ConfigureAwait()
+dotnet_diagnostic.RS2003.severity = none # Rule is no longer shipped
 
 [{*.har,*.inputactions,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.stylelintrc,bowerrc,jest.config}]
 indent_style = space
