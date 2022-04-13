@@ -25,5 +25,9 @@
     <ProjectReference Include="..\MvvmBlazor.CodeGenerators\MvvmBlazor.CodeGenerators.csproj"/>
     <ProjectReference Include="..\MvvmBlazor.Core\MvvmBlazor.Core.csproj"/>
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+  </ItemGroup>
 
 </Project>
