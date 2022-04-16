@@ -30,7 +30,7 @@ jobs:
         run: dotnet build --configuration Release -p:ContinuousIntegrationBuild=true -p:TreatWarningsAsErrors=true src
 
       - name: Test
-        run: dotnet test -p:ContinuousIntegrationBuild=true -p:CollectCoverage=true -p:UseSourceLink=true -p:CoverletOutputFormat=lcov -p:CoverletOutput=$GITHUB_WORKSPACE/coverage.lcov src
+        run: dotnet test -p:ContinuousIntegrationBuild=true -p:CollectCoverage=true -p:CoverletOutputFormat=lcov -p:CoverletOutput=$GITHUB_WORKSPACE/coverage.lcov src
 
       - name: Upload coverage
         uses: romeovs/lcov-reporter-action@master
