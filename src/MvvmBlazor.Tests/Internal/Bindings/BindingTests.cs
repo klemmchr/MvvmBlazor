@@ -87,9 +87,10 @@ public class BindingTests
             .Returns(collection.Object)
             .Returns((object?)null);
 
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
-        binding.Initialize();
-        binding.Dispose();
+        using (var binding = new Binding(source.Object, propertyInfo.Object, wem.Object))
+        {
+            binding.Initialize();
+        }
 
         wem.Verify(x => x.RemoveWeakEventListener(collection.Object));
     }
@@ -116,9 +117,10 @@ public class BindingTests
             );
         propertyInfo.Setup(x => x.GetValue(It.IsAny<INotifyPropertyChanged>(), null)).Returns(collection.Object);
 
-        var binding = new Binding(source.Object, propertyInfo.Object, wem.Object);
-        binding.Initialize();
-        binding.Dispose();
+        using (var binding = new Binding(source.Object, propertyInfo.Object, wem.Object))
+        {
+            binding.Initialize();
+        }
 
         wem.Verify(x => x.RemoveWeakEventListener(source.Object));
     }

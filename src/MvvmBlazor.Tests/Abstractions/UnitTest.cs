@@ -1,15 +1,16 @@
 ﻿namespace MvvmBlazor.Tests.Abstractions;
 
-public abstract class UnitTest
+public abstract class UnitTest : IDisposable
 {
-    protected IServiceProvider Services { get; }
+    private readonly ServiceProvider _services;
+    protected IServiceProvider Services => _services;
 
     protected UnitTest(ITestOutputHelper outputHelper)
     {
-        Services = BuildProvider(outputHelper);
+        _services = BuildProvider(outputHelper);
     }
 
-    private IServiceProvider BuildProvider(ITestOutputHelper testOutputHelper)
+    private ServiceProvider BuildProvider(ITestOutputHelper testOutputHelper)
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton(testOutputHelper);
@@ -20,4 +21,18 @@ public abstract class UnitTest
     }
 
     protected virtual void RegisterServices(IServiceCollection services) { }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _services.Dispose();
+        }
+    }
 }

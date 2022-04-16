@@ -102,7 +102,7 @@ public class MvvmComponentGenerator : ISourceGenerator
         BaseTypeDeclarationSyntax componentClass)
     {
         var componentSourceText = SourceText.From(GenerateComponentCode(componentClassContext), Encoding.UTF8);
-        context.AddSource(componentClass.Identifier + ".Generated.cs", componentSourceText);
+        context.AddSource(componentClass.Identifier + ".g.cs", componentSourceText);
     }
 
     private static void AddGenericComponent(
@@ -132,7 +132,7 @@ public class MvvmComponentGenerator : ISourceGenerator
             );
         }
 
-        context.AddSource(componentClass.Identifier + "T.Generated.cs", genericComponentSourceText);
+        context.AddSource(componentClass.Identifier + "T.g.cs", genericComponentSourceText);
     }
 
     private static string GenerateComponentCode(MvvmComponentClassContext componentClassContext)
