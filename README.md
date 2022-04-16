@@ -4,8 +4,8 @@ MvvmBlazor
 [![NuGet](https://img.shields.io/nuget/v/MvvmBlazor.svg?style=flat-square)](https://www.nuget.org/packages/MvvmBlazor)
 [![NuGet](https://img.shields.io/nuget/dt/MvvmBlazor)](https://www.nuget.org/packages/MvvmBlazor)
 
-BlazorMVVM is a small framework for building Blazor and BlazorServerside apps. With its simple to use MVVM pattern you
-can boost up your development speed while minimizing the hazzle to just make it work.
+MvvmBlazor is a small framework for building Blazor WebAssembly and Blazor Server apps. With its easy-to-use MVVM pattern you
+can increase your development speed while minimising the effort required to make it work.
 
 ## Getting started
 
