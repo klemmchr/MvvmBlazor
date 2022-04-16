@@ -10,12 +10,12 @@ on:
       - 'samples/**/*'
       - '.github/workflows/**/*'
 
-name: Build
+name: Build package
 
 jobs:
 
   build:
-    name: Build package
+    name: Build
     runs-on: ubuntu-latest
     steps:
 
