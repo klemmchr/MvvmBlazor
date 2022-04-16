@@ -15,7 +15,7 @@ name: Build
 jobs:
 
   build:
-    name: Build
+    name: Build package
     runs-on: ubuntu-latest
     steps:
 
