@@ -7,9 +7,10 @@ on:
       - master
     paths:
       - 'samples/**/*'
+      - 'src/**/*'
       - '.github/workflows/**/*'
 
-name: Build
+name: Build samples
 
 jobs:
 
