@@ -34,6 +34,7 @@ jobs:
 
       - name: Upload coverage
         uses: romeovs/lcov-reporter-action@master
+        if: github.event.pull_request.base.ref == 'master'
         with:
           lcov-file: coverage.lcov
           delete-old-comments: true
