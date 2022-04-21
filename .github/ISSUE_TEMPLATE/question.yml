@@ -1,5 +1,5 @@
 name: Question
-description: Ask a quesstion
+description: Ask a question
 labels: ["question", "triage"]
 body:
   - type: textarea
