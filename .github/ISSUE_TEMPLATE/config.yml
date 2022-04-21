@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerabilities
-    url: git+mvvmblazor@klemm.one
+    url: https://github.com/klemmchr/MvvmBlazor
     about: Please report security vulnerabilities via email to git+mvvmblazor@klemm.one.
