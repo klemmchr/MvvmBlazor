@@ -1,0 +1,36 @@
+name: Question
+description: Ask a question
+labels: ["question", "triage"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Question
+      description: Outline the question you have
+    validations:
+      required: true
+  - type: textarea
+    id: code-sample
+    attributes:
+      label: Code sample
+      description: Provide a code sample if applicable 
+      render: C#
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What MvvmBlazor version are you using?
+    validations:
+      required: true
+  - type: dropdown
+    id: blazor-type
+    attributes:
+      label: Are you using Blazor WASM or Blazor Server?
+      multiple: false
+      options:
+        - Blazor WASM
+        - Balzor Server
+    validations:
+      required: true

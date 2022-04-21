@@ -1,0 +1,19 @@
+name: Feature request
+description: Propose a new feature
+labels: ["feature", "triage"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature description
+      description: Describe the feature you would like to have
+    validations:
+      required: true
+  - type: textarea
+    id: code-sample
+    attributes:
+      label: Code sample
+      description: Provide a code sample if applicable 
+      render: C#
+    validations:
+      required: false
