@@ -32,7 +32,7 @@ body:
     id: version
     attributes:
       label: Version
-      description: What version are you using?
+      description: What MvvmBlazor version are you using?
     validations:
       required: true
   - type: dropdown
