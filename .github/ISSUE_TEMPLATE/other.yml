@@ -1,0 +1,18 @@
+name: Other
+description: All other issues
+labels: ["triage"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
+  - type: textarea
+    id: code-sample
+    attributes:
+      label: Code sample
+      description: Provide a code sample if applicable 
+      render: C#
+    validations:
+      required: false
