@@ -1,0 +1,59 @@
+name: Bug Report
+description: File a bug report
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: Explain the issue you have
+    validations:
+      required: true
+  - type: textarea
+    id: expectation
+    attributes:
+      label: Expectation
+      description: Outline what your expectation would be
+    validations:
+      required: true
+  - type: textarea
+    id: code-sample
+    attributes:
+      label: Code sample
+      description: Provide a code sample that demonstrates your issue
+      render: C#
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version are you using?
+    validations:
+      required: true
+  - type: dropdown
+    id: blazor-type
+    attributes:
+      label: Are you using Blazor WASM or Blazor Server?
+      multiple: false
+      options:
+        - Blazor WASM
+        - Balzor Server
+      validations:
+        required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: What operation system are you working with?
+      multiple: false
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - Other
+      validations:
+        required: true
