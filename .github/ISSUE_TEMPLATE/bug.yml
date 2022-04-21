@@ -43,8 +43,8 @@ body:
       options:
         - Blazor WASM
         - Balzor Server
-      validations:
-        required: true
+    validations:
+      required: true
   - type: dropdown
     id: os
     attributes:
@@ -55,5 +55,5 @@ body:
         - Linux
         - macOS
         - Other
-      validations:
-        required: true
+    validations:
+      required: true
