@@ -1,6 +1,6 @@
 name: Question
 description: Ask a question
-labels: ["question", "triage"]
+labels: ["type: question", "status: triage"]
 body:
   - type: textarea
     id: description
