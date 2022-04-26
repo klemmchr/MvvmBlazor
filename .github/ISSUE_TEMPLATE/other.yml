@@ -1,6 +1,6 @@
 name: Other
 description: All other issues
-labels: ["triage"]
+labels: ["status: triage"]
 body:
   - type: textarea
     id: description
