@@ -31,6 +31,6 @@ body:
       multiple: false
       options:
         - Blazor WASM
-        - Balzor Server
+        - Blazor Server
     validations:
       required: true
