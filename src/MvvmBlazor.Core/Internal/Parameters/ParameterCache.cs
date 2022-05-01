@@ -19,6 +19,7 @@ internal class ParameterCache : IParameterCache
 
     public void Set(Type type, ParameterInfo info)
     {
-        _cache[type] = info ?? throw new ArgumentNullException(nameof(info));
+        ArgumentNullException.ThrowIfNull(info);
+        _cache[type] = info;
     }
 }

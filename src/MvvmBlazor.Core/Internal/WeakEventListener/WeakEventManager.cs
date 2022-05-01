@@ -41,10 +41,7 @@ public class WeakEventManager : IWeakEventManager
     public void AddWeakEventListener<T, TArgs>(T source, string eventName, Action<T, TArgs> handler)
         where T : class where TArgs : EventArgs
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentNullException.ThrowIfNull(source);
 
         _listeners.Add(new WeakEventListener<T, TArgs>(source, eventName, handler), handler);
     }
@@ -55,10 +52,7 @@ public class WeakEventManager : IWeakEventManager
     public void AddWeakEventListener<T>(T source, Action<T, PropertyChangedEventArgs> handler)
         where T : class, INotifyPropertyChanged
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentNullException.ThrowIfNull(source);
 
         _listeners.Add(new PropertyChangedWeakEventListener<T>(source, handler), handler);
     }
@@ -69,10 +63,7 @@ public class WeakEventManager : IWeakEventManager
     public void AddWeakEventListener<T>(T source, Action<T, NotifyCollectionChangedEventArgs> handler)
         where T : class, INotifyCollectionChanged
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentNullException.ThrowIfNull(source);
 
         _listeners.Add(new CollectionChangedWeakEventListener<T>(source, handler), handler);
     }
@@ -82,10 +73,7 @@ public class WeakEventManager : IWeakEventManager
     /// </summary>
     public void RemoveWeakEventListener<T>(T source) where T : class
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentNullException.ThrowIfNull(source);
 
         var toRemove = new List<IWeakEventListener>();
         foreach (var listener in _listeners.Keys)
