@@ -15,8 +15,11 @@ internal abstract class WeakEventListenerBase<T, TArgs> : IWeakEventListener whe
 
     protected WeakEventListenerBase(T source, Action<T, TArgs> handler)
     {
-        _source = new WeakReference<T>(source ?? throw new ArgumentNullException(nameof(source)));
-        _handler = new WeakReference<Action<T, TArgs>>(handler ?? throw new ArgumentNullException(nameof(handler)));
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(handler);
+
+        _source = new WeakReference<T>(source);
+        _handler = new WeakReference<Action<T, TArgs>>(handler);
     }
 
     public bool IsAlive => _handler.TryGetTarget(out _) && _source.TryGetTarget(out _);
@@ -81,12 +84,10 @@ internal class TypedWeakEventListener<T, TArgs> : WeakEventListenerBase<T, TArgs
         Action<T, EventHandler<TArgs>> unregister,
         Action<T, TArgs> handler) : base(source, handler)
     {
-        if (register == null)
-        {
-            throw new ArgumentNullException(nameof(register));
-        }
+        ArgumentNullException.ThrowIfNull(register);
+        ArgumentNullException.ThrowIfNull(unregister);
 
-        _unregister = unregister ?? throw new ArgumentNullException(nameof(unregister));
+        _unregister = unregister;
         register(source, HandleEvent!);
     }
 

@@ -26,8 +26,9 @@ public abstract class ViewModelBase : INotifyPropertyChanged
         return false;
     }
 
-    public virtual void OnPropertyChanged(string propertyName)
+    public virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
+        ArgumentNullException.ThrowIfNull(propertyName);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
