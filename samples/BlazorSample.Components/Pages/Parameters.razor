@@ -19,6 +19,22 @@
 <MatTextField @bind-Value="@BindingContext.NewName" Label="New name"></MatTextField>
 <MatButton OnClick="@BindingContext.NavigateToNewName" Raised="true">Navigate</MatButton>
 
+<br/>
+<br/>
+
+<MatCard>
+    <MatCardContent>
+        <MatSubtitle1>
+            Cascading parameters are supported as well.
+        </MatSubtitle1>
+    </MatCardContent>
+</MatCard>
+<br/>
+
+<CascadingValue Value="@("Marc Foo Bar")">
+    <CascadingComponent></CascadingComponent>
+</CascadingValue>
+
 @code {
 
     [Parameter]

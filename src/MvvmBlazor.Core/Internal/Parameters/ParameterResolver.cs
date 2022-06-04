@@ -45,8 +45,9 @@ internal class ParameterResolver : IParameterResolver
             }
 
             // If the property is marked as a parameter add it to the list
-            var parameterAttribute = componentProperty.GetCustomAttribute<ParameterAttribute>();
-            if (parameterAttribute != null)
+            ParameterAttribute? GetParameterAttribute() => componentProperty.GetCustomAttribute<ParameterAttribute>();
+            CascadingParameterAttribute? GetCascadingParameterAttribute() => componentProperty.GetCustomAttribute<CascadingParameterAttribute>();
+            if (GetParameterAttribute() != null || GetCascadingParameterAttribute() != null)
             {
                 resolvedComponentProperties.Add(componentProperty);
             }

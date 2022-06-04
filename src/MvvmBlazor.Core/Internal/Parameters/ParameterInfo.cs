@@ -8,13 +8,14 @@ internal record ParameterInfo
 
     public ParameterInfo(IEnumerable<PropertyInfo> componentProperties, IEnumerable<PropertyInfo> viewModelProperties)
     {
-        var viewModelPropDict = viewModelProperties.ToDictionary(x => x.Name);
-
-        foreach (var componentProperty in componentProperties)
+        var componentPropertyDict = componentProperties.ToDictionary(x => x.Name);
+        foreach (var viewModelProperty in viewModelProperties.OrderBy(x => x.Name))
         {
-            if (!viewModelPropDict.TryGetValue(componentProperty.Name, out var viewModelProperty))
+            if (!componentPropertyDict.TryGetValue(viewModelProperty.Name, out var componentProperty))
             {
-                continue;
+                throw new ParameterException(
+                    $"Failed to find matching component parameter {viewModelProperty.Name} for view model {viewModelProperty.DeclaringType!.FullName}"
+                );
             }
 
             _parameters.Add(componentProperty, viewModelProperty);
