@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddTransient<ParametersViewModel>();
         serviceCollection.AddScoped<NavbarViewModel>();
         serviceCollection.AddScoped<TypedParametersViewModel>();
+        serviceCollection.AddTransient<CascadingViewModel>();
 
         return serviceCollection;
     }

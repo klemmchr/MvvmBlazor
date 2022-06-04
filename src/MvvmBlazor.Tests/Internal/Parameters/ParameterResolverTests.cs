@@ -17,7 +17,7 @@ public class ParameterResolverTests : UnitTest
 
         var res = resolver.ResolveParameters(typeof(S3), typeof(S3));
         res.Parameters.Count.ShouldBe(1);
-        res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe(nameof(S3.Test));
         res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
@@ -28,7 +28,7 @@ public class ParameterResolverTests : UnitTest
 
         var res = resolver.ResolveParameters(typeof(S4), typeof(S4));
         res.Parameters.Count.ShouldBe(1);
-        res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe(nameof(S4.Test));
         res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
@@ -39,10 +39,10 @@ public class ParameterResolverTests : UnitTest
 
         var res = resolver.ResolveParameters(typeof(S2), typeof(S2));
         res.Parameters.Count.ShouldBe(2);
-        res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
-        res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
-        res.Parameters.ElementAt(1).Key.Name.ShouldBe("Foo");
-        res.Parameters.ElementAt(1).Key.PropertyType.ShouldBe(typeof(int));
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe(nameof(S2.Foo));
+        res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(int));
+        res.Parameters.ElementAt(1).Key.Name.ShouldBe(nameof(S2.Test));
+        res.Parameters.ElementAt(1).Key.PropertyType.ShouldBe(typeof(string));
     }
 
     [Fact]
@@ -52,7 +52,18 @@ public class ParameterResolverTests : UnitTest
 
         var res = resolver.ResolveParameters(typeof(S1), typeof(S1));
         res.Parameters.Count.ShouldBe(1);
-        res.Parameters.ElementAt(0).Key.Name.ShouldBe("Test");
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe(nameof(S1.Test));
+        res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
+    }
+
+    [Fact]
+    public void ResolveParameters_resolves_cascading_parameter()
+    {
+        var resolver = Services.GetRequiredService<ParameterResolver>();
+
+        var res = resolver.ResolveParameters(typeof(S5), typeof(S5));
+        res.Parameters.Count.ShouldBe(1);
+        res.Parameters.ElementAt(0).Key.Name.ShouldBe(nameof(S5.Test));
         res.Parameters.ElementAt(0).Key.PropertyType.ShouldBe(typeof(string));
     }
 
@@ -84,5 +95,10 @@ public class ParameterResolverTests : UnitTest
         public int Boo { get; internal set; }
         public int Loo { get; protected set; }
         public int Moo { get; protected internal set; }
+    }
+
+    private class S5
+    {
+        [CascadingParameter] public string? Test { get; set; }
     }
 }

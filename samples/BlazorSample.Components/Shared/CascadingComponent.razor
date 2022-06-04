@@ -1,0 +1,10 @@
+﻿@inherits CustomBaseComponent<CascadingViewModel>
+
+<MatBody2>Cascading value is @Bind(x => x.Name)</MatBody2>
+
+@code {
+
+    [CascadingParameter]
+    public string? Name { get; set; }
+
+}
