@@ -179,6 +179,7 @@ class ViewModel: ViewModelBase
 }
 ```
 
+Cascading parameters are supported as well.
 The parameter will be passed when parameters are set on the component. More information regarding the lifecycle can be
 found in
 the [Microsoft Documentation](https://docs.microsoft.com/en-us/aspnet/core/blazor/components/lifecycle?view=aspnetcore-6.0#lifecycle-events)
