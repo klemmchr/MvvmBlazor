@@ -180,10 +180,5 @@ public class MvvmComponentBaseTTests : UnitTest
         {
             return OnAfterRenderAsync(firstRender);
         }
-
-        public Task ParametersAsync(ParameterView parameters)
-        {
-            return SetParametersAsync(parameters);
-        }
     }
 }
