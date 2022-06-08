@@ -151,7 +151,7 @@ using MvvmBlazor.ViewModel;
 
 namespace {componentNamespace}
 {{
-    partial class {componentClassName} : IDisposable
+    partial class {componentClassName} : IDisposable, IAsyncDisposable
     {{
         private AsyncServiceScope? _scope;
 
@@ -235,11 +235,34 @@ namespace {componentNamespace}
                 _scope = null;
                 Dispose(true);
                 GC.SuppressFinalize(this);
+                IsDisposed = true;
             }}
         }}
 
         protected virtual void Dispose(bool disposing)
         {{
+        }}
+
+        public async ValueTask DisposeAsync()
+        {{
+            if (!IsDisposed)
+            {{
+                if (_scope is not null)
+                {{
+                    await _scope.Value.DisposeAsync();
+                    _scope = null;
+                }}
+
+                await DisposeAsyncCore();
+                Dispose(false);
+                GC.SuppressFinalize(this);
+                IsDisposed = true;
+            }}
+        }}
+
+        protected virtual ValueTask DisposeAsyncCore()
+        {{
+            return ValueTask.CompletedTask;
         }}
     }}
 }}
