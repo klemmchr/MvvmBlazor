@@ -20,15 +20,36 @@ public abstract class ViewModelBase : INotifyPropertyChanged
         {
             field = value;
             OnPropertyChanged(propertyName!);
-            if (!_subscriptions.ContainsKey(propertyName!))
-            {
-                return true;
-            }
-
-            foreach (var action in _subscriptions[propertyName!]) action(value!);
+            NotifySubscribers(value, propertyName!);
             return true;
         }
 
+        return false;
+    }
+
+    protected bool Set<TModel, TProperty>(TModel model, Expression<Func<TModel, TProperty>> property, TProperty value, [CallerMemberName] string? propertyName = null)
+    {
+        return Set(model, property, value, EqualityComparer<TProperty>.Default, propertyName);
+    }
+
+    protected bool Set<TModel, TProperty>(TModel model, Expression<Func<TModel, TProperty>> property, TProperty value, IEqualityComparer<TProperty> equalityComparer, [CallerMemberName] string? propertyName = null)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+        ArgumentNullException.ThrowIfNull(property);
+        ArgumentNullException.ThrowIfNull(equalityComparer);
+
+        var propertyValue = property.Compile().Invoke(model);
+        if (!equalityComparer.Equals(propertyValue, value))
+        {
+            var propertyExpression = property.Body as MemberExpression
+                ?? throw new ArgumentException("Argument must be a member Expression", nameof(property));
+            var propertyInfo = propertyExpression.Member as PropertyInfo
+                ?? throw new ArgumentException("Expression must target a Property", nameof(property));
+            propertyInfo.SetValue(model, value);
+            OnPropertyChanged(propertyName!);
+            NotifySubscribers(value, propertyName!);
+            return true;
+        }
         return false;
     }
 
@@ -36,6 +57,14 @@ public abstract class ViewModelBase : INotifyPropertyChanged
     {
         ArgumentNullException.ThrowIfNull(propertyName);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected void NotifySubscribers<T>(T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (_subscriptions.ContainsKey(propertyName!))
+        {
+            foreach (var action in _subscriptions[propertyName!]) action(value!);
+        }
     }
 
     protected void Subscribe<T>(Expression<Func<T>>? expression, Action<T> action)
