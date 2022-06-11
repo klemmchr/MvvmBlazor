@@ -76,11 +76,32 @@ public class ViewModelBaseTests
         TestField(ref double1, 2.3);
     }
 
+    [Fact]
+    public void Set_should_use_custom_equality_comparer()
+    {
+        bool used = false;
+        var mockEq= new Mock<IEqualityComparer<int>>();
+        mockEq.Setup(x => x.Equals(It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(() => { used = true; return true; });
+
+        var vm = new TestViewModel();
+        var int1 = 1;
+        var res = vm.SetProperty(ref int1, 2, mockEq.Object, "Foo");
+
+        res.ShouldBe(false);
+        used.ShouldBe(true);
+    }
+
     private class TestViewModel : ViewModelBase
     {
         public bool SetProperty<T>(ref T field, T value, string? propertyName = null)
         {
             return Set(ref field, value, propertyName);
+        }
+
+        public bool SetProperty<T>(ref T field, T value, IEqualityComparer<T> equalityComparer, string? propertyName = null)
+        {
+            return Set(ref field, value, equalityComparer, propertyName);
         }
     }
 }
