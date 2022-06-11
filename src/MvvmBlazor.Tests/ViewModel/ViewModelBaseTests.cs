@@ -77,19 +77,35 @@ public class ViewModelBaseTests
     }
 
     [Fact]
-    public void Set_should_use_custom_equality_comparer()
+    public void Set_returns_False_with_custom_equality_comparer()
     {
-        bool used = false;
-        var mockEq= new Mock<IEqualityComparer<int>>();
+        var mockEq= new StrictMock<IEqualityComparer<int>>();
         mockEq.Setup(x => x.Equals(It.IsAny<int>(), It.IsAny<int>()))
-            .Returns(() => { used = true; return true; });
+            .Returns(true)
+            .Verifiable();
 
         var vm = new TestViewModel();
         var int1 = 1;
         var res = vm.SetProperty(ref int1, 2, mockEq.Object, "Foo");
 
         res.ShouldBe(false);
-        used.ShouldBe(true);
+        mockEq.Verify();
+    }
+
+    [Fact]
+    public void Set_returns_true_with_custom_equality_comparer()
+    {
+        var mockEq= new StrictMock<IEqualityComparer<int>>();
+        mockEq.Setup(x => x.Equals(It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(false)
+            .Verifiable();
+
+        var vm = new TestViewModel();
+        var int1 = 1;
+        var res = vm.SetProperty(ref int1, 1, mockEq.Object, "Foo");
+
+        res.ShouldBe(true);
+        mockEq.Verify();
     }
 
     private class TestViewModel : ViewModelBase
