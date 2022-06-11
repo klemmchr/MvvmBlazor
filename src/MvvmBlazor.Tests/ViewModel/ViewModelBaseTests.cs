@@ -1,4 +1,4 @@
-﻿namespace MvvmBlazor.Tests.ViewModel;
+namespace MvvmBlazor.Tests.ViewModel;
 
 public class ViewModelBaseTests
 {
@@ -76,11 +76,48 @@ public class ViewModelBaseTests
         TestField(ref double1, 2.3);
     }
 
+    [Fact]
+    public void Set_returns_False_with_custom_equality_comparer()
+    {
+        var mockEq= new StrictMock<IEqualityComparer<int>>();
+        mockEq.Setup(x => x.Equals(It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(true)
+            .Verifiable();
+
+        var vm = new TestViewModel();
+        var int1 = 1;
+        var res = vm.SetProperty(ref int1, 2, mockEq.Object, "Foo");
+
+        res.ShouldBe(false);
+        mockEq.Verify();
+    }
+
+    [Fact]
+    public void Set_returns_true_with_custom_equality_comparer()
+    {
+        var mockEq= new StrictMock<IEqualityComparer<int>>();
+        mockEq.Setup(x => x.Equals(It.IsAny<int>(), It.IsAny<int>()))
+            .Returns(false)
+            .Verifiable();
+
+        var vm = new TestViewModel();
+        var int1 = 1;
+        var res = vm.SetProperty(ref int1, 1, mockEq.Object, "Foo");
+
+        res.ShouldBe(true);
+        mockEq.Verify();
+    }
+
     private class TestViewModel : ViewModelBase
     {
         public bool SetProperty<T>(ref T field, T value, string? propertyName = null)
         {
             return Set(ref field, value, propertyName);
+        }
+
+        public bool SetProperty<T>(ref T field, T value, IEqualityComparer<T> equalityComparer, string? propertyName = null)
+        {
+            return Set(ref field, value, equalityComparer, propertyName);
         }
     }
 }
