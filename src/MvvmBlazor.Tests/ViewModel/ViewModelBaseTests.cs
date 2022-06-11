@@ -1,4 +1,4 @@
-﻿namespace MvvmBlazor.Tests.ViewModel;
+namespace MvvmBlazor.Tests.ViewModel;
 
 public class ViewModelBaseTests
 {

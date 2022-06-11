@@ -1,4 +1,4 @@
-﻿namespace MvvmBlazor.ViewModel;
+namespace MvvmBlazor.ViewModel;
 
 public abstract class ViewModelBase : INotifyPropertyChanged
 {
@@ -10,7 +10,13 @@ public abstract class ViewModelBase : INotifyPropertyChanged
 
     protected bool Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
-        if (!EqualityComparer<T>.Default.Equals(field, value))
+        return Set(ref field, value, EqualityComparer<T>.Default, propertyName);
+    }
+
+    protected bool Set<T>(ref T field, T value, IEqualityComparer<T> equalityComparer, [CallerMemberName] string? propertyName = null)
+    {
+        ArgumentNullException.ThrowIfNull(equalityComparer);
+        if (!equalityComparer.Equals(field, value))
         {
             field = value;
             OnPropertyChanged(propertyName!);
